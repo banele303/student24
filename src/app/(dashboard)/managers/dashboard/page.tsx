@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { useGetAuthUserQuery, useGetManagerPropertiesQuery } from "@/state/api";
+import { useGetApplicationsQuery, useGetAuthUserQuery, useGetManagerPropertiesQuery } from "@/state/api";
 import { Building2, Users, FileText, CreditCard, AlertCircle, LogOut, BarChart, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -35,12 +35,17 @@ function ManagerDashboard() {
     { skip: !authUser?.cognitoInfo?.userId || authUser?.userRole === "tenant" }
   );
   
-  // For now, we'll use mock data for applications and tenants since those endpoints
-  // aren't available in the API
-  const applications: Application[] = [];
+  // Fetch applications for this manager
+  const { data: applicationData, isLoading: applicationsLoading } = useGetApplicationsQuery(
+    { userId: authUser?.cognitoInfo?.userId || "", userType: "manager" },
+    { skip: !authUser?.cognitoInfo?.userId || authUser?.userRole !== "manager" }
+  );
+  
+  // Process applications data
+  const applications = (applicationData || []).filter(app => app.status === 'Pending');
   const tenants: { name: string; property: string; status: string }[] = [];
   
-  const isLoading = authLoading || propertiesLoading;
+  const isLoading = authLoading || propertiesLoading || applicationsLoading;
 
   if (isLoading) {
     return (
@@ -55,8 +60,8 @@ function ManagerDashboard() {
   // Since 'status' doesn't exist on the Property type, we'll assume all properties are available
   // In a real implementation, you might want to check if a property has active leases
   const availableProperties = properties?.length || 0; // Assuming all properties are available for now
-  const totalApplications = 0; // Mock data for now
-  const pendingApplications = 0; // Mock data for now
+  const totalApplications = applications?.length || 0;
+  const pendingApplications = applications?.filter(app => app.status === 'Pending')?.length || 0;
   const totalTenants = 0; // Mock data for now
   const occupancyRate = totalProperties > 0 
     ? Math.round(((totalProperties - availableProperties) / totalProperties) * 100) 

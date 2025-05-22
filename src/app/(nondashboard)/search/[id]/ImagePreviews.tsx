@@ -6,17 +6,28 @@ import React, { useState } from "react";
 
 const ImagePreviews = ({ images }: ImagePreviewsProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [imgError, setImgError] = useState<{[key: number]: boolean}>({});
-
-  // Custom loader that just returns the URL as-is
+  // Enhanced approach to handle multiple image sources (directly from CardCompact component)
+  const [imgSrc, setImgSrc] = useState<string[]>(
+    // First try images array 
+    Array.isArray(images) && images.length > 0 ? 
+      images.filter(img => img && img.trim() !== '') : 
+      []
+  );
+  
+  // Custom loader that just returns the URL as-is (same as CardCompact)
   const loaderFunc = ({ src }: ImageLoaderProps) => {
     return src;
   };
-
-  // Handle image error
+  
+  // Handle image error for specific index
   const handleImageError = (index: number) => {
     console.error(`Failed to load image at index ${index}`);
-    setImgError(prev => ({ ...prev, [index]: true }));
+    // Replace the failed image with placeholder (exactly as in CardCompact)
+    if (imgSrc.length > index) {
+      const newImgSrc = [...imgSrc];
+      newImgSrc[index] = "/placeholder.svg";
+      setImgSrc(newImgSrc);
+    }
   };
 
   const handlePrev = () => {
@@ -29,36 +40,30 @@ const ImagePreviews = ({ images }: ImagePreviewsProps) => {
 
   return (
     <div className="relative h-[350px] md:h-[400px] lg:h-[400px] xl:h-[450px] w-full max-w-5xl mx-auto mt-6 pt-4 pb-2 px-2">
-      {images.length === 0 ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
+      {imgSrc.length === 0 ? (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 rounded-lg">
           <Home className="h-16 w-16 text-gray-400" />
           <p className="text-gray-500 mt-4">No images available</p>
         </div>
       ) : (
-        images.map((image, index) => (
+        imgSrc.map((image, index) => (
           <div
             key={`image-${index}`}
             className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${
               index === currentImageIndex ? "opacity-100" : "opacity-0"
             }`}
           >
-            {imgError[index] ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
-                <Home className="h-16 w-16 text-gray-400" />
-              </div>
-            ) : (
-              <Image
-                src={image}
-                alt={`Property Image ${index + 1}`}
-                fill
-                loader={loaderFunc}
-                unoptimized={true}
-                priority={index === 0}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1000px"
-                className="object-cover cursor-pointer transition-transform duration-500 ease-in-out rounded-lg shadow-md"
-                onError={() => handleImageError(index)}
-              />
-            )}
+            <Image
+              src={image || "/placeholder.svg"}
+              alt={`Property Image ${index + 1}`}
+              fill
+              loader={loaderFunc}
+              unoptimized={true}
+              priority={index === 0}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1000px"
+              className="object-cover cursor-pointer transition-transform duration-500 ease-in-out rounded-lg shadow-md"
+              onError={() => handleImageError(index)}
+            />
           </div>
         ))
       )}

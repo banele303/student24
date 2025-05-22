@@ -96,7 +96,7 @@ function ModernPropertyCard({
           <div className="absolute top-3 left-3 z-20">
             <div className="bg-blue-600 backdrop-blur-md text-white px-3 py-1.5 rounded-md flex items-center shadow-lg border border-blue-700">
               <span className="font-bold">
-                R{property.pricePerMonth.toLocaleString('en-ZA')}
+                R{(property.pricePerMonth || 0).toLocaleString('en-ZA')}
               </span>
               <span className="text-xs text-white/90 ml-1">/mo</span>
             </div>
