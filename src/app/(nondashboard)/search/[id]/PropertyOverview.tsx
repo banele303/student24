@@ -1,13 +1,21 @@
 import { useGetPropertyQuery } from "@/state/api";
 import { MapPin, Star } from "lucide-react";
 import React from "react";
+import { Property } from "@/types/property";
+
+interface PropertyOverviewProps {
+  propertyId: string | number;
+}
 
 const PropertyOverview = ({ propertyId }: PropertyOverviewProps) => {
+  // Convert string propertyId to number if it's a string
+  const numericPropertyId = typeof propertyId === 'string' ? parseInt(propertyId, 10) : propertyId;
+  
   const {
     data: property,
     isError,
     isLoading,
-  } = useGetPropertyQuery(propertyId);
+  } = useGetPropertyQuery(numericPropertyId);
 
   if (isLoading) return <>Loading...</>;
   if (isError || !property) {
@@ -47,8 +55,8 @@ const PropertyOverview = ({ propertyId }: PropertyOverviewProps) => {
         <div className="flex justify-between items-center gap-4 px-5">
           <div>
             <div className="text-sm text-gray-500">Monthly Rent</div>
-            <div className="font-semibold">
-              R {property.price}
+            <div className="font-semibold text-green-600">
+              R {(property.price || 0).toLocaleString('en-ZA')}
             </div>
           </div>
           <div className="border-l border-gray-300 h-10"></div>

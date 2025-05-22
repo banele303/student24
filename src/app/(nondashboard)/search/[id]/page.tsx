@@ -4,7 +4,7 @@ import { useGetAuthUserQuery, useGetPropertyQuery, useGetRoomsQuery } from "@/st
 import { Property as PropertyType } from "@/types/property";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
-import Image from "next/image";
+import Image, { ImageLoaderProps } from "next/image";
 import ImagePreviews from "./ImagePreviews";
 import PropertyOverview from "./PropertyOverview";
 import PropertyDetails from "./PropertyDetails";
@@ -13,7 +13,7 @@ import ContactWidget from "./ContactWidget";
 import ApplicationModal from "./ApplicationModal";
 import Loading from "@/components/Loading";
 import PropertyReviews from "@/components/PropertyReviews";
-import { Building2, Phone, Bed, Bath, Users } from "lucide-react";
+import { Building2, Phone, Bed, Bath, Users, Home } from "lucide-react";
 
 // Define interfaces for type safety
 interface Room {
@@ -33,6 +33,7 @@ const SingleListing = () => {
   const propertyId = Number(id);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expandedDescriptions, setExpandedDescriptions] = useState<{[key: string]: boolean}>({});
+  const [imgErrors, setImgErrors] = useState<{[key: string]: boolean}>({});
   
   // Toggle description expansion
   const toggleDescription = (roomId: string) => {
@@ -133,17 +134,33 @@ const SingleListing = () => {
                     <div key={isFallbackRoom ? `fallback-${roomNumber}` : index} 
                          className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                       {/* Room Image */}
-                      <div className="relative h-48 w-full">
-                        <Image 
-                          src={roomData.images && roomData.images.length > 0 
-                               ? roomData.images[0] 
-                               : property.images && property.images.length > 0
-                                 ? property.images[Math.min(index, property.images.length - 1)]
-                                 : '/placeholder-room.jpg'}
-                          alt={roomData.name || `Room ${roomNumber}`}
-                          fill
-                          className="object-cover rounded-md"
-                        />
+                      <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
+                        {roomData.images && roomData.images.length > 0 ? (
+                          imgErrors[`room-${roomData.id || index}`] ? (
+                            <div className="flex flex-col items-center justify-center h-full">
+                              <Home className="h-10 w-10 text-gray-400 mb-2" />
+                              <span className="text-gray-400 text-sm">No image available</span>
+                            </div>
+                          ) : (
+                            <Image
+                              src={roomData.images[0]}
+                              alt={roomData.name || `Room ${index + 1}`}
+                              fill
+                              loader={({ src }: ImageLoaderProps) => src}
+                              unoptimized={true}
+                              className="object-cover hover:scale-110 transition-transform duration-500"
+                              onError={() => {
+                                console.error(`Failed to load image for room: ${roomData.id || index}`);
+                                setImgErrors(prev => ({ ...prev, [`room-${roomData.id || index}`]: true }));
+                              }}
+                            />
+                          )
+                        ) : (
+                          <div className="flex flex-col items-center justify-center h-full">
+                            <Home className="h-10 w-10 text-gray-400 mb-2" />
+                            <span className="text-gray-400 text-sm">No image available</span>
+                          </div>
+                        )}
                         <div className="absolute top-2 right-2">
                           <span className={`px-3 py-1 text-xs font-medium rounded-full ${roomData.isAvailable ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
                             {roomData.isAvailable ? 'Available Now' : roomData.availableFrom ? `Available from ${new Date(roomData.availableFrom).toLocaleDateString('en-ZA', {day: 'numeric', month: 'long'})}` : 'Occupied'}
