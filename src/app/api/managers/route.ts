@@ -105,8 +105,8 @@ export async function POST(request: NextRequest) {
     const firstName = body.firstName || '';
     const lastName = body.lastName || '';
     const phone = body.phone || body.phoneNumber || '';
-    // Use only the Cognito username
-    const name = body.name;
+    // Ensure we have a name - derive from email if not provided
+    const name = body.name || (email ? email.split('@')[0] : 'Manager') || 'Manager';
     
     // Validate only the absolute minimum required field
     if (!cognitoId) {
