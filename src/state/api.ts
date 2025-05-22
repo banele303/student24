@@ -1122,14 +1122,27 @@ export const api = createApi({
     }),
 
     updateApplicationStatus: build.mutation<Application & { lease?: Lease }, { id: number; status: string }>({
-      query: ({ id, status }) => ({
-        url: `applications/${id}/status`,
-        method: "PUT",
-        body: { status },
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      }),
+      query: ({ id, status }) => {
+        console.log('RTK Query sending request:', { id, status });
+        
+        // Make sure status is properly formatted - backend expects 'Pending', 'Approved', or 'Denied'
+        const formattedStatus = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+        
+        return {
+          url: `applications/${id}/status`,
+          method: "PUT",
+          body: JSON.stringify({ status: formattedStatus }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+        };
+      },
+      // Add better error transformation
+      transformErrorResponse: (response) => {
+        console.error('Application status update error response:', response);
+        return response;
+      },
       // --- CORRECTED invalidatesTags ---
       invalidatesTags: (result, error, { id }) => {
           // Explicitly define the type of the tags array

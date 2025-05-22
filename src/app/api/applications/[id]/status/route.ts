@@ -27,20 +27,39 @@ export async function PUT(
     // Parse request body
     let body;
     try {
-      // Check if request has content before parsing
-      const contentLength = request.headers.get('content-length');
-      if (!contentLength || parseInt(contentLength) === 0) {
-        return NextResponse.json(
-          { message: 'Empty request body' },
-          { status: 400 }
-        );
-      }
+      // Enhanced request debugging
+      console.log('Headers:', Object.fromEntries(request.headers.entries()));
       
-      body = await request.json();
+      // More lenient approach to getting the body
+      try {
+        body = await request.json();
+      } catch (parseError) {
+        console.error('JSON parse error, trying text:', parseError);
+        // If JSON parsing fails, try to get the body as text and parse it manually
+        const textBody = await request.text();
+        console.log('Request body as text:', textBody);
+        
+        if (!textBody || textBody.trim() === '') {
+          return NextResponse.json(
+            { message: 'Empty request body' },
+            { status: 400 }
+          );
+        }
+        
+        try {
+          body = JSON.parse(textBody);
+        } catch (jsonError) {
+          console.error('Failed to parse text as JSON:', jsonError);
+          return NextResponse.json(
+            { message: 'Invalid JSON in request body' },
+            { status: 400 }
+          );
+        }
+      }
     } catch (error) {
-      console.error('Error parsing request body:', error);
+      console.error('Error handling request body:', error);
       return NextResponse.json(
-        { message: 'Invalid JSON in request body' },
+        { message: 'Error processing request body', error: String(error) },
         { status: 400 }
       );
     }

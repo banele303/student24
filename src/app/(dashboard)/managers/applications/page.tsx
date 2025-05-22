@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 import {
   useGetApplicationsQuery,
   useGetAuthUserQuery,
@@ -303,9 +304,20 @@ const Applications = () => {
 
   const handleStatusChange = async (id: number, status: 'Approved' | 'Denied' | 'Pending') => {
     try {
-      await updateApplicationStatus({ id, status });
+      // Ensure status is capitalized correctly as the API expects
+      const validStatus = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+      
+      console.log('Updating application status:', { id, status: validStatus });
+      
+      const result = await updateApplicationStatus({ 
+        id, 
+        status: validStatus as 'Approved' | 'Denied' | 'Pending'
+      }).unwrap();
+      
+      console.log('Status update successful:', result);
     } catch (error) {
       console.error("Failed to update application status:", error);
+      toast.error("Could not update application status. Please try again.");
     }
   };
 
