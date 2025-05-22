@@ -48,7 +48,7 @@ const PropertyOverview = ({ propertyId }: PropertyOverviewProps) => {
           <div>
             <div className="text-sm text-gray-500">Monthly Rent</div>
             <div className="font-semibold">
-              R {((property as any).pricePerMonth || (property as any).price || 0).toLocaleString('en-ZA')}
+              R {property.price}
             </div>
           </div>
           <div className="border-l border-gray-300 h-10"></div>
@@ -76,7 +76,7 @@ const PropertyOverview = ({ propertyId }: PropertyOverviewProps) => {
         <h2 className="text-xl font-semibold mb-5">About {property.name}</h2>
         <p className="text-gray-500 leading-7">
           {property.description}
-        
+
         </p>
       </div>
     </div>
