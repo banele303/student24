@@ -197,6 +197,35 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     // Handle file uploads if any
     let photoUrls = existingProperty.photoUrls || [];
     
+    // Check if we have a photoUrls field in the form data (for selective deletion)
+    const photoUrlsFromForm = formData.get('photoUrls');
+    if (photoUrlsFromForm && typeof photoUrlsFromForm === 'string') {
+      try {
+        // Parse the kept photo URLs from the form data
+        const keptPhotoUrls = JSON.parse(photoUrlsFromForm);
+        
+        // Identify photos that need to be deleted
+        const photosToDelete = photoUrls.filter((url: string) => !keptPhotoUrls.includes(url));
+        
+        // Delete these photos from S3
+        if (photosToDelete.length > 0) {
+          try {
+            await Promise.all(photosToDelete.map((url: string) => deleteFileFromS3(url)));
+            console.log(`Successfully deleted ${photosToDelete.length} photos`);
+          } catch (deleteError) {
+            console.error('Error deleting selected photos:', deleteError);
+            // Continue with the update even if deletion fails
+          }
+        }
+        
+        // Update photoUrls to only include kept photos
+        photoUrls = keptPhotoUrls;
+      } catch (parseError) {
+        console.error('Error parsing photoUrls JSON:', parseError);
+        // Continue with existing photo URLs if parsing fails
+      }
+    }
+    
     if (files.length > 0) {
       try {
         // Upload new files

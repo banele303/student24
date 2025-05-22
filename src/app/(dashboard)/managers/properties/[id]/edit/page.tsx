@@ -332,6 +332,9 @@ export default function EditPropertyPage() {
   };
 
   const onSubmitPropertyHandler = async (data: PropertyFormData) => {
+    // Set loading state
+    toast.loading("Updating property...");
+    
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
         if (key === "amenities" || key === "highlights") {
@@ -348,30 +351,38 @@ export default function EditPropertyPage() {
         }
     });
 
-
     if (newPropertyPhotoFiles) {
       Array.from(newPropertyPhotoFiles).forEach(file => formData.append("photos", file));
     }
     formData.append("replacePhotos", String(replacePropertyPhotosFlag));
 
-    // Handle sending the final list of photo URLs if NOT replacing all
-    if (!replacePropertyPhotosFlag) {
+    // Handle image deletion - send the list of photos to keep
+    if (!replacePropertyPhotosFlag && propertyPhotosMarkedForDelete.length > 0) {
+        // Filter out images marked for deletion
         const keptPhotoUrls = currentPropertyPhotos.filter(url => !propertyPhotosMarkedForDelete.includes(url));
-        // Send this list to backend. Backend needs to be modified to use this field
-        // when replacePhotos is false to correctly handle selective deletions.
+        // Send this list to backend so it knows which images to keep
         formData.append('photoUrls', JSON.stringify(keptPhotoUrls));
+        console.log('Images kept:', keptPhotoUrls);
+        console.log('Images to delete:', propertyPhotosMarkedForDelete);
     }
 
-
     try {
-      await updateProperty({ id: propertyIdString, body: formData }).unwrap();
+      // Make the API call to update the property
+      const result = await updateProperty({ id: propertyIdString, body: formData }).unwrap();
+      toast.dismiss();
       toast.success("Property updated successfully!");
-      refetchProperty();
-      refetchRooms();
+      
+      // Update the UI with the new data
+      await refetchProperty();
+      await refetchRooms();
+      
+      // Reset the image states
       setNewPropertyPhotoFiles(null);
       setPropertyPhotosMarkedForDelete([]);
     } catch (error: any) {
+      toast.dismiss();
       toast.error(error?.data?.message || "Failed to update property.");
+      console.error('Error updating property:', error);
     }
   };
 
