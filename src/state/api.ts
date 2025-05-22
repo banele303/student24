@@ -1126,6 +1126,9 @@ export const api = createApi({
         url: `applications/${id}/status`,
         method: "PUT",
         body: { status },
+        headers: {
+          'Content-Type': 'application/json'
+        },
       }),
       // --- CORRECTED invalidatesTags ---
       invalidatesTags: (result, error, { id }) => {
