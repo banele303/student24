@@ -47,13 +47,14 @@ const PropertyDetails = () => {
     useGetPropertyQuery(propertyId) as { data: Property | undefined, isLoading: boolean, error: any };
   const { data: leases, isLoading: leasesLoading } =
     useGetPropertyLeasesQuery(propertyId, { skip: !!propertyError });
-  const { data: payments, isLoading: paymentsLoading } =
-    useGetPaymentsQuery(propertyId, { skip: !!propertyError });
   const { data: rooms, isLoading: roomsLoading } =
     useGetRoomsQuery(propertyId, { skip: !!propertyError });
+    
+  // We don't fetch all payments at once since we need lease-specific payments
+  // Payments will be fetched individually for each lease when needed
 
   // Show loading state while data is being fetched
-  if (propertyLoading || leasesLoading || paymentsLoading || roomsLoading) return <Loading />;
+  if (propertyLoading || leasesLoading || roomsLoading) return <Loading />;
   
   // Handle property not found error
   if (propertyError) {
@@ -83,14 +84,10 @@ const PropertyDetails = () => {
   }
 
   const getCurrentMonthPaymentStatus = (leaseId: number) => {
-    const currentDate = new Date();
-    const currentMonthPayment = payments?.find(
-      (payment) =>
-        payment.leaseId === leaseId &&
-        new Date(payment.date).getMonth() === currentDate.getMonth() &&
-        new Date(payment.date).getFullYear() === currentDate.getFullYear()
-    );
-    return currentMonthPayment?.status || "Not Paid";
+    // For now return a placeholder status
+    // In a real implementation, we would fetch payments for each lease individually
+    // using useGetPaymentsQuery(leaseId) for each lease
+    return "Not Paid";
   };
 
   return (
@@ -106,20 +103,16 @@ const PropertyDetails = () => {
       </Link>
 
       {/* Property Header with Image - Modernized */}
-      <div className="relative w-full overflow-hidden mb-8 bg-gradient-to-br from-blue-950 to-black rounded-xl">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10 z-0"></div>
-        
-        {/* Decorative elements */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl"></div>
+      <div className="relative w-full overflow-hidden mb-8 bg-white/5 dark:bg-white/5 bg-gray-50 rounded-xl">
         
         <div className="relative z-10 flex flex-col md:flex-row gap-6 p-6 md:p-8">
           {/* Image container with fixed aspect ratio */}
           <div className="relative w-full md:w-2/5 aspect-[4/3] rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/10">
             <Image
-              src={(property as any)?.images?.[0] || "/placeholder.jpg"}
+              src={property?.photoUrls?.[0] || "/placeholder.jpg"}
               alt={property?.name || "Property"}
               fill
+              unoptimized={true}
               className="object-cover"
               priority
             />
@@ -129,26 +122,26 @@ const PropertyDetails = () => {
           {/* Property details */}
           <div className="flex-1 flex flex-col justify-between py-2">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{property?.name}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold dark:text-white text-slate-800 mb-3 tracking-tight">{property?.name}</h1>
               <div className="flex items-center text-white/80 mb-4">
                 <MapPin className="h-4 w-4 mr-2" />
-                <span>{property?.location?.address}, {property?.location?.city}</span>
+                <span className="dark:text-gray-800 text-white">{property?.location?.address}, {property?.location?.city}</span>
               </div>
               
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="flex flex-col items-center justify-center p-3 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
                   <BedDouble className="h-5 w-5 text-blue-400 mb-1" />
-                  <span className="font-medium text-white">{property?.beds || 0}</span>
+                  <span className="font-medium text-gray-800 dark:text-white">{property?.beds || 0}</span>
                   <span className="text-xs text-gray-400">Beds</span>
                 </div>
                 <div className="flex flex-col items-center justify-center p-3 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
                   <Bath className="h-5 w-5 text-blue-400 mb-1" />
-                  <span className="font-medium text-white">{property?.baths || 0}</span>
+                  <span className="font-medium text-gray-800 dark:text-white">{property?.baths || 0}</span>
                   <span className="text-xs text-gray-400">Baths</span>
                 </div>
                 <div className="flex flex-col items-center justify-center p-3 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
                   <Ruler className="h-5 w-5 text-blue-400 mb-1" />
-                  <span className="font-medium text-white">{property?.squareFeet || 0}</span>
+                  <span className="font-medium text-gray-800 dark:text-white">{property?.squareFeet || 0}</span>
                   <span className="text-xs text-gray-400">sq ft</span>
                 </div>
               </div>
@@ -169,21 +162,21 @@ const PropertyDetails = () => {
       </div>
 
       {/* Navigation Tabs - Modernized */}
-      <div className="flex mb-8 overflow-x-auto no-scrollbar bg-gradient-to-r from-gray-900/50 to-gray-800/30 backdrop-blur-sm rounded-xl p-1 border border-white/5 shadow-lg">
+      <div className="flex mb-8 overflow-x-auto no-scrollbar bg-gray-50 dark:bg-white/5 rounded-xl p-1 border border-gray-200 dark:border-white/5 shadow-lg">
         <button
-          className={`px-6 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${activeTab === 'overview' ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
+          className={`px-6 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${activeTab === 'overview' ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg' : 'text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'}`}
           onClick={() => setActiveTab('overview')}
         >
           Overview
         </button>
         <button
-          className={`px-6 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${activeTab === 'rooms' ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
+          className={`px-6 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${activeTab === 'rooms' ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg' : 'text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'}`}
           onClick={() => setActiveTab('rooms')}
         >
           Rooms
         </button>
         <button
-          className={`px-6 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${activeTab === 'tenants' ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg' : 'text-gray-300 hover:text-white hover:bg-white/5'}`}
+          className={`px-6 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${activeTab === 'tenants' ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg' : 'text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'}`}
           onClick={() => setActiveTab('tenants')}
         >
           Tenants
@@ -195,18 +188,18 @@ const PropertyDetails = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Property Details - Claude AI inspired modern gray design */}
           <div className="md:col-span-2 space-y-6">
-            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-xl p-6 border border-gray-700/50 backdrop-blur-sm">
-              <h2 className="text-xl font-semibold mb-4 text-white flex items-center">
+            <div className="bg-white/5 rounded-xl shadow-xl p-6 border border-gray-700/50">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white flex items-center">
                 <div className="h-5 w-1 bg-blue-500 rounded-full mr-3 shadow-glow-blue"></div>
                 Property Details
               </h2>
-              <p className="text-gray-300 mb-6 leading-relaxed">{property?.description || "No description available."}</p>
+              <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">{property?.description || "No description available."}</p>
               
               {/* We already have these stats in the header, so we can remove them here */}
               
               <div className="flex flex-wrap gap-2 mt-4">
                 {property?.amenities?.map((amenity: string, index: number) => (
-                  <Badge key={index} variant="outline" className="bg-gray-800/50 text-gray-200 border-gray-600 hover:bg-gray-700/50 transition-colors">
+                  <Badge key={index} variant="outline" className="bg-gray-100 dark:bg-gray-800/50 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700/50 transition-colors">
                     {amenity}
                   </Badge>
                 ))}
@@ -220,23 +213,23 @@ const PropertyDetails = () => {
             </div>
             
             {/* Additional Info Card */}
-            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-xl p-6 border border-gray-700/50 backdrop-blur-sm">
-              <h2 className="text-xl font-semibold mb-4 text-white flex items-center">
-                <div className="h-5 w-1 bg-purple-500 rounded-full mr-3 shadow-glow-purple"></div>
+            <div className="bg-white/5 rounded-xl shadow-xl p-6 border border-gray-700/50">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white flex items-center">
+                <div className="h-5 w-1 bg-purple-500 rounded-full mr-3"></div>
                 Location Details
               </h2>
               <div className="space-y-4">
-                <div className="flex items-start gap-3 p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                  <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
+                <div className="flex items-start gap-3 p-3 bg-gray-100 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700/50">
+                  <MapPin className="h-5 w-5 text-gray-500 dark:text-gray-400 mt-0.5" />
                   <div>
-                    <h3 className="text-sm font-medium text-gray-200">Full Address</h3>
-                    <p className="text-gray-400">{property?.location?.address}, {property?.location?.city}, {property?.location?.state} {property?.location?.postalCode}</p>
+                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200">Full Address</h3>
+                    <p className="text-gray-500 dark:text-gray-400">{property?.location?.address}, {property?.location?.city}, {property?.location?.state} {property?.location?.postalCode}</p>
                   </div>
                 </div>
                 
                 {/* You could add a map here if you have coordinates */}
-                <div className="h-40 bg-gray-800/50 rounded-lg border border-gray-700/50 flex items-center justify-center">
-                  <p className="text-gray-400 text-sm">Map view would appear here</p>
+                <div className="h-40 bg-gray-100 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700/50 flex items-center justify-center">
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">Map view would appear here</p>
                 </div>
               </div>
             </div>
@@ -244,26 +237,26 @@ const PropertyDetails = () => {
 
           {/* Pricing Card - Claude AI inspired modern gray design */}
           <div className="space-y-6">
-            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-xl p-6 border border-gray-700/50 backdrop-blur-sm">
-              <h2 className="text-xl font-semibold mb-4 text-white flex items-center">
-                <div className="h-5 w-1 bg-green-500 rounded-full mr-3 shadow-glow-green"></div>
+            <div className="bg-white/5 rounded-xl shadow-xl p-6 border border-gray-700/50">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white flex items-center">
+                <div className="h-5 w-1 bg-green-500 rounded-full mr-3"></div>
                 Pricing
               </h2>
               <div className="space-y-3">
                 <div className="flex justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                  <span className="text-gray-300">Monthly Rent</span>
-                  <span className="font-medium text-white">R{property?.pricePerMonth?.toFixed(2)}</span>
+                  <span className="text-gray-600 dark:text-gray-300">Monthly Rent</span>
+                  <span className="font-medium text-gray-800 dark:text-white">R{property?.pricePerMonth?.toFixed(2)}</span>
                 </div>
                 {property?.securityDeposit && (
                   <div className="flex justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                    <span className="text-gray-300">Security Deposit</span>
-                    <span className="font-medium text-white">R{property?.securityDeposit?.toFixed(2)}</span>
+                    <span className="text-gray-600 dark:text-gray-300">Security Deposit</span>
+                    <span className="font-medium text-gray-800 dark:text-white">R{property?.securityDeposit?.toFixed(2)}</span>
                   </div>
                 )}
                 {property?.applicationFee && (
                   <div className="flex justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                    <span className="text-gray-300">Application Fee</span>
-                    <span className="font-medium text-white">R{property?.applicationFee?.toFixed(2)}</span>
+                    <span className="text-gray-600 dark:text-gray-300">Application Fee</span>
+                    <span className="font-medium text-gray-800 dark:text-white">R{property?.applicationFee?.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between p-4 bg-gradient-to-r from-blue-900/30 to-blue-800/30 rounded-lg border border-blue-700/30 mt-4">
@@ -274,8 +267,8 @@ const PropertyDetails = () => {
             </div>
             
             {/* Quick Actions Card */}
-            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-xl p-6 border border-gray-700/50 backdrop-blur-sm">
-              <h2 className="text-xl font-semibold mb-4 text-white flex items-center">
+            <div className="bg-white/5 rounded-xl shadow-xl p-6 border border-gray-700/50">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white flex items-center">
                 <div className="h-5 w-1 bg-blue-500 rounded-full mr-3 shadow-glow-blue"></div>
                 Quick Actions
               </h2>
@@ -300,18 +293,13 @@ const PropertyDetails = () => {
 
       {/* Rooms Tab */}
       {activeTab === 'rooms' && (
-        <div className="relative w-full overflow-hidden bg-gradient-to-br from-blue-950 to-black rounded-xl p-6 md:p-8 space-y-6">
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10 z-0"></div>
-          
-          {/* Decorative elements */}
-          <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl"></div>
+        <div className="relative w-full overflow-hidden bg-gray-50 dark:bg-white/5 rounded-xl p-6 md:p-8 space-y-6">
           
           <div className="relative z-10">
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h2 className="text-xl font-semibold mb-1">Available Rooms</h2>
-                <p className="text-sm text-gray-400">Manage and view all rooms for this property.</p>
+                <h2 className="text-xl font-semibold mb-1 text-gray-800 dark:text-white">Available Rooms</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Manage and view all rooms for this property.</p>
               </div>
               <Button 
                 onClick={() => router.push(`/managers/properties/${propertyId}/edit`)}
@@ -326,20 +314,19 @@ const PropertyDetails = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {rooms && rooms.length > 0 ? (
                 rooms.map((room) => (
-                  <Card key={room.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 border border-[#333] bg-[#0F1112] rounded-xl">
+                  <Card key={room.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-[#333] bg-white dark:bg-[#0F1112] rounded-xl">
                     <div className="relative aspect-video">
                       <Image
-                        src={room.photoUrls?.[0] || "/placeholder.jpg"}
+                        src={room.photoUrls?.[0] ? room.photoUrls[0] : "/placeholder.jpg"}
                         alt={room.name}
                         fill
+                        unoptimized={true}
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                       />
-                      {/* Overlay gradient */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0F1112] via-transparent to-[#0F1112]/40 z-10" />
                       
                       {/* Price tag */}
                       <div className="absolute top-4 left-4 z-20">
-                        <div className="bg-[#0F1112] backdrop-blur-md text-white px-3 py-1.5 rounded-md flex items-center shadow-lg border border-[#333]">
+                        <div className="bg-black/70 text-white px-3 py-1.5 rounded-md flex items-center shadow-lg border border-[#333]">
                           <span className="font-bold">R{room.pricePerMonth.toFixed(0)}</span>
                           <span className="text-xs text-white/80 ml-1">/mo</span>
                         </div>
@@ -348,30 +335,30 @@ const PropertyDetails = () => {
                       {/* Availability badge */}
                       <div className="absolute top-4 right-4 z-20">
                         <Badge className={`${room.isAvailable 
-                          ? 'bg-green-900/50 text-green-300 border border-green-700/50' 
-                          : 'bg-red-900/50 text-red-300 border border-red-700/50'} 
-                          backdrop-blur-sm px-2.5 py-1`}>
+                          ? 'bg-green-900/70 text-green-300 border border-green-700/50' 
+                          : 'bg-red-900/70 text-red-300 border border-red-700/50'} 
+                          px-2.5 py-1`}>
                           {room.isAvailable ? 'Available' : 'Occupied'}
                         </Badge>
                       </div>
                     </div>
                     <div className="p-5 space-y-4">
                       <div>
-                        <h3 className="font-semibold text-lg mb-1 text-white">{room.name}</h3>
-                        <p className="text-gray-400 text-sm mb-3 line-clamp-2">{room.description}</p>
+                        <h3 className="font-semibold text-lg mb-1 text-gray-800 dark:text-white">{room.name}</h3>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm mb-3 line-clamp-2">{room.description}</p>
                       </div>
                       
                       <div className="grid grid-cols-2 gap-2 text-sm">
-                        <div className="flex flex-col items-center justify-center p-2 rounded-md bg-[#111] border border-[#333]">
-                          <BedDouble className="h-4 w-4 mb-1 text-gray-400" />
-                          <span className="font-medium text-white">{room.capacity || 1}</span>
-                          <span className="text-xs text-gray-400">Capacity</span>
+                        <div className="flex flex-col items-center justify-center p-2 rounded-md border border-[#333]">
+                          <BedDouble className="h-4 w-4 mb-1 text-gray-500 dark:text-gray-400" />
+                          <span className="font-medium text-gray-800 dark:text-white">{room.capacity || 1}</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">Capacity</span>
                         </div>
 
-                        <div className="flex flex-col items-center justify-center p-2 rounded-md bg-[#111] border border-[#333]">
-                          <Ruler className="h-4 w-4 mb-1 text-gray-400" />
-                          <span className="font-medium text-white">{room.squareFeet || '—'}</span>
-                          <span className="text-xs text-gray-400">sq ft</span>
+                        <div className="flex flex-col items-center justify-center p-2 rounded-md border border-[#333]">
+                          <Ruler className="h-4 w-4 mb-1 text-gray-500 dark:text-gray-400" />
+                          <span className="font-medium text-gray-800 dark:text-white">{room.squareFeet || '—'}</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">sq ft</span>
                         </div>
                       </div>
                       
@@ -379,7 +366,7 @@ const PropertyDetails = () => {
                         <Button 
                           variant="outline"
                           size="sm"
-                          className="w-full bg-[#111] border-[#333] hover:bg-[#222] text-white"
+                          className="w-full border-gray-200 dark:border-[#333] hover:bg-gray-100 dark:hover:bg-[#222] text-gray-700 dark:text-white"
                           onClick={() => router.push(`/managers/properties/${propertyId}/edit`)}
                         >
                           <Edit3 className="h-4 w-4 mr-2" />
@@ -408,12 +395,7 @@ const PropertyDetails = () => {
 
       {/* Tenants Tab */}
       {activeTab === 'tenants' && (
-        <div className="relative w-full overflow-hidden bg-gradient-to-br from-blue-950 to-black rounded-xl p-6 md:p-8">
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10 z-0"></div>
-          
-          {/* Decorative elements */}
-          <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl"></div>
+        <div className="relative w-full overflow-hidden bg-white/5 rounded-xl p-6 md:p-8">
           
           <div className="relative z-10">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
@@ -434,7 +416,7 @@ const PropertyDetails = () => {
                 </Button>
               </div>
             </div>
-            <div className="bg-[#0F1112]/80 backdrop-blur-sm border border-[#333] rounded-xl overflow-hidden">
+            <div className="border border-[#333] rounded-xl overflow-hidden">
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>

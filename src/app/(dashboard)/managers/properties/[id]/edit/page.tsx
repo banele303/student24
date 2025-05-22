@@ -448,13 +448,13 @@ export default function EditPropertyPage() {
   const isAnyMutationLoading = isUpdatingProperty || isDeletingProperty || isDeletingRoom;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white">
+    <div className="min-h-screen dark:text-slate-800 text-white">
       <Toaster richColors position="top-center" />
       <div className="relative container mx-auto px-4 py-8 mb-20">
         {/* Decorative elements */}
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-5 z-0"></div>
+       
         {/* Header */}
         <div className="mb-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -495,7 +495,7 @@ export default function EditPropertyPage() {
 
         {/* Main Property Form */}
         <PropertyFormUI {...propertyForm}>
-          <form onSubmit={propertyForm.handleSubmit(onSubmitPropertyHandler)} className="space-y-0">
+          <form onSubmit={propertyForm.handleSubmit(onSubmitPropertyHandler)} className="space-y-8">
             {/* Basic Information */}
             <FormSection title="Basic Information" icon={<Building size={20} />} defaultOpen={true}>
               <div className="space-y-6">
@@ -507,8 +507,8 @@ export default function EditPropertyPage() {
 
             {/* Pricing & Fees */}
              <FormSection title="Pricing & Fees" icon={<CircleDollarSign size={20} />}>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
-                <div className="relative">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5 space-y-6">
+                <div className="relative ">
                   {/* Use CreateFormFieldt */}
                   <CreateFormFieldt name="pricePerMonth" label="Monthly Rent" type="number" control={propertyForm.control} min={0} inputClassName="pl-8" placeholder="0.00" />
                   <span className="absolute top-[2.3rem] left-3 text-muted-foreground font-medium dark:text-gray-400">R</span>
@@ -624,7 +624,7 @@ export default function EditPropertyPage() {
             </FormSection>
 
             {/* Rooms Management Section */}
-            <FormSection title="Manage Rooms" icon={<BedDouble size={20} />} actions={
+            <FormSection title="Manage Rooms" icon={<BedDouble size={20} />} defaultOpen={true} actions={
               <UIButton type="button" variant="outline" size="sm" onClick={openRoomModalForCreate} className="dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
                 <PlusCircle className="mr-2 h-4 w-4" /> Add New Room
               </UIButton>
@@ -678,9 +678,14 @@ export default function EditPropertyPage() {
             </FormSection>
 
             {/* Sticky Submit Footer */}
-            <div className="sticky bottom-0 bg-background/90 dark:bg-gray-800/90 backdrop-blur-sm py-5 mt-10 border-t dark:border-gray-700 shadow-lg">
+            <div className="sticky bottom-0">
               <div className="max-w-6xl mx-auto flex justify-end px-4">
-                <UIButton type="submit" size="lg" className="min-w-[180px] text-base" disabled={isAnyMutationLoading}>
+                <UIButton 
+                  type="submit" 
+                  size="lg" 
+                  className="min-w-[200px] text-base mt-5 bg-blue-600 backdrop-blur-sm border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm hover:shadow-md transition-all duration-300 font-medium rounded-lg" 
+                  disabled={isAnyMutationLoading}
+                >
                   {isUpdatingProperty && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
                   Save All Property Changes
                 </UIButton>

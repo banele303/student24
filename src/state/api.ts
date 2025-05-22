@@ -889,7 +889,7 @@ export const api = createApi({
           
           // Send the entire FormData with both room data and photos in a single request
           // The server will handle extracting room data and processing photos
-          const createRoomResponse = await fetch(`${API_BASE_URL}/rooms/with-photos?propertyId=${propertyId}`, {
+          const createRoomResponse = await fetch(`${API_BASE_URL}/properties/${propertyId}/create-room`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`

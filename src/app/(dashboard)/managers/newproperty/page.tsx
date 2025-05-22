@@ -514,8 +514,15 @@ const NewProperty = () => {
             
             // Add photo files last
             if (room.photoUrls && Array.isArray(room.photoUrls)) {
+              // First, log what we have in the photo array for debugging
+              console.log(`Room photos array has ${room.photoUrls.length} items:`, 
+                room.photoUrls.map(p => p instanceof File ? `File: ${p.name}` : `Other: ${typeof p}`));
+              
+              // Use a different FormData key that matches what the server expects
               room.photoUrls.forEach((photo, index) => {
                 if (photo instanceof File) {
+                  // Try both 'photo' and 'photos' keys to see which one works
+                  roomFormData.append('photo', photo);
                   roomFormData.append('photos', photo);
                   console.log(`Appending photo ${index}: ${photo.name}, size: ${photo.size}`);
                 }

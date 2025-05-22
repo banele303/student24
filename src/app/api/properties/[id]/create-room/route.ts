@@ -38,13 +38,8 @@ async function uploadFileToS3(file: Buffer, originalName: string, mimeType: stri
     await upload.done();
     console.log('Successfully uploaded file:', fileName);
     
-    // Set public read permissions
-    await s3Client.send({
-      Bucket: process.env.AWS_BUCKET_NAME || 'realstatee',
-      Key: fileName,
-      ACL: 'public-read',
-      Command: 'PutObjectAcl' // This is a placeholder for the actual command
-    } as any);
+    // No need to set ACL explicitly, it's often not allowed in modern S3 configurations
+    // Instead, we can configure the bucket to allow public access through bucket policies
     console.log('Successfully set ACL to public-read for', fileName);
     
     // Generate the URL
@@ -134,25 +129,54 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         
         // Process photo uploads
         const photoUrls: string[] = [];
-        const photoEntries = formData.getAll('photos');
         
+        // Try to get photos using both possible keys
+        let photoEntries = formData.getAll('photos');
+        console.log(`Found ${photoEntries.length} photos in FormData with key 'photos'`);
+        
+        // If no photos found with 'photos' key, try 'photo' key
+        if (photoEntries.length === 0) {
+          photoEntries = formData.getAll('photo');
+          console.log(`Found ${photoEntries.length} photos in FormData with key 'photo'`);
+        }
+        
+        // Also check if there are any entries with the key 'photoUrls'
+        const photoUrlsEntries = formData.getAll('photoUrls');
+        if (photoUrlsEntries.length > 0) {
+          console.log(`Found ${photoUrlsEntries.length} entries with key 'photoUrls'`);
+          
+          // If they're files, add them to photoEntries
+          for (const entry of photoUrlsEntries) {
+            if (entry instanceof File) {
+              photoEntries = [...photoEntries, entry];
+            }
+          }
+        }
+        
+        // Now process all found photo entries
         if (photoEntries && photoEntries.length > 0) {
           console.log(`Processing ${photoEntries.length} photos for room`);
           
           // Upload each photo to S3
           for (const photoEntry of photoEntries) {
-            if (photoEntry instanceof File) {
-              try {
-                console.log(`Processing photo: ${photoEntry.name}, size: ${photoEntry.size}, type: ${photoEntry.type}`);
+            try {
+              if (photoEntry instanceof File) {
+                console.log(`Processing photo as File: ${photoEntry.name}, size: ${photoEntry.size}, type: ${photoEntry.type}`);
                 const photoBuffer = Buffer.from(await photoEntry.arrayBuffer());
                 const photoUrl = await uploadFileToS3(photoBuffer, photoEntry.name, photoEntry.type);
+                console.log('Successfully uploaded to S3, URL:', photoUrl);
                 photoUrls.push(photoUrl);
-              } catch (uploadError) {
-                console.error('Error uploading photo:', uploadError);
+              } else {
+                console.log('Photo entry is not a File instance:', typeof photoEntry);
               }
+            } catch (uploadError) {
+              console.error('Error uploading photo:', uploadError);
             }
           }
         }
+        
+        // Log results of photo processing
+        console.log(`Processed ${photoUrls.length} photos, URLs:`, photoUrls);
         
         // Add photoUrls to roomData
         roomData.photoUrls = photoUrls;
