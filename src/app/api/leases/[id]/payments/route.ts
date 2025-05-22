@@ -2,14 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
-export async function GET(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = context.params;
-
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
+    
     // Validate and parse the lease ID
     const leaseId = parseInt(id, 10);
     if (isNaN(leaseId)) {

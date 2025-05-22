@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // Get property ID from params
-    const propertyId = parseInt(params.id);
+    const resolvedParams = await params;
+    const propertyId = parseInt(resolvedParams.id);
     
     if (isNaN(propertyId)) {
       return NextResponse.json({ message: 'Invalid property ID' }, { status: 400 });
