@@ -1131,7 +1131,7 @@ export const api = createApi({
         return {
           url: `applications/${id}/status`,
           method: "PUT",
-          body: JSON.stringify({ status: formattedStatus }),
+          body: { status: formattedStatus }, // Let RTK Query handle JSON stringification
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'

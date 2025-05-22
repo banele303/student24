@@ -27,39 +27,18 @@ export async function PUT(
     // Parse request body
     let body;
     try {
-      // Enhanced request debugging
-      console.log('Headers:', Object.fromEntries(request.headers.entries()));
+      // Clone the request to avoid the "Body has already been read" error
+      const clonedRequest = request.clone();
       
-      // More lenient approach to getting the body
-      try {
-        body = await request.json();
-      } catch (parseError) {
-        console.error('JSON parse error, trying text:', parseError);
-        // If JSON parsing fails, try to get the body as text and parse it manually
-        const textBody = await request.text();
-        console.log('Request body as text:', textBody);
-        
-        if (!textBody || textBody.trim() === '') {
-          return NextResponse.json(
-            { message: 'Empty request body' },
-            { status: 400 }
-          );
-        }
-        
-        try {
-          body = JSON.parse(textBody);
-        } catch (jsonError) {
-          console.error('Failed to parse text as JSON:', jsonError);
-          return NextResponse.json(
-            { message: 'Invalid JSON in request body' },
-            { status: 400 }
-          );
-        }
-      }
+      // Enhanced request debugging
+      console.log('Headers:', Object.fromEntries(clonedRequest.headers.entries()));
+      
+      // Get the request body as JSON
+      body = await request.json();
     } catch (error) {
       console.error('Error handling request body:', error);
       return NextResponse.json(
-        { message: 'Error processing request body', error: String(error) },
+        { message: 'Error processing request body: Invalid JSON format' },
         { status: 400 }
       );
     }
