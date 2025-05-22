@@ -5,7 +5,7 @@ import { verifyAuth } from '@/lib/auth';
 // PUT handler for updating application status
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     // Verify authentication
@@ -15,7 +15,7 @@ export async function PUT(
     }
 
     // Get application ID from URL params
-    const id = parseInt(context.params.id);
+    const id = parseInt(params.id);
     if (isNaN(id)) {
       return NextResponse.json(
         { message: 'Invalid application ID' },
