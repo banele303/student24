@@ -25,7 +25,25 @@ export async function PUT(
     }
 
     // Parse request body
-    const body = await request.json();
+    let body;
+    try {
+      // Check if request has content before parsing
+      const contentLength = request.headers.get('content-length');
+      if (!contentLength || parseInt(contentLength) === 0) {
+        return NextResponse.json(
+          { message: 'Empty request body' },
+          { status: 400 }
+        );
+      }
+      
+      body = await request.json();
+    } catch (error) {
+      console.error('Error parsing request body:', error);
+      return NextResponse.json(
+        { message: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
     
     // Validate status field
     if (!body.status || !['Pending', 'Approved', 'Denied'].includes(body.status)) {
