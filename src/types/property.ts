@@ -22,7 +22,8 @@ export interface Property {
   beds: number;
   baths: number;
   squareFeet: number;
-  pricePerMonth: number;
+  pricePerMonth?: number; // Make this optional
+  price?: number;        // Add alternative field name
   priceUnit?: string;
   securityDeposit?: number;
   applicationFee?: number;

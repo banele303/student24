@@ -5,6 +5,7 @@ import {
   useGetTenantQuery,
   useRemoveFavoritePropertyMutation,
 } from "@/state/api";
+import { toast } from "sonner";
 import { useAppSelector } from "@/state/redux";
 import { Property } from "@/types/prismaTypes";
 import Card from "@/components/Card";
@@ -146,7 +147,23 @@ const Listings = () => {
   }, [tenant?.favorites]);
 
   const handleFavoriteToggle = async (propertyId: number) => {
-    if (!authUser) return;
+    // Check if user is logged in
+    if (!authUser) {
+      toast.error(
+        <div className="flex flex-col gap-1">
+          <span className="font-semibold">Login Required</span>
+          <span className="text-sm">You must be logged in to save favorites</span>
+        </div>,
+        {
+          id: 'login-required',
+          action: {
+            label: 'Log in',
+            onClick: () => window.location.href = '/auth/login'
+          }
+        }
+      );
+      return;
+    }
 
     // Immediately update UI state before API call completes
     const currentFavoriteStatus = localFavorites[propertyId] || false;
@@ -161,12 +178,14 @@ const Listings = () => {
           cognitoId: authUser.cognitoInfo.userId || "",
           propertyId,
         });
+        toast.success('Property removed from favorites');
         console.log('Property removed from favorites:', propertyId);
       } else {
         await addFavorite({
           cognitoId: authUser.cognitoInfo.userId || "",
           propertyId,
         });
+        toast.success('Property added to favorites');
         console.log('Property added to favorites:', propertyId);
       }
     } catch (error) {
@@ -176,6 +195,7 @@ const Listings = () => {
         ...prev,
         [propertyId]: currentFavoriteStatus
       }));
+      toast.error('Failed to update favorites. Please try again.');
     }
   };
 
@@ -218,58 +238,14 @@ const Listings = () => {
 
   return (
     <div className="w-full">
-      {/* Property count and view toggle */}
-      <div className="flex justify-between items-center mb-4">
+      {/* Property count heading */}
+      <div className="mb-4">
+        {/* Location-based heading */}
+        {filters.location && filters.location !== 'any' && (
+          <h2 className="text-xl font-semibold mb-2">Properties in {filters.location.replace(/,\s*South Africa/i, '')}</h2>
+        )}
         <div className="text-sm text-gray-600">
           Showing {startIndex + 1}-{endIndex} of {totalProperties} properties
-        </div>
-        <div className="flex space-x-2">
-          <button
-            onClick={() => {}}
-            className={`p-2 rounded-md ${
-              viewMode === "grid"
-                ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300"
-                : "text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
-            }`}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
-              />
-            </svg>
-          </button>
-          <button
-            onClick={() => {}}
-            className={`p-2 rounded-md ${
-              viewMode === "list"
-                ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300"
-                : "text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
-            }`}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-              />
-            </svg>
-          </button>
         </div>
       </div>
 
@@ -277,7 +253,7 @@ const Listings = () => {
       <div
         className={`grid ${
           viewMode === "grid"
-            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            ? "grid-cols-1 md:grid-cols-2"
             : "grid-cols-1"
         } gap-6 mb-8`}
       >
@@ -287,22 +263,20 @@ const Listings = () => {
               key={property.id}
               property={property}
               isFavorite={localFavorites[property.id] || false}
-              onFavoriteToggle={
-                authUser?.userRole === "tenant"
-                  ? () => handleFavoriteToggle(property.id)
-                  : undefined
-              }
+              onFavoriteToggle={() => handleFavoriteToggle(property.id)}
+              propertyLink={`/search/${property.id}`}
+              userRole={authUser?.userRole || null}
+              showFavoriteButton={true}
             />
           ) : (
             <CardCompact
               key={property.id}
               property={property}
               isFavorite={localFavorites[property.id] || false}
-              onFavoriteToggle={
-                authUser?.userRole === "tenant"
-                  ? () => handleFavoriteToggle(property.id)
-                  : undefined
-              }
+              onFavoriteToggle={() => handleFavoriteToggle(property.id)}
+              propertyLink={`/search/${property.id}`}
+              userRole={authUser?.userRole || null}
+              showFavoriteButton={true}
             />
           )
         ))}

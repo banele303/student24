@@ -109,17 +109,22 @@ export default function PropertyCardCompact({
                 property.name
               )}
             </h2>
-            {/* Favorite button - always show it regardless of user role */}
+            {/* Favorite button - always visible for all users */}
             {showFavoriteButton && (
               <Button
                 size="icon"
                 variant="ghost"
                 className={`h-6 w-6 shrink-0 rounded-full p-0 transition-colors ${
-                  isFavorite ? "text-red-500" : "text-gray-400 hover:text-gray-700"
-                } ${userRole === "manager" ? "opacity-60" : ""}`}
-                onClick={onFavoriteToggle}
-                title={userRole === "manager" ? "Managers cannot favorite properties" : "Add to favorites"}
-                disabled={userRole === "manager"}
+                  isFavorite 
+                    ? "text-red-500" 
+                    : "text-gray-400 hover:text-red-400"
+                }`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  onFavoriteToggle?.()
+                }}
+                title="Add to favorites"
               >
                 <Heart className={`h-4 w-4 transition-all duration-300 ${isFavorite ? "fill-red-500 scale-110" : ""}`} />
                 <span className="sr-only">Toggle favorite</span>
