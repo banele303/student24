@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { setFilters } from "@/state";
-import { Search, MapPin, Home, Building, Warehouse } from "lucide-react";
+import { Search, MapPin} from "lucide-react";
 
 const HeroSection = () => {
   const dispatch = useDispatch();
@@ -236,43 +236,43 @@ const HeroSection = () => {
             {/* University Location Buttons */}
             <div className="flex flex-wrap justify-center gap-2 mb-6">
               <PropertyTypeTab
-                icon={<Building size={18} />}
+                icon={<Search size={18} />}
                 label="UCT"
                 isActive={activeTab === "uct"}
                 onClick={() => handleUniversityClick("UCT")}
               />
               <PropertyTypeTab
-                icon={<Building size={18} />}
+                icon={<Search size={18} />}
                 label="WITS"
                 isActive={activeTab === "wits"}
                 onClick={() => handleUniversityClick("WITS")}
               />
               <PropertyTypeTab
-                icon={<Building size={18} />}
+                icon={<Search size={18} />}
                 label="UJ"
                 isActive={activeTab === "uj"}
                 onClick={() => handleUniversityClick("UJ")}
               />
               <PropertyTypeTab
-                icon={<Building size={18} />}
+                icon={<Search size={18} />}
                 label="UKZN"
                 isActive={activeTab === "ukzn"}
                 onClick={() => handleUniversityClick("UKZN")}
               />
               <PropertyTypeTab
-                icon={<Building size={18} />}
+                icon={<Search size={18} />}
                 label="UWC"
                 isActive={activeTab === "uwc"}
                 onClick={() => handleUniversityClick("UWC")}
               />
               <PropertyTypeTab
-                icon={<Building size={18} />}
+                icon={<Search size={18} />}
                 label="UP"
                 isActive={activeTab === "up"}
                 onClick={() => handleUniversityClick("UP")}
               />
               <PropertyTypeTab
-                icon={<Building size={18} />}
+                icon={<Search size={18} />}
                 label="SU"
                 isActive={activeTab === "su"}
                 onClick={() => handleUniversityClick("SU")}
