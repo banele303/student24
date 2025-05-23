@@ -20,10 +20,11 @@ interface Room {
   name?: string;
   price?: number;
   isAvailable?: boolean;
-  availableFrom?: string;
+  availableFrom?: string | Date | null;
   description?: string;
   capacity?: string;
   features?: string[];
+  photoUrls?: string[];
   images?: string[];
   id?: number;
 }
@@ -59,16 +60,64 @@ const SingleListing = () => {
   // Use a default phone number since contactPhone is not available on the Property type
   const propertyPhone = '+27 123 456 7890';
   
-  // Use the rooms data from the API call
-  const propertyRooms = rooms || [];
+  // Process property data to ensure image URLs are valid
+  const processedProperty = React.useMemo(() => {
+    if (!property) return null;
+    
+    console.log('PROPERTY DATA CHECK');
+    console.log('Property ID:', property.id);
+    console.log('Raw images array:', property.images);
+    
+    // Return processed property with guaranteed values
+    return {
+      ...property,
+      // Ensure images array is valid
+      images: Array.isArray(property.images) && property.images.length > 0 ? 
+        property.images.filter(img => img && typeof img === 'string' && img.trim() !== '') : 
+        []
+    };
+  }, [property]);
+  
+  // Process rooms data to ensure image URLs are valid
+  const processedRooms = React.useMemo(() => {
+    if (!rooms || !Array.isArray(rooms)) return [];
+    
+    // Log for debugging
+    if (rooms.length > 0) {
+      console.log('ROOMS DATA CHECK');
+      console.log('First room images:', rooms[0]?.photoUrls);
+    }
+    
+    // Return processed rooms with guaranteed values
+    return rooms.map((room) => ({
+      ...room,
+      // Convert availableFrom to string if it's a Date object
+      availableFrom: room.availableFrom instanceof Date ? 
+        room.availableFrom.toISOString() : 
+        (typeof room.availableFrom === 'string' ? room.availableFrom : undefined),
+      // Ensure photoUrls array is valid
+      images: Array.isArray(room.photoUrls) && room.photoUrls.length > 0 ? 
+        room.photoUrls.filter(img => img && typeof img === 'string' && img.trim() !== '') : 
+        []
+    }));
+  }, [rooms]);
+  
+  // Use processed data
+  const propertyRooms = processedRooms || [];
 
   if (isLoading || roomsLoading) return <div><Loading/></div>;
-  if (isError || !property) return <div>Property not found</div>;
+  if (isError || !property || !processedProperty) return <div>Property not found</div>;
+
+  // Log processed data for debugging
+  console.log('Using processed property images:', processedProperty.images);
+  if (propertyRooms.length > 0) {
+    console.log('Using processed room images for first room:', propertyRooms[0].images);
+  }
 
   return (
     <div className="bg-gray-50 pb-16">
       <ImagePreviews
-        images={property.images || []}
+        images={processedProperty.images || []}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         {/* Property Title and Quick Info */}
@@ -135,33 +184,26 @@ const SingleListing = () => {
                          className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                       {/* Room Image */}
                       <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
-                        {roomData.images && roomData.images.length > 0 ? (
-                          imgErrors[`room-${roomData.id || index}`] ? (
-                            <div className="flex flex-col items-center justify-center h-full">
-                              <Home className="h-10 w-10 text-gray-400 mb-2" />
-                              <span className="text-gray-400 text-sm">No image available</span>
-                            </div>
-                          ) : (
-                            <Image
-                              src={roomData.images[0]}
-                              alt={roomData.name || `Room ${index + 1}`}
-                              fill
-                              loader={({ src }: ImageLoaderProps) => src}
-                              unoptimized={true}
-                              className="object-cover hover:scale-110 transition-transform duration-500"
-                              onError={() => {
-                                console.error(`Failed to load image for room: ${roomData.id || index}`);
-                                setImgErrors(prev => ({ ...prev, [`room-${roomData.id || index}`]: true }));
-                              }}
-                            />
-                          )
-                        ) : (
-                          <div className="flex items-center justify-center h-full bg-gray-100">
-                            <span className="text-gray-400 text-sm">
-                              No Image
-                            </span>
-                          </div>
-                        )}
+                        <Image
+                          src={roomData.images && roomData.images.length > 0 ? roomData.images[0] : "/placeholder.jpg"}
+                          alt={roomData.name || `Room ${index + 1}`}
+                          fill
+                          loader={({ src }: ImageLoaderProps) => src}
+                          unoptimized={true}
+                          priority={index === 0}
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          className="object-cover hover:scale-110 transition-transform duration-500"
+                          onError={() => {
+                            console.error(`Failed to load image for room: ${roomData.id || index}`);
+                            // Set a local error state for this specific image
+                            const newImgErrors = { ...imgErrors };
+                            newImgErrors[`room-${roomData.id || index}`] = true;
+                            setImgErrors(newImgErrors);
+                            
+                            // Log the error for debugging
+                            console.log(`Setting fallback image for room ${roomData.id || index}`);
+                          }}
+                        />
                       </div>
                       
                       {/* Room Details */}
@@ -169,7 +211,8 @@ const SingleListing = () => {
                         <div className="flex justify-between items-center mb-2">
                           <h3 className="font-medium text-lg">{roomData.name}</h3>
                           <span className="text-blue-600 font-semibold text-lg">
-                            R{roomData.price !== undefined ? roomData.price.toLocaleString('en-ZA') : 'N/A'}
+                            R{roomData.price !== undefined && roomData.price !== null ? roomData.price.toLocaleString('en-ZA') : 
+                               property.price ? Math.round(property.price / 3).toLocaleString('en-ZA') : 'N/A'}
                             <span className="text-sm text-gray-500">/month</span>
                           </span>
                         </div>

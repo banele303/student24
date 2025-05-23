@@ -15,7 +15,7 @@ const ImagePreviews = ({ images }: ImagePreviewsProps) => {
     // First try images array 
     Array.isArray(images) && images.length > 0 ? 
       images.filter(img => img && img.trim() !== '') : 
-      []
+      ["/placeholder.jpg"] // Always provide at least one image for the carousel
   );
   
   // Custom loader that just returns the URL as-is (same as CardCompact)
