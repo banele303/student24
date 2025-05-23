@@ -1,7 +1,6 @@
 "use client";
 
 import { useGetAuthUserQuery, useGetPropertyQuery, useGetRoomsQuery } from "@/state/api";
-import { Property as PropertyType } from "@/types/property";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import Image, { ImageLoaderProps } from "next/image";
@@ -67,13 +66,19 @@ const SingleListing = () => {
     console.log('PROPERTY DATA CHECK');
     console.log('Property ID:', property.id);
     console.log('Raw images array:', property.images);
+    console.log('Property price:', property.price);
     
     // Return processed property with guaranteed values
     return {
       ...property,
-      // Ensure images array is valid
+      // Make sure price is a valid number
+      price: typeof property.price === 'number' ? property.price : 
+             typeof property.price === 'string' ? parseFloat(property.price) : 0,
+      // Ensure images array is valid - use exactly the same approach as in CardCompact
       images: Array.isArray(property.images) && property.images.length > 0 ? 
         property.images.filter(img => img && typeof img === 'string' && img.trim() !== '') : 
+        Array.isArray(property.photoUrls) && property.photoUrls.length > 0 ?
+        property.photoUrls.filter(img => img && typeof img === 'string' && img.trim() !== '') :
         []
     };
   }, [property]);
@@ -86,21 +91,26 @@ const SingleListing = () => {
     if (rooms.length > 0) {
       console.log('ROOMS DATA CHECK');
       console.log('First room images:', rooms[0]?.photoUrls);
+      console.log('First room price:', rooms[0]?.pricePerMonth);
     }
     
     // Return processed rooms with guaranteed values
     return rooms.map((room) => ({
       ...room,
+      // Make sure price is properly set from pricePerMonth
+      price: typeof room.pricePerMonth === 'number' ? room.pricePerMonth : 
+             typeof room.pricePerMonth === 'string' ? parseFloat(room.pricePerMonth) : 
+             (property?.price ? Math.round(property.price / 3) : 0),
       // Convert availableFrom to string if it's a Date object
       availableFrom: room.availableFrom instanceof Date ? 
         room.availableFrom.toISOString() : 
         (typeof room.availableFrom === 'string' ? room.availableFrom : undefined),
-      // Ensure photoUrls array is valid
+      // Ensure photoUrls array is valid and use it for images
       images: Array.isArray(room.photoUrls) && room.photoUrls.length > 0 ? 
         room.photoUrls.filter(img => img && typeof img === 'string' && img.trim() !== '') : 
         []
     }));
-  }, [rooms]);
+  }, [rooms, property]);
   
   // Use processed data
   const propertyRooms = processedRooms || [];
@@ -185,20 +195,23 @@ const SingleListing = () => {
                       {/* Room Image */}
                       <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
                         <Image
-                          src={roomData.images && roomData.images.length > 0 ? roomData.images[0] : "/placeholder.jpg"}
+                          src={roomData.images && roomData.images.length > 0 ? 
+                                roomData.images[0] : 
+                                roomData.photoUrls && roomData.photoUrls.length > 0 ? 
+                                roomData.photoUrls[0] : 
+                                "/placeholder.jpg"}
                           alt={roomData.name || `Room ${index + 1}`}
                           fill
-                          loader={({ src }: ImageLoaderProps) => src}
                           unoptimized={true}
                           priority={index === 0}
                           sizes="(max-width: 768px) 100vw, 50vw"
                           className="object-cover hover:scale-110 transition-transform duration-500"
-                          onError={() => {
+                          onError={(e) => {
                             console.error(`Failed to load image for room: ${roomData.id || index}`);
-                            // Set a local error state for this specific image
-                            const newImgErrors = { ...imgErrors };
-                            newImgErrors[`room-${roomData.id || index}`] = true;
-                            setImgErrors(newImgErrors);
+                            // Update the image source directly to fallback
+                            if (e.currentTarget) {
+                              e.currentTarget.src = "/placeholder.jpg";
+                            }
                             
                             // Log the error for debugging
                             console.log(`Setting fallback image for room ${roomData.id || index}`);
@@ -211,7 +224,7 @@ const SingleListing = () => {
                         <div className="flex justify-between items-center mb-2">
                           <h3 className="font-medium text-lg">{roomData.name}</h3>
                           <span className="text-blue-600 font-semibold text-lg">
-                            R{roomData.price !== undefined && roomData.price !== null ? roomData.price.toLocaleString('en-ZA') : 
+                            R{roomData.price ? roomData.price.toLocaleString('en-ZA') : 
                                property.price ? Math.round(property.price / 3).toLocaleString('en-ZA') : 'N/A'}
                             <span className="text-sm text-gray-500">/month</span>
                           </span>

@@ -19,6 +19,7 @@ export interface Property {
   description?: string;
   propertyType: PropertyType;
   photoUrls: string[];
+  images?: string[];      // Added images property
   beds: number;
   baths: number;
   squareFeet: number;

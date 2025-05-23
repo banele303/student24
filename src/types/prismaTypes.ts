@@ -67,6 +67,7 @@ export interface Property {
   locationId?: number;
   isAvailable: boolean;
   images?: string[];
+  photoUrls?: string[];
   // Ratings and reviews
   averageRating?: number;
   numberOfReviews?: number;

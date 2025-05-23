@@ -1128,14 +1128,15 @@ export const api = createApi({
         // Make sure status is properly formatted - backend expects 'Pending', 'Approved', or 'Denied'
         const formattedStatus = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
         
-        // Create payload and explicitly stringify it to ensure proper JSON format
-        const payload = JSON.stringify({ status: formattedStatus });
-        console.log('Sending stringified payload:', payload);
+        // Create payload and manually stringify it to ensure proper JSON format
+        const payload = { status: formattedStatus };
+        const stringifiedPayload = JSON.stringify(payload);
+        console.log('Sending stringified payload:', stringifiedPayload);
         
         return {
           url: `applications/${id}/status`,
           method: "PUT",
-          body: payload, // Use pre-stringified JSON to avoid any serialization issues
+          body: stringifiedPayload, // Manually stringified payload
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
