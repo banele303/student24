@@ -156,16 +156,12 @@ const SingleListing = () => {
                             />
                           )
                         ) : (
-                          <div className="flex flex-col items-center justify-center h-full">
-                            <Home className="h-10 w-10 text-gray-400 mb-2" />
-                            <span className="text-gray-400 text-sm">No image available</span>
+                          <div className="flex items-center justify-center h-full bg-gray-100">
+                            <span className="text-gray-400 text-sm">
+                              No Image
+                            </span>
                           </div>
                         )}
-                        <div className="absolute top-2 right-2">
-                          <span className={`px-3 py-1 text-xs font-medium rounded-full ${roomData.isAvailable ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
-                            {roomData.isAvailable ? 'Available Now' : roomData.availableFrom ? `Available from ${new Date(roomData.availableFrom).toLocaleDateString('en-ZA', {day: 'numeric', month: 'long'})}` : 'Occupied'}
-                          </span>
-                        </div>
                       </div>
                       
                       {/* Room Details */}
@@ -173,7 +169,7 @@ const SingleListing = () => {
                         <div className="flex justify-between items-center mb-2">
                           <h3 className="font-medium text-lg">{roomData.name}</h3>
                           <span className="text-blue-600 font-semibold text-lg">
-                            R{roomData.price}
+                            R{roomData.price !== undefined ? roomData.price.toLocaleString('en-ZA') : 'N/A'}
                             <span className="text-sm text-gray-500">/month</span>
                           </span>
                         </div>

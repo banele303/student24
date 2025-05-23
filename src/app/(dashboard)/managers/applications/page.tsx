@@ -309,12 +309,14 @@ const Applications = () => {
       
       console.log('Updating application status:', { id, status: validStatus });
       
+      // Send ID and status directly - the mutation will handle creating the request body
       const result = await updateApplicationStatus({ 
         id, 
         status: validStatus as 'Approved' | 'Denied' | 'Pending'
       }).unwrap();
       
       console.log('Status update successful:', result);
+      toast.success(`Application ${validStatus.toLowerCase()}`);
     } catch (error) {
       console.error("Failed to update application status:", error);
       toast.error("Could not update application status. Please try again.");

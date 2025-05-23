@@ -4,6 +4,10 @@ import { ChevronLeft, ChevronRight, Home } from "lucide-react";
 import Image, { ImageLoaderProps } from "next/image";
 import React, { useState } from "react";
 
+interface ImagePreviewsProps {
+  images: string[];
+}
+
 const ImagePreviews = ({ images }: ImagePreviewsProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   // Enhanced approach to handle multiple image sources (directly from CardCompact component)
@@ -25,7 +29,7 @@ const ImagePreviews = ({ images }: ImagePreviewsProps) => {
     // Replace the failed image with placeholder (exactly as in CardCompact)
     if (imgSrc.length > index) {
       const newImgSrc = [...imgSrc];
-      newImgSrc[index] = "/placeholder.svg";
+      newImgSrc[index] = "/placeholder.jpg";
       setImgSrc(newImgSrc);
     }
   };
@@ -54,7 +58,7 @@ const ImagePreviews = ({ images }: ImagePreviewsProps) => {
             }`}
           >
             <Image
-              src={image || "/placeholder.svg"}
+              src={image || "/placeholder.jpg"}
               alt={`Property Image ${index + 1}`}
               fill
               loader={loaderFunc}
