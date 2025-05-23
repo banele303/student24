@@ -12,8 +12,7 @@ function Landing() {
     <div>
       <HeroSection />
       <CityCard />
-    
-      <FeaturesSection />
+     <FeaturesSection />
       <BlogSection />
       {/* <DiscoverSection/> */}
       <CallToActionSection />
