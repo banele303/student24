@@ -187,6 +187,18 @@ export default function AdminLayout({
                 <BarChart className="mr-3 h-5 w-5" />
                 <span>Analytics</span>
               </a>
+              <a 
+                href="/admin/settings" 
+                className={cn(
+                  "flex items-center px-4 py-3 my-1 mx-2 rounded-md transition-colors",
+                  pathname === "/admin/settings" 
+                    ? isDark ? "bg-blue-900/30 text-blue-400" : "bg-blue-100 text-blue-700"
+                    : isDark ? "text-slate-300 hover:bg-slate-800" : "text-slate-700 hover:bg-slate-100"
+                )}
+              >
+                <Settings className="mr-3 h-5 w-5" />
+                <span>Settings</span>
+              </a>
             </nav>
           </div>
           

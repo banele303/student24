@@ -11,7 +11,7 @@ const Loading = () => {
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-5"></div>
       
       {/* Modern loading container */}
-      <div className="relative flex flex-col items-center justify-center z-10 bg-white/80 p-8 rounded-2xl shadow-lg border border-gray-100">
+      <div className="relative flex flex-col items-center justify-center z-10  p-8 rounded-2xl ">
         {/* Blue glow behind spinner */}
         <div className="absolute w-20 h-20 bg-blue-500/10 rounded-full blur-xl animate-pulse"></div>
         

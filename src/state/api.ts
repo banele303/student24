@@ -1128,22 +1128,22 @@ export const api = createApi({
         // Make sure status is properly formatted - backend expects 'Pending', 'Approved', or 'Denied'
         const formattedStatus = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
         
-        // Create payload and manually stringify it to ensure proper JSON format
-        const payload = { status: formattedStatus };
-        const stringifiedPayload = JSON.stringify(payload);
-        console.log('Sending stringified payload:', stringifiedPayload);
+        // Use query parameters instead of a request body
+        const params = new URLSearchParams();
+        params.append('status', formattedStatus);
+        console.log('Using URL parameters instead of body:', params.toString());
         
         return {
-          url: `applications/${id}/status`,
+          // Include status as a query parameter to avoid body parsing issues
+          url: `applications/${id}/status?${params.toString()}`,
           method: "PUT",
-          body: stringifiedPayload, // Manually stringified payload
+          // Include body as well for redundancy (some API frameworks prefer body)
+          body: { status: formattedStatus },
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
           },
         };
       },
-      // Add better error transformation
       transformErrorResponse: (response) => {
         console.error('Application status update error response:', response);
         return response;
@@ -1236,6 +1236,25 @@ export const api = createApi({
       },
     }),
     
+    updateAdminSettings: build.mutation<{ success: boolean, message: string, updatedAttributes: Record<string, string> }, { name?: string, email?: string, phoneNumber?: string }>({
+      query: (data) => {
+        return {
+          url: `admin/settings/update`,
+          method: "POST",
+          body: data
+        };
+      },
+      invalidatesTags: (result) => [
+        { type: "Admins", id: "CURRENT" }
+      ],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          success: "Admin settings updated successfully!",
+          error: "Failed to update admin settings."
+        });
+      },
+    }),
+    
     deleteManager: build.mutation<{ success: boolean, message: string, deletedManager: Manager }, string>({
       query: (cognitoId) => {
         // Build query string with parameters
@@ -1254,6 +1273,46 @@ export const api = createApi({
         await withToast(queryFulfilled, {
           success: "Manager deleted successfully!",
           error: "Failed to delete manager.",
+        });
+      },
+    }),
+    
+    getManagerDetails: build.query<{
+      id: number;
+      name: string;
+      email: string;
+      phoneNumber: string;
+      status: string;
+      properties: {
+        id: number;
+        name: string;
+        address: string;
+        tenantCount: number;
+        roomCount: number;
+      }[];
+      tenants: {
+        id: number;
+        name: string;
+        email: string;
+        propertyName: string;
+      }[];
+      stats: {
+        propertyCount: number;
+        tenantCount: number;
+        occupancyRate: string;
+        averageRent: string;
+      }
+    }, string>({
+      query: (managerId) => {
+        return {
+          url: `admin/managers/${managerId}`,
+          method: "GET",
+        };
+      },
+      providesTags: (result, error, id) => [{ type: "Managers", id }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch landlord details.",
         });
       },
     }),
@@ -1283,12 +1342,17 @@ export const api = createApi({
         name: string;
         address: string;
         landlord: string;
+        landlordEmail: string;
+        landlordId: number;
         propertyId: number;
       }[];
       applications: {
         id: number;
         propertyName: string;
         propertyId: number;
+        landlord: string;
+        landlordEmail: string;
+        landlordId: number;
         status: string;
         date: string;
       }[];
@@ -1299,6 +1363,9 @@ export const api = createApi({
         startDate: string;
         endDate: string;
         rent: string;
+        landlord: string;
+        landlordEmail: string;
+        landlordId: number;
       }[];
     }, string>({
       query: (tenantId) => {
@@ -1341,10 +1408,12 @@ export const {
   useCreateApplicationMutation,
   // Admin-specific hooks
   useGetAllManagersQuery,
+  useGetManagerDetailsQuery,
   useUpdateManagerStatusMutation,
   useDeleteManagerMutation,
   useGetAllTenantsQuery,
   useGetTenantDetailsQuery,
+  useUpdateAdminSettingsMutation,
 
   // Room endpoints
   useGetRoomsQuery,

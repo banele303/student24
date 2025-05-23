@@ -188,16 +188,16 @@ const Navbar = () => {
                 </Link>
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger className={`focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${isDashboardPage ? 'dark:focus-visible:ring-offset-slate-900' : ''} rounded-full`}>
-                    <div className={`flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-slate-100 ${isDashboardPage ? 'dark:hover:bg-slate-800' : ''} transition-all duration-200`}>
-                      <Avatar className={`h-9 w-9 ring-2 ring-blue-500/20 ${isDashboardPage ? 'dark:ring-blue-500/30' : ''} hover:ring-blue-500/50 bg-gradient-to-br from-slate-50 to-slate-100 ${isDashboardPage ? 'dark:from-slate-800 dark:to-slate-900' : ''} transition-all duration-200 shadow-sm cursor-pointer`}>
+                  <DropdownMenuTrigger asChild>
+                    <button className={`flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-slate-100 ${isDashboardPage ? 'dark:hover:bg-slate-800' : ''} transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${isDashboardPage ? 'dark:focus-visible:ring-offset-slate-900' : ''}`}>
+                      <Avatar className={`h-9 w-9 ring-2 ring-blue-500/20 ${isDashboardPage ? 'dark:ring-blue-500/30' : ''} hover:ring-blue-500/50 bg-gradient-to-br from-slate-50 to-slate-100 ${isDashboardPage ? 'dark:from-slate-800 dark:to-slate-900' : ''} transition-all duration-200 shadow-sm`}>
                         <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-medium text-lg flex items-center justify-center">
                           {authUser.cognitoInfo?.username?.charAt(0)?.toUpperCase() || "U"}
                         </AvatarFallback>
                       </Avatar>
 
                       <ChevronDown className={`h-4 w-4 text-slate-400 group-hover:text-slate-500 ${isDashboardPage ? 'dark:text-slate-500 dark:group-hover:text-slate-400' : ''}`} />
-                    </div>
+                    </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     className={`bg-white/95 ${isDashboardPage ? 'dark:bg-slate-900/95' : ''} backdrop-blur-sm shadow-xl rounded-xl border border-slate-200 ${isDashboardPage ? 'dark:border-slate-800/60' : ''} mt-2 p-1 min-w-[240px] animate-in fade-in-50 zoom-in-95 duration-200`}

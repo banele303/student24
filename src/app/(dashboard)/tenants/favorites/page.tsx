@@ -52,7 +52,7 @@ const Favorites = () => {
   if (error) return <div>Error loading favorites</div>;
 
   return (
-    <div className="dashboard-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 dark:bg-gray-900">
+    <div className="dashboard-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 ">
       <Header
         title="Favorited Properties"
         subtitle="Browse and manage your saved property listings"
@@ -61,11 +61,18 @@ const Favorites = () => {
       {/* Enhanced card grid with larger, wider cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10 max-w-screen-xl mx-auto">
         {favoriteProperties?.map((property) => {
+          // Debug the raw property data
+          console.log('RAW PROPERTY FROM API:', {
+            id: property.id,
+            price: property.price,
+            priceType: typeof property.price
+          });
+          
           // Transform property to add any missing required fields
           const enhancedProperty = {
             ...property,
-            // Map price to pricePerMonth for ModernPropertyCard compatibility
-            pricePerMonth: property.price,
+            // Pass through the original price data
+            price: property.price,
             // Ensure squareFeet is always a number (required by ModernPropertyCard)
             squareFeet: property.squareFeet || 0,
             // Ensure location field has all required properties
@@ -76,8 +83,10 @@ const Favorites = () => {
             }
           };
           
+        
+          
           return (
-            <div key={property.id} className="transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
+            <div key={property.id} className="transform transition-all ml-[-2.5rem] duration-300 hover:scale-[1.02] hover:shadow-xl">
               <ModernPropertyCard
                 property={enhancedProperty}
                 isFavorite={true}

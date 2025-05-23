@@ -68,7 +68,7 @@ const cities = [
     name: "Bloemfontein",
     description: "Find res in Bloemfontein",
     image:
-      "/bloom.png",
+      "/Bloemfontein.jpg",
     coordinates: [26.2041, -29.0852] as [number, number],
     lat: -29.0852,
     lng: 26.2041,

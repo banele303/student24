@@ -2,20 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useGetAuthUserQuery, useGetAllTenantsQuery, useGetTenantDetailsQuery } from "@/state/api";
+import { useGetAuthUserQuery, useGetAllTenantsQuery } from "@/state/api";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+// Dialog imports removed as we're using page navigation instead
 import { Input } from "@/components/ui/input";
-import { Search, Eye, Mail, Phone } from "lucide-react";
+import { Search, Eye, Mail, Phone, UserRound, User2 } from "lucide-react";
 import { Pagination } from "@/components/ui/pagination";
 
 // Define Tenant type for TypeScript
@@ -49,12 +42,17 @@ type TenantDetails = {
     name: string;
     address: string;
     landlord: string;
+    landlordId: number;
+    landlordEmail: string;
     propertyId: number;
   }[];
   applications: {
     id: number;
     propertyName: string;
     propertyId: number;
+    landlord: string;
+    landlordId: number;
+    landlordEmail: string;
     status: string;
     date: string;
   }[];
@@ -62,6 +60,9 @@ type TenantDetails = {
     id: number;
     propertyName: string;
     propertyId: number;
+    landlord: string;
+    landlordId: number;
+    landlordEmail: string;
     startDate: string;
     endDate: string;
     rent: string;
@@ -71,9 +72,12 @@ type TenantDetails = {
 export default function StudentsPage() {
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [tenantDetails, setTenantDetails] = useState<TenantDetails | null>(null);
+  // No longer need dialog-related state as we're using navigation
+  
+  // Function to navigate to landlord details
+  const viewLandlordDetails = (landlordId: number) => {
+    router.push(`/admin/landlords/${landlordId}`);
+  };
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -82,18 +86,8 @@ export default function StudentsPage() {
   const { data: authUser } = useGetAuthUserQuery();
   const { data: tenants, isLoading: isLoadingTenants } = useGetAllTenantsQuery();
   
-  // Properly fetch tenant details with the hook at component level
-  const { data: tenantDetailsData, isLoading: tenantLoading, error: tenantError } = useGetTenantDetailsQuery(
-    selectedTenant ? selectedTenant.id.toString() : 'skip',
-    { skip: !selectedTenant }
-  );
-  
-  // Update tenant details when data is loaded
-  useEffect(() => {
-    if (tenantDetailsData && !tenantDetails) {
-      setTenantDetails(tenantDetailsData);
-    }
-  }, [tenantDetailsData, tenantDetails]);
+  // No longer need to fetch tenant details in this component
+  // Details are now fetched in the [id]/page.tsx component
   
   const router = useRouter();
 
@@ -111,12 +105,9 @@ export default function StudentsPage() {
     currentPage * itemsPerPage
   );
 
+  // Navigate to student details page instead of showing a dialog
   const viewTenantDetails = (tenant: Tenant) => {
-    setSelectedTenant(tenant);
-    setIsDialogOpen(true);
-    
-    // Clear previous tenant details while loading
-    setTenantDetails(null);
+    router.push(`/admin/students/${tenant.id}`);
   };
 
   return (
@@ -216,135 +207,7 @@ export default function StudentsPage() {
         </div>
       )}
 
-      {/* Student Details Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Student Details: {selectedTenant ? `${selectedTenant.firstName} ${selectedTenant.lastName}` : ''}</DialogTitle>
-            <DialogDescription>
-              View detailed information about this student.
-            </DialogDescription>
-          </DialogHeader>
-          
-          {selectedTenant && (
-            <div className="space-y-6 py-4 max-h-[60vh] overflow-y-auto">
-              {/* Tenant details section */}
-              {tenantLoading ? (
-                <div className="flex justify-center items-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-                </div>
-              ) : tenantError ? (
-                <div className="py-4 text-center text-red-500">
-                  Failed to load student details. Please try again.
-                </div>
-              ) : null}
-              
-              {/* Contact Information */}
-              <div>
-                <h3 className="text-lg font-medium mb-2">Contact Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-gray-500" />
-                    <span>{selectedTenant?.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-gray-500" />
-                    <span>{selectedTenant?.phoneNumber}</span>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Favorites */}
-              <div>
-                <h3 className="text-lg font-medium mb-2">Favorited Properties</h3>
-                {tenantDetails?.favorites && tenantDetails.favorites.length > 0 ? (
-                  <div className="space-y-2">
-                    {tenantDetails.favorites.map((favorite) => (
-                      <Card key={favorite.id} className="p-3">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <h4 className="font-medium">{favorite.name}</h4>
-                            <p className="text-sm text-gray-500">{favorite.address}</p>
-                            <p className="text-xs text-gray-400">Landlord: {favorite.landlord}</p>
-                          </div>
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-3.5 w-3.5 mr-1" />
-                            View Property
-                          </Button>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500">No favorited properties.</p>
-                )}
-              </div>
-              
-              {/* Applications */}
-              <div>
-                <h3 className="text-lg font-medium mb-2">Applications</h3>
-                {tenantDetails?.applications && tenantDetails.applications.length > 0 ? (
-                  <div className="space-y-2">
-                    {tenantDetails.applications.map((application) => (
-                      <Card key={application.id} className="p-3">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <h4 className="font-medium">{application.propertyName}</h4>
-                            <p className="text-sm text-gray-500">Applied: {application.date}</p>
-                            <Badge variant={application.status === "Approved" ? "default" : "outline"}>
-                              {application.status}
-                            </Badge>
-                          </div>
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-3.5 w-3.5 mr-1" />
-                            View Application
-                          </Button>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500">No applications submitted.</p>
-                )}
-              </div>
-              
-              {/* Leases */}
-              <div>
-                <h3 className="text-lg font-medium mb-2">Active Leases</h3>
-                {tenantDetails?.leases && tenantDetails.leases.length > 0 ? (
-                  <div className="space-y-2">
-                    {tenantDetails.leases.map((lease) => (
-                      <Card key={lease.id} className="p-3">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <h4 className="font-medium">{lease.propertyName}</h4>
-                            <p className="text-sm text-gray-500">
-                              {lease.startDate} to {lease.endDate}
-                            </p>
-                            <p className="text-sm font-medium text-green-600">
-                              {lease.rent} per month
-                            </p>
-                          </div>
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-3.5 w-3.5 mr-1" />
-                            View Lease
-                          </Button>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500">No active leases.</p>
-                )}
-              </div>
-            </div>
-          )}
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* No dialog needed - we're using page navigation to /admin/students/[id] */}
     </div>
   );
 }

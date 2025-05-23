@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { verifyAuth } from '@/lib/auth';
 
 // PUT handler for updating manager status (admin only)
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ cognitoId: string }> }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // Verify authentication and role
     const authResult = await verifyAuth(request, ['admin']);
@@ -11,14 +11,14 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get and validate the cognitoId parameter
+    // Get and validate the id parameter
     // In Next.js App Router, params must be awaited before accessing properties
-    const { cognitoId } = await params;
-    if (!cognitoId) {
-      return NextResponse.json({ message: 'Missing cognitoId parameter' }, { status: 400 });
+    const { id } = await params;
+    if (!id) {
+      return NextResponse.json({ message: 'Missing id parameter' }, { status: 400 });
     }
     
-    console.log('Attempting to update manager status for cognitoId:', cognitoId);
+    console.log('Attempting to update manager status for cognitoId:', id);
     
     // Parse the request body directly without using stream operations
     let requestBody: { status?: string; notes?: string };
@@ -47,13 +47,13 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       }, { status: 400 });
     }
 
-    console.log(`Attempting to update manager with cognitoId: ${cognitoId} to status: ${status}`);
+    console.log(`Attempting to update manager with cognitoId: ${id} to status: ${status}`);
 
     // Check if manager exists
     let existingManager;
     try {
       existingManager = await prisma.manager.findUnique({
-        where: { cognitoId },
+        where: { cognitoId: id },
       });
 
       if (!existingManager) {
@@ -79,10 +79,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Update manager status
     try {
-      console.log(`Updating manager ${existingManager.name} (${cognitoId}) from ${existingManager.status} to ${status}`);
+      console.log(`Updating manager ${existingManager.name} (${id}) from ${existingManager.status} to ${status}`);
       
       const updatedManager = await prisma.manager.update({
-        where: { cognitoId },
+        where: { cognitoId: id },
         data: {
           status,
           // If status is Active and manager wasn't previously Active, set approvedAt

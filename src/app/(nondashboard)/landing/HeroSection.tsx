@@ -189,7 +189,7 @@ const HeroSection = () => {
 
       {/* Background Image */}
       <Image
-        src="/landing-splash.jpg"
+        src="/hero-1.jpg"
         alt="Rentiful Rental Platform Hero Section"
         fill
         className="object-cover object-center"
