@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useGetTenantDetailsQuery } from "@/state/api";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,11 +9,14 @@ import { Button } from "@/components/ui/button";
 import { User2, Mail, Phone, ArrowLeft, Eye } from "lucide-react";
 
 // Student details page showing favorites, applications, and leases
-export default function StudentDetailsPage({ params }: { params: { id: string } }) {
+export default function StudentDetailsPage() {
+  // Get the id from the URL using useParams
+  const params = useParams();
+  const id = params.id as string;
   const router = useRouter();
   
   // Fetch student details using the API hook
-  const { data: tenantDetails, isLoading, error: fetchError } = useGetTenantDetailsQuery(params.id);
+  const { data: tenantDetails, isLoading, error: fetchError } = useGetTenantDetailsQuery(id);
   
   // Extract error message if there's an error
   const error = fetchError ? (fetchError as any)?.data?.error || "Failed to load student information. Please try again." : null;
