@@ -1,14 +1,10 @@
 
-import { Metadata } from "next";
 import LandlordClient from "./client";
 
-interface PageProps {
-  params: { id: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
-
 // Simple server component that passes the ID parameter to the client component
-export default async function LandlordDetailsPage({ params }: PageProps) {
-  return <LandlordClient id={params.id} />;
+export default async function LandlordDetailsPage({ params }: { params: { id: string } }) {
+  // In Next.js 14+, params need to be awaited before use
+  const resolvedParams = await Promise.resolve(params);
+  return <LandlordClient id={resolvedParams.id} />;
 }
 
