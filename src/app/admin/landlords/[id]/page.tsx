@@ -8,7 +8,7 @@ interface PageProps {
 }
 
 // Simple server component that passes the ID parameter to the client component
-export default function LandlordDetailsPage({ params }: PageProps) {
+export default async function LandlordDetailsPage({ params }: PageProps) {
   return <LandlordClient id={params.id} />;
 }
 
