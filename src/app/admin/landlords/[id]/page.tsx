@@ -2,13 +2,13 @@
 import { Metadata } from "next";
 import LandlordClient from "./client";
 
-type Props = {
-  params: { id: string }
-};
+interface PageProps {
+  params: { id: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
 
 // Simple server component that passes the ID parameter to the client component
-async function LandlordDetailsPage({ params }: Props) {
+export default function LandlordDetailsPage({ params }: PageProps) {
   return <LandlordClient id={params.id} />;
 }
 
-export default LandlordDetailsPage;
