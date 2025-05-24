@@ -20,8 +20,12 @@ import {
 } from "lucide-react";
 import { useGetManagerDetailsQuery } from "@/state/api";
 
+interface LandlordDetailsProps {
+  id: string;
+}
+
 // Landlord details client component that receives the ID directly
-export default function LandlordDetailsClient({ id }: { id: string }) {
+export default function LandlordDetailsClient({ id }: LandlordDetailsProps) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const router = useRouter();
