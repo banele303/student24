@@ -21,7 +21,14 @@ import {
 import { useGetManagerDetailsQuery } from "@/state/api";
 
 // Landlord details page showing properties, tenants, etc.
-export default function LandlordDetailsPage({ params }: { params: { id: string } }) {
+interface LandlordPageProps {
+  params: {
+    id: string;
+  };
+  searchParams?: Record<string, string | string[] | undefined>;
+}
+
+export default function LandlordDetailsPage({ params }: LandlordPageProps) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const router = useRouter();
