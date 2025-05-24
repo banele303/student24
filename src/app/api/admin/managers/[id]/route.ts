@@ -51,9 +51,10 @@ type PrismaProperty = {
 // GET /api/admin/managers/[id]
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { params } = context;
+  // Await the params since they are now a Promise in Next.js 14+
+  const { id } = await params;
   try {
     // Verify authentication and role
     const authResult = await verifyAuth(request, ['admin']);
@@ -61,7 +62,6 @@ export async function GET(
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id } = params;
     const managerId = parseInt(id);
 
     if (isNaN(managerId)) {
