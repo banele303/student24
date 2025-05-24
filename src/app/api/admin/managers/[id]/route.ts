@@ -51,8 +51,9 @@ type PrismaProperty = {
 // GET /api/admin/managers/[id]
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  const { params } = context;
   try {
     // Verify authentication and role
     const authResult = await verifyAuth(request, ['admin']);
