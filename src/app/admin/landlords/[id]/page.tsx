@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
@@ -22,13 +22,17 @@ import {
 import { useGetManagerDetailsQuery } from "@/state/api";
 
 // Landlord details page
-export default function LandlordDetailsPage({ params }: { params: { id: string } }) {
+export default function LandlordDetailsPage() {
+  // Get the id from the URL using useParams
+  const params = useParams();
+  const id = params.id as string;
+  
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const router = useRouter();
   
   // Fetch landlord details using the API hook
-  const { data: landlord, isLoading, error: fetchError } = useGetManagerDetailsQuery(params.id);
+  const { data: landlord, isLoading, error: fetchError } = useGetManagerDetailsQuery(id);
   
   // Extract error message if there's an error
   const error = fetchError ? (fetchError as any)?.data?.error || "Failed to load landlord information. Please try again." : null;
@@ -71,7 +75,7 @@ export default function LandlordDetailsPage({ params }: { params: { id: string }
   
   // If we have no data, show an empty state
   const landlordData = landlord || {
-    id: parseInt(params.id),
+    id: parseInt(id),
     name: "",
     email: "",
     phoneNumber: "",
