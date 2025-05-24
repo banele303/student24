@@ -1,3 +1,8 @@
+// This is a server component wrapper that passes the ID to the client component
+export default function LandlordDetailsPage({ params }: { params: { id: string } }) {
+  return <LandlordDetailsClient id={params.id} />;
+}
+
 "use client";
 
 import { useState } from "react";
@@ -20,21 +25,14 @@ import {
 } from "lucide-react";
 import { useGetManagerDetailsQuery } from "@/state/api";
 
-// Landlord details page showing properties, tenants, etc.
-interface LandlordPageProps {
-  params: {
-    id: string;
-  };
-  searchParams?: Record<string, string | string[] | undefined>;
-}
-
-export default function LandlordDetailsPage({ params }: LandlordPageProps) {
+// Landlord details client component that receives the ID directly
+function LandlordDetailsClient({ id }: { id: string }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const router = useRouter();
   
   // Fetch landlord details using the API hook
-  const { data: landlord, isLoading, error: fetchError } = useGetManagerDetailsQuery(params.id);
+  const { data: landlord, isLoading, error: fetchError } = useGetManagerDetailsQuery(id);
   
   // Extract error message if there's an error
   const error = fetchError ? (fetchError as any)?.data?.error || "Failed to load landlord information. Please try again." : null;
@@ -77,7 +75,7 @@ export default function LandlordDetailsPage({ params }: LandlordPageProps) {
   
   // If we have no data, show an empty state
   const landlordData = landlord || {
-    id: parseInt(params.id),
+    id: parseInt(id),
     name: "",
     email: "",
     phoneNumber: "",
