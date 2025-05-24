@@ -1,12 +1,27 @@
-import LandlordDetailsClient from "./client";
+"use client";
 
-// This is a server component wrapper that passes the ID to the client component
-export default function LandlordDetailsPage({ params }: { params: { id: string } }) {
-  return <LandlordDetailsClient id={params.id} />;
-}
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  User2, 
+  Mail, 
+  Phone, 
+  ArrowLeft, 
+  Home, 
+  ClipboardList, 
+  Users,
+  Building,
+  Eye
+} from "lucide-react";
+import { useGetManagerDetailsQuery } from "@/state/api";
 
 // Landlord details client component that receives the ID directly
-function LandlordDetailsClient({ id }: { id: string }) {
+export default function LandlordDetailsClient({ id }: { id: string }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const router = useRouter();
@@ -115,22 +130,19 @@ function LandlordDetailsClient({ id }: { id: string }) {
           
           <div>
             <div className={cn(
-              "px-3 py-1 rounded-full text-sm font-medium inline-flex items-center",
-              landlordData.status === "Active" 
-                ? isDark ? "bg-green-900/30 text-green-400" : "bg-green-100 text-green-700"
-                : isDark ? "bg-yellow-900/30 text-yellow-400" : "bg-yellow-100 text-yellow-700"
+              "px-3 py-1 rounded-full inline-block",
+              landlordData.status === "Active" ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" :
+              landlordData.status === "Pending" ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400" :
+              landlordData.status === "Disabled" ? "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300" :
+              "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
             )}>
-              <span className={cn(
-                "h-2 w-2 rounded-full mr-1.5",
-                landlordData.status === "Active" ? "bg-green-500" : "bg-yellow-500"
-              )}></span>
               {landlordData.status}
             </div>
           </div>
         </div>
       </Card>
       
-      {/* Landlord Stats Cards */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <Card className={cn(
           "p-4",
@@ -139,7 +151,7 @@ function LandlordDetailsClient({ id }: { id: string }) {
           <div className="flex items-center">
             <div className={cn(
               "h-10 w-10 rounded-full flex items-center justify-center mr-3",
-              isDark ? "bg-indigo-900/30 text-indigo-400" : "bg-indigo-100 text-indigo-600"
+              isDark ? "bg-blue-900/30 text-blue-400" : "bg-blue-100 text-blue-600"
             )}>
               <Building className="h-5 w-5" />
             </div>
@@ -157,7 +169,7 @@ function LandlordDetailsClient({ id }: { id: string }) {
           <div className="flex items-center">
             <div className={cn(
               "h-10 w-10 rounded-full flex items-center justify-center mr-3",
-              isDark ? "bg-blue-900/30 text-blue-400" : "bg-blue-100 text-blue-600"
+              isDark ? "bg-green-900/30 text-green-400" : "bg-green-100 text-green-600"
             )}>
               <Users className="h-5 w-5" />
             </div>
@@ -175,7 +187,7 @@ function LandlordDetailsClient({ id }: { id: string }) {
           <div className="flex items-center">
             <div className={cn(
               "h-10 w-10 rounded-full flex items-center justify-center mr-3",
-              isDark ? "bg-green-900/30 text-green-400" : "bg-green-100 text-green-600"
+              isDark ? "bg-blue-900/30 text-blue-400" : "bg-blue-100 text-blue-600"
             )}>
               <Home className="h-5 w-5" />
             </div>
@@ -243,7 +255,9 @@ function LandlordDetailsClient({ id }: { id: string }) {
             ))}
             
             {landlordData.properties.length === 0 && (
-              <p className="text-center text-gray-500 py-4">No properties found.</p>
+              <Card className="p-4">
+                <p className="text-center text-gray-500 py-4">No properties found.</p>
+              </Card>
             )}
           </div>
         </TabsContent>
@@ -279,7 +293,9 @@ function LandlordDetailsClient({ id }: { id: string }) {
             ))}
             
             {landlordData.tenants.length === 0 && (
-              <p className="text-center text-gray-500 py-4">No tenants found.</p>
+              <Card className="p-4">
+                <p className="text-center text-gray-500 py-4">No tenants found.</p>
+              </Card>
             )}
           </div>
         </TabsContent>
