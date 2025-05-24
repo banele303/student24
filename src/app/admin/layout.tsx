@@ -5,6 +5,7 @@ import { useGetAuthUserQuery } from "@/state/api";
 import "./theme.css"; // Import admin theme CSS
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
+import Link from "next/link";
 import { NAVBAR_HEIGHT } from "@/lib/constants";
 import AdminNavbar from "@/components/AdminNavbar";
 import { cn } from "@/lib/utils";
@@ -127,7 +128,7 @@ export default function AdminLayout({
               )}>Admin Dashboard</h2>
             </div>
             <nav className="mt-2">
-              <a 
+              <Link 
                 href="/admin" 
                 className={cn(
                   "flex items-center px-4 py-3 my-1 mx-2 rounded-md transition-colors",
@@ -138,8 +139,8 @@ export default function AdminLayout({
               >
                 <LayoutDashboard className="mr-3 h-5 w-5" />
                 <span>Dashboard</span>
-              </a>
-              <a 
+              </Link>
+              <Link 
                 href="/admin/students" 
                 className={cn(
                   "flex items-center px-4 py-3 my-1 mx-2 rounded-md transition-colors",
@@ -150,8 +151,8 @@ export default function AdminLayout({
               >
                 <GraduationCap className="mr-3 h-5 w-5" />
                 <span>Students</span>
-              </a>
-              <a 
+              </Link>
+              <Link 
                 href="/admin/landlords" 
                 className={cn(
                   "flex items-center px-4 py-3 my-1 mx-2 rounded-md transition-colors",
@@ -162,8 +163,8 @@ export default function AdminLayout({
               >
                 <Building2 className="mr-3 h-5 w-5" />
                 <span>Landlords</span>
-              </a>
-              <a 
+              </Link>
+              <Link 
                 href="/admin/properties" 
                 className={cn(
                   "flex items-center px-4 py-3 my-1 mx-2 rounded-md transition-colors",
@@ -174,8 +175,8 @@ export default function AdminLayout({
               >
                 <Home className="mr-3 h-5 w-5" />
                 <span>Properties</span>
-              </a>
-              <a 
+              </Link>
+              <Link 
                 href="/admin/analytics" 
                 className={cn(
                   "flex items-center px-4 py-3 my-1 mx-2 rounded-md transition-colors",
@@ -186,8 +187,8 @@ export default function AdminLayout({
               >
                 <BarChart className="mr-3 h-5 w-5" />
                 <span>Analytics</span>
-              </a>
-              <a 
+              </Link>
+              <Link 
                 href="/admin/settings" 
                 className={cn(
                   "flex items-center px-4 py-3 my-1 mx-2 rounded-md transition-colors",
@@ -198,7 +199,7 @@ export default function AdminLayout({
               >
                 <Settings className="mr-3 h-5 w-5" />
                 <span>Settings</span>
-              </a>
+              </Link>
             </nav>
           </div>
           
