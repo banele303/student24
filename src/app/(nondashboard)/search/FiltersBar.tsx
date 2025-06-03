@@ -115,7 +115,7 @@ const FiltersBar = () => {
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchQuery)}.json?access_token=${
           process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
-        }&fuzzyMatch=true&types=place,locality,neighborhood,region,address&country=za&limit=5&language=en`,
+        }&fuzzyMatch=true&types=address,place,locality,neighborhood,region&country=za&limit=10&language=en`,
       )
       const data = await response.json()
       
@@ -136,8 +136,20 @@ const FiltersBar = () => {
         console.log('Selected location:', feature.place_name)
         const [lng, lat] = feature.center
         
-        // Extract just the place name without country
-        const locationName = feature.place_name.split(',')[0];
+        // Preserve the full address information but remove the country part at the end
+        // This keeps street addresses intact while removing "South Africa" from the display
+        const placeNameParts = feature.place_name.split(',');
+        // Remove the last part (country) and possibly the second-last part (province) if it's not part of the address
+        const locationParts = placeNameParts.slice(0, -1); // Remove the country
+        // For address searches, keep the full address information including street and number
+        const isAddress = feature.place_name.toLowerCase().includes('avenue') || 
+                          feature.place_name.toLowerCase().includes('street') || 
+                          feature.place_name.toLowerCase().includes('road') ||
+                          /\d+\s+[A-Za-z]/.test(feature.place_name); // Test for number followed by text (street address pattern)
+        
+        const locationName = isAddress 
+          ? locationParts.join(', ').trim() // Keep the full address for specific searches
+          : locationParts[0].trim(); // Just the city/place for broader searches
         
         const newFilters = {
           ...filters,

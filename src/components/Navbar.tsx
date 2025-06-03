@@ -328,7 +328,7 @@ const Navbar = () => {
                     About
                   </Link>
                   <Link 
-                    href="/contact" 
+                    href="/contact-us" 
                     className={cn(
                       "px-4 py-2 text-base font-medium transition-colors duration-300",
                       scrolled ? "text-slate-700 hover:text-blue-600" : 
