@@ -222,41 +222,8 @@ export default function CitySelection() {
   };
 
   return (
-    <div className="py-16 px-4 md:px-8 bg-white">
+    <div className="py-12 px-4 md:px-8 bg-white">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start mb-10">
-          <div>
-            <h2 className="text-3xl md:text-4xl text-start font-bold text-blue-400 mb-2">
-              Explore Cities
-            </h2>
-            <p className="text-gray-400 max-w-2xl">
-              Discover premium accommodations in South Africa&apos;s most
-              vibrant cities. Find your perfect stay today.
-            </p>
-          </div>
-
-          <div className="mt-4 md:mt-0 relative">
-            <div className="relative flex items-center">
-              {/* <input
-                type="text"
-                placeholder="Search cities..."
-                className="pl-10 pr-4 py-2 bg-[#1E2A45]/50 border border-[#1E2A45] rounded-full text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4F9CF9] w-full md:w-[250px]"
-              />
-              <Search className="absolute left-3 w-4 h-4 text-gray-400" /> */}
-
-              <Input
-                type="text"
-                value={searchQuery}
-                onChange={handleInputChange}
-                onKeyPress={handleKeyPress}
-                placeholder="Search by city, neighborhood or address"
-                className="pl-10 pr-4 py-2 bg-[#1E2A45]/50 border border-blue-700 rounded-full text-gray-600 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4F9CF9] w-full md:w-[250px]"
-              />
-              <Search className="absolute left-3 font-bold w-4 h-4 text-blue-700" />
-            </div>
-          </div>
-        </div>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
           {cities.map((city, index) => (
             <CityCard key={city.name} city={city} index={index} />

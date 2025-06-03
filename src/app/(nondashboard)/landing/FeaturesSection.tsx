@@ -64,7 +64,7 @@ const FeaturesSection = () => {
   ]
 
   return (
-    <section className="py-20 px-4 sm:px-6 bg-white">
+    <section className="py-10 px-4 sm:px-6 bg-white">
       <motion.div
         initial="hidden"
         whileInView="visible"

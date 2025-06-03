@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useGetAuthUserQuery } from '@/state/api';
 import { Property } from '@/types/prismaTypes';
 import { Input } from '@/components/ui/input';
@@ -427,9 +428,11 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {existingPhotos.map((url, index) => (
                 <div key={index} className="relative">
-                  <img
+                  <Image
                     src={url}
                     alt={`Property photo ${index + 1}`}
+                    width={300}
+                    height={200}
                     className="w-full h-32 object-cover rounded-md"
                   />
                 </div>

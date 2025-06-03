@@ -130,7 +130,7 @@ const Listings = () => {
       
       return addressMatch;
     });
-  }, [allProperties, filters.location, processedProperties]);
+  }, [filters.location, processedProperties]);
 
   // Local state to track favorite status changes for immediate UI feedback
   const [localFavorites, setLocalFavorites] = useState<Record<number, boolean>>({});

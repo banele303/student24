@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { setFilters } from "@/state";
 import { Search, MapPin} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const HeroSection = () => {
   const dispatch = useDispatch();
@@ -210,9 +211,9 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-4xl pt-6 md:text-4xl lg:text-5xl pt-19 font-bold text-blue-500 mb-6 tracking-tight drop-shadow-lg"
+              className="text-4xl pt-6 md:text-4xl lg:text-5xl pt-19 font-bold text-[#00acee] mb-6 tracking-tight drop-shadow-lg"
             >
-              Find Any Res in South Africa
+              Find Any Res.
             </motion.h1>
 
             <motion.p
@@ -221,8 +222,7 @@ const HeroSection = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-xl text-white/60 mb-8 pb-5 max-w-2xl mx-auto font-semibold"
             >
-              Explore our wide range of rental properties tailored to fit your
-              lifestyle and needs!
+             Find accommodations close to campus at your budget.
             </motion.p>
           </div>
 
@@ -231,10 +231,109 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="bg-white/10 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-white/20"
+            className=""
           >
+
+            {/* Compact Search Bar */}
+            <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-4 w-full p-2">
+              <div className="flex flex-col md:flex-row items-center gap-2">
+                {/* Location Input */}
+                <div className="flex items-center px-3 py-2 flex-1 border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-700 w-full md:w-auto">
+                  <div className="text-[#00acee] mr-2">
+                    <MapPin size={20} />
+                  </div>
+                  <div className="flex-1 group w-full">
+                    <Input
+                      type="text"
+                      value={searchQuery}
+                      onChange={handleInputChange}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Search by city or address"
+                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-2 bg-transparent text-gray-800 placeholder-gray-400 transition-all duration-300 group-hover:placeholder-[#00acee] focus:placeholder-[#00acee] text-base w-full"
+                    />
+                    <div className="h-0.5 w-0 bg-[#00acee] transition-all duration-300 group-hover:w-full group-focus-within:w-full"></div>
+                  </div>
+                </div>
+                
+                {/* Property Type Dropdown */}
+                <div className="flex items-center px-4 py-2 w-full md:w-40">
+                  <div className="text-[#00acee] mr-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1 group relative">
+                    <div className="relative overflow-hidden rounded-lg bg-white/50 shadow-inner transition-all duration-300 group-hover:bg-white/80 px-2 py-1">
+                      <Select defaultValue="any">
+                        <SelectTrigger className="border-0 focus:ring-0 p-0 bg-transparent h-auto text-gray-800 w-full outline-none">
+                          <SelectValue placeholder="Property Type" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-lg shadow-lg border-gray-200 bg-white">
+                          <SelectItem value="any">Any Type</SelectItem>
+                          <SelectItem value="apartment">Apartment</SelectItem>
+                          <SelectItem value="house">House</SelectItem>
+                          <SelectItem value="room">Room</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-[#00acee] transition-transform duration-300 group-hover:rotate-180 bg-white/70 rounded-full p-0.5 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+                {/* Price Range Dropdown */}
+                <div className="flex items-center px-4 py-2 w-full md:w-48">
+                  <div className="text-[#00acee] mr-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="flex-1 group relative">
+                    <div className="relative overflow-hidden rounded-lg bg-white/50 shadow-inner transition-all duration-300 group-hover:bg-white/80 px-2 py-1">
+                      <Select defaultValue="any">
+                        <SelectTrigger className="border-0 focus:ring-0 p-0 bg-transparent h-auto text-gray-800 w-full outline-none">
+                          <SelectValue placeholder="Price Range" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-lg shadow-lg border-gray-200 bg-white">
+                          <SelectItem value="any">Any Price</SelectItem>
+                          <SelectItem value="0-2000">R0 - R2,000</SelectItem>
+                          <SelectItem value="2000-4000">R2,000 - R4,000</SelectItem>
+                          <SelectItem value="4000-6000">R4,000 - R6,000</SelectItem>
+                          <SelectItem value="6000-8000">R6,000 - R8,000</SelectItem>
+                          <SelectItem value="8000-10000">R8,000 - R10,000</SelectItem>
+                          <SelectItem value="10000-15000">R10,000 - R15,000</SelectItem>
+                          <SelectItem value="15000-20000">R15,000 - R20,000</SelectItem>
+                          <SelectItem value="20000+">R20,000+</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-[#00acee] transition-transform duration-300 group-hover:rotate-180 bg-white/70 rounded-full p-0.5 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Search Button */}
+                <div className="w-full md:w-auto px-2">
+                  <Button 
+                    className="w-full bg-[#00acee] hover:bg-[#0099d4] text-white rounded-md px-4 py-2 text-sm"
+                    onClick={handleLocationSearch}
+                  >
+                    <Search size={16} className="mr-1" />
+                    Search
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
             {/* University Location Buttons */}
-            <div className="flex flex-wrap justify-center gap-2 mb-6">
+            <div className="flex flex-wrap justify-center gap-3 mt-6">
               <PropertyTypeTab
                 icon={<Search size={18} />}
                 label="UCT"
@@ -277,33 +376,6 @@ const HeroSection = () => {
                 isActive={activeTab === "su"}
                 onClick={() => handleUniversityClick("SU")}
               />
-            </div>
-
-            {/* Search Input with Animation */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-0">
-              <div className="relative flex-grow group">
-                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  <MapPin
-                    size={20}
-                    className="group-focus-within:text-secondary-500 text-blue-500 transition-colors duration-300"
-                  />
-                </div>
-                <Input
-                  type="text"
-                  value={searchQuery}
-                  onChange={handleInputChange}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Search by city, neighborhood or address"
-                  className="w-full rounded-lg sm:rounded-r-none h-14 border-0 pl-12 pr-4 bg-white text-gray-800 text-lg placeholder-blue-600 placeholder:text-blue-500 focus-visible:ring-2 focus-visible:ring-secondary-400 transition-all duration-300 shadow-inner"
-                />
-              </div>
-              <Button
-                onClick={handleLocationSearch}
-                className="h-14 px-8 bg-blue-500 hover:bg-secondary-600 text-white rounded-lg sm:rounded-l-none text-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-secondary-500/30"
-              >
-                <Search size={20} className="mr-2" />
-                Search
-              </Button>
             </div>
           </motion.div>
         </motion.div>

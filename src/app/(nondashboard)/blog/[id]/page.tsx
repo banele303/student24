@@ -36,7 +36,7 @@ const blogPosts = [
       
       <p>By following these guidelines, you'll be better equipped to find student accommodation that meets your needs and enhances your university experience.</p>
     `,
-    image: "https://realstatee.s3.eu-north-1.amazonaws.com/properties/1746474305856-Screenshot2025-04-29211732.png",
+    image: "/Bloom.png",
     author: "Sarah Johnson",
     date: "May 5, 2025",
     readTime: "5 min read",
@@ -67,7 +67,7 @@ const blogPosts = [
       
       <p>Taking the time to thoroughly check these five aspects before signing a lease can save you from significant headaches and financial losses down the road. Remember, a lease is a binding legal document, so make sure you're comfortable with all its terms before committing.</p>
     `,
-    image: "https://realstatee.s3.eu-north-1.amazonaws.com/properties/1746474305856-Screenshot2025-04-29211732.png",
+    image: "/Bloom.png",
     author: "Michael Chen",
     date: "April 28, 2025",
     readTime: "7 min read",
@@ -107,7 +107,7 @@ const blogPosts = [
       
       <p>Whether co-living represents a temporary housing solution or a long-term lifestyle choice, its growth reflects changing attitudes toward home, community, and urban living in South Africa.</p>
     `,
-    image: "https://realstatee.s3.eu-north-1.amazonaws.com/properties/1746474305856-Screenshot2025-04-29211732.png",
+    image: "/Bloom.png",
     author: "Thabo Mbeki",
     date: "April 15, 2025",
     readTime: "6 min read",
@@ -150,7 +150,7 @@ const blogPosts = [
       
       <p>Remember, the goal is to create a space that feels like yours without making permanent changes that could affect your security deposit. With these budget-friendly approaches, you can enjoy a personalized home environment without overcommitting financially or violating your lease terms.</p>
     `,
-    image: "https://realstatee.s3.eu-north-1.amazonaws.com/properties/1746474305856-Screenshot2025-04-29211732.png",
+    image: "/Bloom.png",
     author: "Jessica Smith",
     date: "April 10, 2025",
     readTime: "4 min read",
@@ -211,7 +211,7 @@ const blogPosts = [
       
       <p>Understanding these legal aspects of renting in South Africa will help you navigate your tenancy with confidence and know when and how to assert your rights if necessary.</p>
     `,
-    image: "https://realstatee.s3.eu-north-1.amazonaws.com/properties/1746474305856-Screenshot2025-04-29211732.png",
+    image: "/Bloom.png",
     author: "David Makhura",
     date: "March 30, 2025",
     readTime: "8 min read",
@@ -273,7 +273,7 @@ const blogPosts = [
       
       <p>As smart home technology continues to evolve, it's transforming the rental experience for both landlords and tenants. Those who embrace these changes stand to benefit from more efficient, comfortable, and secure living environments.</p>
     `,
-    image: "https://realstatee.s3.eu-north-1.amazonaws.com/properties/1746474305856-Screenshot2025-04-29211732.png",
+    image: "/Bloom.png",
     author: "Lerato Khumalo",
     date: "March 22, 2025",
     readTime: "5 min read",
@@ -401,7 +401,7 @@ const BlogPostDetail = () => {
               <div className="flex items-start gap-4">
                 <div className="w-16 h-16 bg-gray-300 rounded-full overflow-hidden flex-shrink-0">
                   <Image 
-                    src="https://realstatee.s3.eu-north-1.amazonaws.com/properties/1746474305856-Screenshot2025-04-29211732.png"
+                    src="/Bloom.png"
                     alt={post.author}
                     width={64}
                     height={64}

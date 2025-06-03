@@ -1,18 +1,18 @@
 import React from "react";
 import HeroSection from "./HeroSection";
-import FeaturesSection from "./FeaturesSection";
-import DiscoverSection from "./DiscoverSection";
 import CallToActionSection from "./CallToActionSection";
 import FooterSection from "./FooterSection";
 import CityCard from "./CitySelection";
 import BlogSection from "./BlogSection";
+import RandomListings from "./RandomListings";
 
 function Landing() {
   return (
     <div>
       <HeroSection />
       <CityCard />
-     <FeaturesSection />
+      <RandomListings />
+      {/* <FeaturesSection /> */}
       <BlogSection />
       {/* <DiscoverSection/> */}
       <CallToActionSection />

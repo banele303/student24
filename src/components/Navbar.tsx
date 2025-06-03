@@ -9,6 +9,7 @@ import { useGetAuthUserQuery } from "@/state/api"
 import { usePathname, useRouter } from "next/navigation"
 import { signOut } from "aws-amplify/auth"
 import { ThemeToggle } from "@/components/ThemeToggle"
+import { cn } from "@/lib/utils"
 import {
   Plus,
   Search,
@@ -42,8 +43,12 @@ const Navbar = () => {
   const router = useRouter()
   const pathname = usePathname()
   const [isLoading, setIsLoading] = useState(true)
+  const [scrolled, setScrolled] = useState(false)
 
   const isDashboardPage = pathname.includes("/managers") || pathname.includes("/tenants") || pathname.includes("/admin")
+  
+  // Check if current page is the home page (which has a dark background image)
+  const isHomePage = pathname === "/"
 
   // Loading state management
   useEffect(() => {
@@ -65,6 +70,26 @@ const Navbar = () => {
     // Clean up loading state if component unmounts during navigation
     return () => {
       setIsLoading(false)
+    }
+  }, [])
+  
+  // Handle scroll events to change navbar background
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setScrolled(true)
+      } else {
+        setScrolled(false)
+      }
+    }
+    
+    window.addEventListener('scroll', handleScroll)
+    
+    // Initial check
+    handleScroll()
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
     }
   }, [])
 
@@ -100,8 +125,16 @@ const Navbar = () => {
 
       <header className="fixed top-0 left-0 w-full z-50">
         <div 
-          className={`flex justify-between items-center w-full px-6 md:px-8 transition-colors backdrop-blur-lg border-b
-                    bg-white/90 ${isDashboardPage ? 'dark:bg-slate-900/90 dark:border-slate-700/40' : 'bg-white/90'} border-slate-200`}
+          className={cn(
+            "flex justify-between items-center w-full px-6 md:px-8 transition-all duration-300",
+            isDashboardPage 
+              ? "bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-700/40 backdrop-blur-lg" 
+              : scrolled 
+                ? "bg-white/90 border-b border-slate-200 backdrop-blur-lg" 
+                : isHomePage 
+                  ? "bg-transparent border-transparent" 
+                  : "bg-white/80 backdrop-blur-sm border-b border-slate-200/30"
+          )}
           style={{ height: `${NAVBAR_HEIGHT}px` }}
         >
           {/* Left section: Logo and dashboard actions */}
@@ -166,14 +199,7 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Middle section: Tagline (only on non-dashboard pages) */}
-          {!isDashboardPage && (
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-full flex justify-center">
-              <p className="text-slate-600 dark:text-slate-300 hidden md:block font-light tracking-wide text-center">
-                Discover your perfect rental apartment with our advanced search
-              </p>
-            </div>
-          )}
+          {/* Middle section removed */}
 
           {/* Right section: User actions */}
           <div className="flex items-center gap-6">
@@ -278,58 +304,89 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                {/* Theme toggle for non-authenticated users */}
-                <ThemeToggle />
-                
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 hover:border-slate-300 shadow-sm transition-all duration-300 rounded-full h-10 w-10"
-                    >
-                      <User className="h-5 w-5 text-slate-700" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    className="bg-white dark:bg-slate-900 shadow-xl rounded-xl border border-slate-200 dark:border-slate-800 mt-2 p-1 min-w-[200px] animate-in fade-in-50 zoom-in-95 duration-200"
-                    align="end"
-                    sideOffset={8}
+                <div className="flex items-center gap-6">
+                  {/* Navigation links for non-authenticated users */}
+                  <nav className="hidden md:flex items-center space-x-3">
+                  <Link 
+                    href="/" 
+                    className={cn(
+                      "px-4 py-2 text-base font-medium transition-colors duration-300",
+                      scrolled ? "text-slate-700 hover:text-blue-600" : 
+                      isHomePage ? "text-white hover:text-blue-100" : "text-slate-700 hover:text-blue-600"
+                    )}
                   >
-                    <DropdownMenuItem
-                      className="cursor-pointer py-2.5 px-3 my-1 rounded-md text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 flex items-center gap-2 text-sm"
-                      onClick={() => router.push('/blog', { scroll: false })}
-                    >
-                      <BookOpen className="w-4 h-4" />
-                      <span>Blog</span>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem
-                      className="cursor-pointer py-2.5 px-3 my-1 rounded-md text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 flex items-center gap-2 text-sm"
-                      onClick={() => router.push("/signin")}
-                    >
-                      <LogIn className="w-4 h-4" />
-                      <span>Sign In</span>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuSeparator className="bg-slate-200 dark:bg-slate-800 my-1" />
-
-                    <DropdownMenuItem
-                      className="cursor-pointer py-2.5 px-3 my-1 rounded-md bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-200 flex items-center gap-2 text-sm"
-                      onClick={() => router.push("/signup")}
-                    >
-                      <UserPlus className="w-4 h-4" />
-                      <span>Sign Up</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                    Home
+                  </Link>
+                  <Link 
+                    href="/about" 
+                    className={cn(
+                      "px-4 py-2 text-base font-medium transition-colors duration-300",
+                      scrolled ? "text-slate-700 hover:text-blue-600" : 
+                      isHomePage ? "text-white hover:text-blue-100" : "text-slate-700 hover:text-blue-600"
+                    )}
+                  >
+                    About
+                  </Link>
+                  <Link 
+                    href="/contact" 
+                    className={cn(
+                      "px-4 py-2 text-base font-medium transition-colors duration-300",
+                      scrolled ? "text-slate-700 hover:text-blue-600" : 
+                      isHomePage ? "text-white hover:text-blue-100" : "text-slate-700 hover:text-blue-600"
+                    )}
+                  >
+                    Contact
+                  </Link>
+                  <Link 
+                    href="/landlords" 
+                    className={cn(
+                      "px-4 py-2 text-base font-medium transition-colors duration-300",
+                      scrolled ? "text-slate-700 hover:text-blue-600" : 
+                      isHomePage ? "text-white hover:text-blue-100" : "text-slate-700 hover:text-blue-600"
+                    )}
+                  >
+                    Landlords
+                  </Link>
+                  </nav>
+                  
+                  {/* Theme toggle for non-authenticated users */}
+                  <ThemeToggle />
+                  
+                  {/* Auth buttons */}
+                  <div className="flex items-center gap-8 mr-5">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => router.push("/register")}
+                    className={cn(
+                      "transition-colors bg-transparent border-2 px-7 py-4 rounded-full text-l shadow-md",
+                      scrolled 
+                        ? "border-[#00acee] hover:border-[#00acee] text-black hover:text-blue-700" 
+                        : isHomePage
+                          ? "border-gray-300 bg-transparent hover:border-gray-300 text-slate-200"
+                          : "border-[#00acee] hover:border-[#00acee] text-slate-700 hover:text-blue-700"
+                    )}
+                  >
+                    Register
+                  </Button>
+                  
+                  <Button
+                    size="lg"
+                    onClick={() => router.push("/signin")}
+                    className="bg-[#00acee] hover:bg-[#00acee] text-white  text-l px-7 py-5 rounded-full shadow-full hover:shadow-xl transition-all duration-300"
+                  >
+                    Login
+                  </Button>
+                  </div>
+                </div>
               </>
             )}
+
           </div>
         </div>
       </header>
     </>
-  )
+  );
 }
 
 export default Navbar
