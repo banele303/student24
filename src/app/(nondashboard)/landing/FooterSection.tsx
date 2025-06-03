@@ -25,7 +25,7 @@ const FooterSection = () => {
                 <Link href="/about">About Us</Link>
               </li>
               <li>
-                <Link href="/contact">Contact Us</Link>
+                <Link href="/contact-us">Contact Us</Link>
               </li>
               <li>
                 <Link href="/faq">FAQ</Link>
@@ -34,7 +34,7 @@ const FooterSection = () => {
                 <Link href="/terms">Terms</Link>
               </li>
               <li>
-                <Link href="/privacy">Privacy</Link>
+                <Link href="/privacy-policy">Privacy</Link>
               </li>
             </ul>
           </nav>
@@ -70,9 +70,8 @@ const FooterSection = () => {
         </div>
         <div className="mt-8 text-center text-sm text-gray-500 flex justify-center space-x-4">
           <span>© RENTiful. All rights reserved.</span>
-          <Link href="/privacy">Privacy Policy</Link>
+          <Link href="/privacy-policy">Privacy Policy</Link>
           <Link href="/terms">Terms of Service</Link>
-          <Link href="/cookies">Cookie Policy</Link>
         </div>
       </div>
     </footer>
