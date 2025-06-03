@@ -1,12 +1,9 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import FooterSection from "../landing/FooterSection";
-import { Check, CheckCircle2 } from "lucide-react";
+
 import LandlordHero from "./landlord-hero";
-import FeaturesSection from "../landing/FeaturesSection";
 import FeaturesLandSection from "./Featured";
 import HowItWorks from "./how-it-works";
 import BenefitsSection from "./benefits-section";
@@ -14,12 +11,12 @@ import BenefitsSection from "./benefits-section";
 export default function LandlordsPage() {
   return (
     <div className="min-h-screen">
-    <LandlordHero/>
-    <FeaturesLandSection/>
+      <LandlordHero />
+      <FeaturesLandSection />
 
-     <HowItWorks/>
-     <BenefitsSection/>
-     
+      <HowItWorks />
+      <BenefitsSection />
+
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-[#00acee]">
@@ -28,13 +25,13 @@ export default function LandlordsPage() {
             Ready to list your accommodation with us?
           </h2>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Button 
+            <Button
               className="bg-white text-[#00acee] hover:bg-gray-100 font-medium px-8 py-6 rounded-full text-lg"
               onClick={() => window.location.href = "/signin"}
             >
               Login to your account
             </Button>
-            <Button 
+            <Button
               className="bg-[#00acee] border-2 border-white text-white hover:bg-blue-500 font-medium px-8 py-6 rounded-full text-lg"
               onClick={() => window.location.href = "/register"}
             >
