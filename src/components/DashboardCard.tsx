@@ -11,8 +11,21 @@ import {
   Home,
   MapPin,
   Star,
-  Trash2,
-} from "lucide-react";
+  Trash2          {property.isPetsAllowed && (
+            <Badge className="bg-black/70 text-white text-xs font-medium backdrop-blur-sm border border-[#333]">
+              Pets
+            </Badge>
+          )}
+          {property.isParkingIncluded && (
+            <Badge className="bg-black/70 text-white text-xs font-medium backdrop-blur-sm border border-[#333]">
+              Parking
+            </Badge>
+          )}
+          {property.isNsfassAccredited && (
+            <Badge className="bg-green-600/70 text-white text-xs font-medium backdrop-blur-sm border border-green-500">
+              NSFAS
+            </Badge>
+          )}lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -39,6 +52,7 @@ interface PropertyCardProps {
     numberOfReviews?: number;
     isPetsAllowed?: boolean;
     isParkingIncluded?: boolean;
+    isNsfassAccredited?: boolean;
   };
   isFavorite?: boolean;
   onFavoriteToggle?: () => void;

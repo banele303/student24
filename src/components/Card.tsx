@@ -30,6 +30,7 @@ interface PropertyCardProps {
     numberOfReviews: number
     isPetsAllowed?: boolean
     isParkingIncluded?: boolean
+    isNsfassAccredited?: boolean
     availableRooms?: number
   }
   isFavorite?: boolean
@@ -79,7 +80,7 @@ function PropertyCard({
 
   return (
     <Card
-      className="group overflow-hidden transition-all bg-white mt-6 duration-300 hover:shadow-md border border-gray-200 bg-white rounded-xl relative max-w-sm cursor-pointer"
+      className="group overflow-hidden transition-all mt-6 duration-300 hover:shadow-md border border-gray-200 bg-white rounded-xl relative max-w-sm cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
@@ -134,6 +135,11 @@ function PropertyCard({
           {property.isParkingIncluded && (
             <Badge className="bg-white/90 text-gray-800 text-xs font-medium backdrop-blur-sm border border-gray-200">
               Parking Included
+            </Badge>
+          )}
+          {property.isNsfassAccredited && (
+            <Badge className="bg-green-100/90 text-green-800 text-xs font-medium backdrop-blur-sm border border-green-300">
+              NSFAS Accredited
             </Badge>
           )}
         </div>

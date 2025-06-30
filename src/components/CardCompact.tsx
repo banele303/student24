@@ -28,6 +28,7 @@ interface PropertyCardCompactProps {
     numberOfReviews: number
     isPetsAllowed?: boolean
     isParkingIncluded?: boolean
+    isNsfassAccredited?: boolean
     availableRooms?: number
   }
   isFavorite?: boolean
@@ -172,6 +173,11 @@ export default function PropertyCardCompact({
             {property.isParkingIncluded && (
               <Badge variant="outline" className="text-xs bg-gray-50 border-gray-200">
                 Parking
+              </Badge>
+            )}
+            {property.isNsfassAccredited && (
+              <Badge variant="outline" className="text-xs bg-green-50 border-green-200 text-green-700">
+                NSFAS
               </Badge>
             )}
           </div>

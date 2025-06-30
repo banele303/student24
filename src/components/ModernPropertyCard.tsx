@@ -25,6 +25,7 @@ interface ModernPropertyCardProps {
     numberOfReviews?: number
     isPetsAllowed?: boolean
     isParkingIncluded?: boolean
+    isNsfassAccredited?: boolean
     availableRooms?: number
     price?: number
   }
@@ -173,6 +174,20 @@ function ModernPropertyCard({
               )}
             </div>
           )}
+
+          {/* Features badges */}
+          <div className="flex flex-wrap gap-1 mt-1">
+            {property.isNsfassAccredited && (
+              <span className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-[8px] px-1.5 py-0.5 rounded-full font-medium border border-green-300 dark:border-green-700">
+                NSFAS
+              </span>
+            )}
+            {property.isParkingIncluded && (
+              <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-[8px] px-1.5 py-0.5 rounded-full font-medium border border-blue-300 dark:border-blue-700">
+                Parking
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </Card>
