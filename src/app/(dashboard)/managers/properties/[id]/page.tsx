@@ -253,12 +253,6 @@ const PropertyDetails = () => {
                     <span className="font-medium text-gray-800 dark:text-white">R{property?.securityDeposit?.toFixed(2)}</span>
                   </div>
                 )}
-                {property?.applicationFee && (
-                  <div className="flex justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                    <span className="text-gray-600 dark:text-gray-300">Application Fee</span>
-                    <span className="font-medium text-gray-800 dark:text-white">R{property?.applicationFee?.toFixed(2)}</span>
-                  </div>
-                )}
                 <div className="flex justify-between p-4 bg-gradient-to-r from-blue-900/30 to-blue-800/30 rounded-lg border border-blue-700/30 mt-4">
                   <span className="font-semibold text-white">Total Due at Signing</span>
                   <span className="font-bold text-white">R{((property?.pricePerMonth || 0) + (property?.securityDeposit || 0)).toFixed(2)}</span>
