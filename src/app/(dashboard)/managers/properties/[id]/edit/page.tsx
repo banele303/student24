@@ -289,7 +289,6 @@ export default function EditPropertyPage() {
         description: fetchedPropertyData.description || "",
         pricePerMonth: fetchedPropertyData.pricePerMonth || 0,
         securityDeposit: fetchedPropertyData.securityDeposit ?? undefined, // Use undefined for optional numbers
-        isPetsAllowed: false, // Default since it's not in the API response type
         isParkingIncluded: fetchedPropertyData.isParkingIncluded || false,
         isNsfassAccredited: fetchedPropertyData.isNsfassAccredited || false,
         amenities: fetchedPropertyData.amenities || [],
