@@ -21,10 +21,10 @@ export default function TermsPage() {
         <div className="prose max-w-none">
           <h2 className="text-2xl font-bold text-slate-800 mb-6">1. Definitions</h2>
           <ul className="list-disc pl-5 mb-6 space-y-2">
-            <li><strong>"Student"</strong> refers to any person using the platform to seek accommodation.</li>
-            <li><strong>"Landlord"</strong> refers to any individual or entity listing accommodation on the platform.</li>
-            <li><strong>"Tenant"</strong> refers to a student whose application is accepted by a landlord.</li>
-            <li><strong>"Platform"</strong> refers to the Rental App website.</li>
+            <li><strong>&quot;Student&quot;</strong> refers to any person using the platform to seek accommodation.</li>
+            <li><strong>&quot;Landlord&quot;</strong> refers to any individual or entity listing accommodation on the platform.</li>
+            <li><strong>&quot;Tenant&quot;</strong> refers to a student whose application is accepted by a landlord.</li>
+            <li><strong>&quot;Platform&quot;</strong> refers to the Rental App website.</li>
           </ul>
 
           <h2 className="text-2xl font-bold text-slate-800 mb-6">2. User Registration and Application Process</h2>
