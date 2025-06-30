@@ -401,6 +401,9 @@ export async function POST(request: NextRequest) {
             isParkingIncluded: typeof propertyData.isParkingIncluded === "boolean" 
               ? propertyData.isParkingIncluded 
               : propertyData.isParkingIncluded === "true",
+            isNsfassAccredited: typeof propertyData.isNsfassAccredited === "boolean" 
+              ? propertyData.isNsfassAccredited 
+              : propertyData.isNsfassAccredited === "true",
             // Parse numeric fields
             pricePerMonth: typeof propertyData.pricePerMonth === "number" 
               ? propertyData.pricePerMonth 
@@ -408,9 +411,6 @@ export async function POST(request: NextRequest) {
             securityDeposit: typeof propertyData.securityDeposit === "number" 
               ? propertyData.securityDeposit 
               : parseFloat(propertyData.securityDeposit) || 0,
-            applicationFee: typeof propertyData.applicationFee === "number" 
-              ? propertyData.applicationFee 
-              : parseFloat(propertyData.applicationFee) || 0,
             beds: typeof propertyData.beds === "number" 
               ? propertyData.beds 
               : parseInt(propertyData.beds) || 1,

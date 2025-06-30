@@ -186,8 +186,7 @@ const NewProperty = () => {
       description: "",
       pricePerMonth: 1000,
       securityDeposit: 500,
-      applicationFee: 100,
-      isPetsAllowed: true,
+      isNsfassAccredited: false,
       isParkingIncluded: true,
       photoUrls: [] as unknown as FileList, // Important for react-hook-form with file inputs
       amenities: [],
@@ -218,8 +217,7 @@ const NewProperty = () => {
         break;
       case 2: // Pricing & Fees
         isValid = formState.pricePerMonth > 0 && 
-                 formState.securityDeposit >= 0 && 
-                 formState.applicationFee >= 0;
+                 formState.securityDeposit >= 0;
         break;
       case 3: // Property Details
         isValid = formState.beds > 0 && 
@@ -723,6 +721,19 @@ const NewProperty = () => {
                     labelClassName={labelStyle}
                     inputClassName={`${inputStyle} h-10`}
                   />
+
+                  {/* NSFAS Accreditation - Making it prominent */}
+                  <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-lg p-4">
+                    <CreateFormField
+                      name="isNsfassAccredited"
+                      label="NSFAS Accredited Property"
+                      type="switch"
+                      labelClassName={`${labelStyle} text-green-400 font-semibold`}
+                    />
+                    <p className="text-xs text-green-300/70 mt-1">
+                      Mark if this property accepts NSFAS funding. NSFAS accredited properties are prioritized for students with government funding.
+                    </p>
+                  </div>
                 </div>
                 
                 <StepNavigation
@@ -738,7 +749,7 @@ const NewProperty = () => {
               {/* Step 2: Pricing & Fees */}
               <FormStep 
                 title="Pricing & Fees" 
-                icon={<CircleDollarSign size={20} />}
+                icon={<CircleDollarSign size={20} />} 
                 isActive={currentStep === 2}
                 isCompleted={completedSteps.includes(2)}
                 stepNumber={2}
@@ -758,7 +769,7 @@ const NewProperty = () => {
                     <span className="absolute top-9 left-3 text-gray-400">R</span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                     <div className="relative">
                       <CustomFormField
                         name="securityDeposit"
@@ -770,19 +781,13 @@ const NewProperty = () => {
                       />
                       <span className="absolute top-9 left-3 text-gray-400">R</span>
                     </div>
-
-                    <div className="relative">
-                      <CustomFormField
-                        name="applicationFee"
-                        label="Application Fee"
-                        type="number"
-                        labelClassName={labelStyle}
-                        inputClassName={`${inputStyle} pl-7`}
-                        min={0}
-                      />
-                      <span className="absolute top-9 left-3 text-gray-400">R</span>
-                    </div>
                   </div>
+                  <CreateFormField
+                    name="isParkingIncluded"
+                    label="Parking Included"
+                    type="switch"
+                    labelClassName={labelStyle}
+                  />
                 </div>
                 
                 <StepNavigation
@@ -832,22 +837,6 @@ const NewProperty = () => {
                       labelClassName={labelStyle}
                       inputClassName={inputStyle}
                       min={0}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <CreateFormField
-                      name="isPetsAllowed"
-                      label="Pets Allowed"
-                      type="switch"
-                      labelClassName={labelStyle}
-                    />
-
-                    <CreateFormField
-                      name="isParkingIncluded"
-                      label="Parking Included"
-                      type="switch"
-                      labelClassName={labelStyle}
                     />
                   </div>
                   

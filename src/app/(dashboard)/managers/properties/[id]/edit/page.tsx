@@ -534,6 +534,7 @@ export default function EditPropertyPage() {
                   <CreateFormFieldt name="applicationFee" label="Application Fee" type="number" control={propertyForm.control} min={0} inputClassName="pl-8" placeholder="0.00" />
                   <span className="absolute top-[2.3rem] left-3 text-muted-foreground font-medium dark:text-gray-400">R</span>
                 </div>
+                <CreateFormFieldt name="isParkingIncluded" label="Parking Included with Property" type="switch" control={propertyForm.control} />
               </div>
             </FormSection>
 
@@ -546,8 +547,7 @@ export default function EditPropertyPage() {
                   <CreateFormFieldt name="squareFeet" label="Total Square Feet (Property)" type="number" control={propertyForm.control} min={0} placeholder="e.g., 2500" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 items-center pt-2">
-                  <CreateFormFieldt name="isPetsAllowed" label="Pets Allowed on Property" type="switch" control={propertyForm.control} />
-                  <CreateFormFieldt name="isParkingIncluded" label="Parking Included with Property" type="switch" control={propertyForm.control} />
+                  <CreateFormFieldt name="isNsfassAccredited" label="NSFAS Accredited" type="switch" control={propertyForm.control} />
                 </div>
               </div>
             </FormSection>

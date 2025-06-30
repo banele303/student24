@@ -60,7 +60,6 @@ export interface Property {
   propertyType?: string;
   price: number;
   securityDeposit?: number;
-  applicationFee?: number;
   beds: number;
   baths: number;
   squareFeet?: number;
@@ -74,6 +73,7 @@ export interface Property {
   // Property features
   isPetsAllowed?: boolean;
   isParkingIncluded?: boolean;
+  isNsfassAccredited?: boolean;
   amenities?: string[];
   highlights?: string[];
   // Related models

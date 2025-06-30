@@ -319,15 +319,15 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         ...(propertyData.isParkingIncluded !== undefined && {
           isParkingIncluded: propertyData.isParkingIncluded === "true"
         }),
+        ...(propertyData.isNsfassAccredited !== undefined && {
+          isNsfassAccredited: propertyData.isNsfassAccredited === "true"
+        }),
         // Parse numeric fields if present
         ...(propertyData.pricePerMonth !== undefined && {
           pricePerMonth: parseFloat(propertyData.pricePerMonth) || undefined
         }),
         ...(propertyData.securityDeposit !== undefined && {
           securityDeposit: parseFloat(propertyData.securityDeposit) || undefined
-        }),
-        ...(propertyData.applicationFee !== undefined && {
-          applicationFee: parseFloat(propertyData.applicationFee) || undefined
         }),
         ...(propertyData.beds !== undefined && {
           beds: parseInt(propertyData.beds) || undefined

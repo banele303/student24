@@ -6,8 +6,7 @@ export const propertySchema = z.object({
   description: z.string().min(1, "Description is required"),
   pricePerMonth: z.number().min(0, "Price must be positive"),
   securityDeposit: z.number().min(0, "Security deposit must be positive"),
-  applicationFee: z.number().min(0, "Application fee must be positive"),
-  isPetsAllowed: z.boolean(),
+  isNsfassAccredited: z.boolean(),
   isParkingIncluded: z.boolean(),
   photoUrls: z.any(), // This will be handled by the file input
   amenities: z.array(z.string()).min(1, "At least one amenity is required"),
@@ -78,9 +77,9 @@ export interface ApiProperty {
   photoUrls: string[];
   pricePerMonth: number;
   securityDeposit?: number | null;
-  applicationFee?: number | null;
   isPetsAllowed: boolean;
   isParkingIncluded: boolean;
+  isNsfassAccredited: boolean;
   propertyType: PropertyTypeEnum;
   beds: number;
   baths: number;

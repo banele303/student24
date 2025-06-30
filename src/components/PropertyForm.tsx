@@ -252,43 +252,60 @@ export const PropertyForm = ({
             />
           </div>
 
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              name="isNsfassAccredited"
+              defaultChecked={initialData?.isNsfassAccredited}
+              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            />
+            <label className="ml-2 block text-sm text-gray-700">
+              NSFAS Accredited
+            </label>
+          </div>
+        </div>
+
+        {/* Pricing */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">Pricing and Fees</h3>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Application Fee
+              Price per Month
             </label>
             <input
               type="number"
-              name="applicationFee"
-              defaultValue={initialData?.applicationFee}
+              name="pricePerMonth"
+              defaultValue={initialData?.pricePerMonth}
+              min="0"
+              required
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Security Deposit
+            </label>
+            <input
+              type="number"
+              name="securityDeposit"
+              defaultValue={initialData?.securityDeposit}
               min="0"
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             />
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                name="isPetsAllowed"
-                defaultChecked={initialData?.isPetsAllowed}
-                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              <label className="ml-2 block text-sm text-gray-700">
-                Pets Allowed
-              </label>
-            </div>
-
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                name="isParkingIncluded"
-                defaultChecked={initialData?.isParkingIncluded}
-                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              <label className="ml-2 block text-sm text-gray-700">
-                Parking Included
-              </label>
-            </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              name="isParkingIncluded"
+              defaultChecked={initialData?.isParkingIncluded}
+              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            />
+            <label className="ml-2 block text-sm text-gray-700">
+              Parking Included
+            </label>
           </div>
         </div>
 

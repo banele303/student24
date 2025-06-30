@@ -27,9 +27,9 @@ export interface Property {
   price?: number;        // Add alternative field name
   priceUnit?: string;
   securityDeposit?: number;
-  applicationFee?: number;
   isPetsAllowed: boolean;
   isParkingIncluded: boolean;
+  isNsfassAccredited: boolean;
   amenities?: string[];
   highlights?: string[];
   averageRating?: number;

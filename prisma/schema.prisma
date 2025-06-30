@@ -78,12 +78,12 @@ model Property {
   description       String
   pricePerMonth     Float
   securityDeposit   Float
-  applicationFee    Float
   photoUrls         String[]
   amenities         Amenity[]
   highlights        Highlight[]
   isPetsAllowed     Boolean      @default(false)
   isParkingIncluded Boolean      @default(false)
+  isNsfassAccredited Boolean     @default(false)
   beds              Int
   baths             Float
   squareFeet        Int
