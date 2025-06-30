@@ -76,20 +76,11 @@ const PropertyDetails = ({ propertyId }: PropertyDetailsProps) => {
         <Tabs defaultValue="required-fees" className="mt-8">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="required-fees">Required Fees</TabsTrigger>
-            <TabsTrigger value="pets">Pets</TabsTrigger>
+            <TabsTrigger value="nsfas">NSFAS</TabsTrigger>
             <TabsTrigger value="parking">Parking</TabsTrigger>
           </TabsList>
           <TabsContent value="required-fees" className="w-1/3">
             <p className="font-semibold mt-5 mb-2">One time move in fees</p>
-            <hr />
-            <div className="flex justify-between py-2 bg-secondary-50">
-              <span className="text-primary-700 font-medium">
-                Application Fee
-              </span>
-              <span className="text-primary-700">
-                R {property.applicationFee || 0}
-              </span>
-            </div>
             <hr />
             <div className="flex justify-between py-2 bg-secondary-50">
               <span className="text-primary-700 font-medium">
@@ -101,9 +92,9 @@ const PropertyDetails = ({ propertyId }: PropertyDetailsProps) => {
             </div>
             <hr />
           </TabsContent>
-          <TabsContent value="pets">
+          <TabsContent value="nsfas">
             <p className="font-semibold mt-5 mb-2">
-              Pets are {property.isPetsAllowed ? "allowed" : "not allowed"}
+              {property.isNsfassAccredited ? "NSFAS Accredited" : "Not NSFAS Accredited"}
             </p>
           </TabsContent>
           <TabsContent value="parking">
