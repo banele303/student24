@@ -289,9 +289,9 @@ export default function EditPropertyPage() {
         description: fetchedPropertyData.description || "",
         pricePerMonth: fetchedPropertyData.pricePerMonth || 0,
         securityDeposit: fetchedPropertyData.securityDeposit ?? undefined, // Use undefined for optional numbers
-        applicationFee: fetchedPropertyData.applicationFee ?? undefined, // Use undefined for optional numbers
-        isPetsAllowed: fetchedPropertyData.isPetsAllowed || false,
+        isPetsAllowed: false, // Default since it's not in the API response type
         isParkingIncluded: fetchedPropertyData.isParkingIncluded || false,
+        isNsfassAccredited: fetchedPropertyData.isNsfassAccredited || false,
         amenities: fetchedPropertyData.amenities || [],
         highlights: fetchedPropertyData.highlights || [],
         propertyType: fetchedPropertyData.propertyType ? (fetchedPropertyData.propertyType as PropertyTypeEnum) : PropertyTypeEnum.Apartment,
@@ -344,7 +344,7 @@ export default function EditPropertyPage() {
             formData.append(key, String(value));
         } else if (value !== null && value !== undefined && value !== '') {
             formData.append(key, String(value));
-        } else if (key === 'squareFeet' || key === 'securityDeposit' || key === 'applicationFee') { // Handle optional numbers that might be 0
+        } else if (key === 'squareFeet' || key === 'securityDeposit') { // Handle optional numbers that might be 0
              if (typeof value === 'number' && value === 0) {
                  formData.append(key, '0');
              } // If null/undefined, don't append
@@ -529,12 +529,8 @@ export default function EditPropertyPage() {
                   <CreateFormFieldt name="securityDeposit" label="Security Deposit" type="number" control={propertyForm.control} min={0} inputClassName="pl-8" placeholder="0.00" />
                   <span className="absolute top-[2.3rem] left-3 text-muted-foreground font-medium dark:text-gray-400">R</span>
                 </div>
-                <div className="relative">
-                   {/* Use CreateFormFieldt */}
-                  <CreateFormFieldt name="applicationFee" label="Application Fee" type="number" control={propertyForm.control} min={0} inputClassName="pl-8" placeholder="0.00" />
-                  <span className="absolute top-[2.3rem] left-3 text-muted-foreground font-medium dark:text-gray-400">R</span>
-                </div>
                 <CreateFormFieldt name="isParkingIncluded" label="Parking Included with Property" type="switch" control={propertyForm.control} />
+                <CreateFormFieldt name="isNsfassAccredited" label="NSFAS Accredited Property" type="switch" control={propertyForm.control} />
               </div>
             </FormSection>
 
