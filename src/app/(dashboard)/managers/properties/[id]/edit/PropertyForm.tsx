@@ -54,8 +54,13 @@ const PROPERTY_TYPES = [
   'LOFT'
 ];
 
+// Extend the Property type if needed
+interface ExtendedProperty extends Partial<Property> {
+  // Add any additional properties if needed
+}
+
 interface PropertyFormProps {
-  property?: Property;
+  property?: ExtendedProperty;
   onSubmit: (formData: FormData) => void;
   isSubmitting: boolean;
 }
@@ -74,12 +79,12 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
   const [propertyType, setPropertyType] = useState(property?.propertyType || 'APARTMENT');
   const [price, setPrice] = useState(property?.price?.toString() || '');
   const [securityDeposit, setSecurityDeposit] = useState(property?.securityDeposit?.toString() || '');
-  const [applicationFee, setApplicationFee] = useState(property?.applicationFee?.toString() || '');
   const [beds, setBeds] = useState(property?.beds?.toString() || '');
   const [baths, setBaths] = useState(property?.baths?.toString() || '');
   const [squareFeet, setSquareFeet] = useState(property?.squareFeet?.toString() || '');
   const [isPetsAllowed, setIsPetsAllowed] = useState(property?.isPetsAllowed || false);
   const [isParkingIncluded, setIsParkingIncluded] = useState(property?.isParkingIncluded || false);
+  const [isNsfassAccredited, setIsNsfassAccredited] = useState(property?.isNsfassAccredited || false);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>(property?.amenities || []);
   const [highlights, setHighlights] = useState<string>(
     property?.highlights ? property.highlights.join('\n') : ''
@@ -109,12 +114,12 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
     formData.append('propertyType', propertyType);
     formData.append('price', price);
     formData.append('securityDeposit', securityDeposit);
-    formData.append('applicationFee', applicationFee);
     formData.append('beds', beds);
     formData.append('baths', baths);
     formData.append('squareFeet', squareFeet);
     formData.append('isPetsAllowed', isPetsAllowed.toString());
     formData.append('isParkingIncluded', isParkingIncluded.toString());
+    formData.append('isNsfassAccredited', isNsfassAccredited.toString());
     
     // Add location info
     formData.append('address', address);
@@ -259,7 +264,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
           <div className="flex items-center space-x-2">
             <Switch
               id="isPetsAllowed"
@@ -277,6 +282,15 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             />
             <Label htmlFor="isParkingIncluded">Parking Included</Label>
           </div>
+
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="isNsfassAccredited"
+              checked={isNsfassAccredited}
+              onCheckedChange={setIsNsfassAccredited}
+            />
+            <Label htmlFor="isNsfassAccredited" className="text-green-600 font-semibold">NSFAS Accredited</Label>
+          </div>
         </div>
       </div>
       
@@ -285,7 +299,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
       {/* Financial Information */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Financial Information</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           <div className="space-y-2">
             <Label htmlFor="securityDeposit">Security Deposit ($)</Label>
             <Input
@@ -296,19 +310,6 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
               value={securityDeposit}
               onChange={(e) => setSecurityDeposit(e.target.value)}
               placeholder="Security deposit amount"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="applicationFee">Application Fee ($)</Label>
-            <Input
-              id="applicationFee"
-              type="number"
-              min="0"
-              step="0.01"
-              value={applicationFee}
-              onChange={(e) => setApplicationFee(e.target.value)}
-              placeholder="Application fee amount"
             />
           </div>
         </div>
