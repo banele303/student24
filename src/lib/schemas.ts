@@ -49,6 +49,7 @@ export type SettingsFormData = z.infer<typeof settingsSchema>;
 
 // Room form data schema
 export const roomSchema = z.object({
+  id: z.number().optional(), // For editing existing rooms
   propertyId: z.number().or(z.string().transform(val => parseInt(val))),
   name: z.string().min(1, "Room name is required"),
   description: z.string().optional(),

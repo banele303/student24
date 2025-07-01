@@ -161,6 +161,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           for (const photoEntry of photoEntries) {
             try {
               if (photoEntry instanceof File) {
+                // Limit file size to 5MB to prevent 413 errors
+                if (photoEntry.size > 5 * 1024 * 1024) {
+                  console.warn(`File ${photoEntry.name} is too large (${photoEntry.size} bytes), skipping`);
+                  continue;
+                }
+                
                 console.log(`Processing photo as File: ${photoEntry.name}, size: ${photoEntry.size}, type: ${photoEntry.type}`);
                 const photoBuffer = Buffer.from(await photoEntry.arrayBuffer());
                 const photoUrl = await uploadFileToS3(photoBuffer, photoEntry.name, photoEntry.type);

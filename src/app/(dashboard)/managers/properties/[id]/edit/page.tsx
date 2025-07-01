@@ -402,6 +402,7 @@ export default function EditPropertyPage() {
 
   const openRoomModalForEdit = (roomFromApi: ApiRoom) => {
     const roomFormDataForModal: Partial<RoomFormData> = {
+        id: roomFromApi.id, // Add the room ID for editing
         propertyId: roomFromApi.propertyId,
         name: roomFromApi.name,
         description: roomFromApi.description || "",

@@ -102,7 +102,30 @@ export function PropertyEditPageRoomFormModal({
   }, [isOpen, initialRoomData, propertyId, resetRoomForm, setCurrentPhotosInModal, setNewPhotoFilesModal, setPhotosToDeleteModal, setReplacePhotosFlagModal]);
 
   const handleFileChangeModal = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewPhotoFilesModal(e.target.files);
+    const files = e.target.files;
+    if (files) {
+      // Check file sizes
+      const maxSize = 5 * 1024 * 1024; // 5MB limit
+      const oversizedFiles = Array.from(files).filter(file => file.size > maxSize);
+      
+      if (oversizedFiles.length > 0) {
+        modalToast.error(`Some files are too large (max 5MB): ${oversizedFiles.map(f => f.name).join(', ')}`);
+        // Filter out oversized files
+        const validFiles = Array.from(files).filter(file => file.size <= maxSize);
+        if (validFiles.length > 0) {
+          // Create a new FileList with only valid files
+          const dt = new DataTransfer();
+          validFiles.forEach(file => dt.items.add(file));
+          setNewPhotoFilesModal(dt.files);
+        } else {
+          setNewPhotoFilesModal(null);
+        }
+      } else {
+        setNewPhotoFilesModal(files);
+      }
+    } else {
+      setNewPhotoFilesModal(null);
+    }
   };
 
   const togglePhotoForDeleteModal = (url: string) => {
