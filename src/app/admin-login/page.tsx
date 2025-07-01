@@ -230,7 +230,7 @@ export default function AdminLogin() {
               >
                 {isLoading ? (
                   <>
-                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    <div className="mr-2 h-4 w-4 bg-white/30 rounded animate-pulse"></div>
                     Authenticating...
                   </>
                 ) : (
@@ -268,7 +268,7 @@ export default function AdminLogin() {
               >
                 {isLoading ? (
                   <>
-                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    <div className="mr-2 h-4 w-4 bg-white/30 rounded animate-pulse"></div>
                     Updating Password...
                   </>
                 ) : (

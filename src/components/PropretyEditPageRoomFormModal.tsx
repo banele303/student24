@@ -29,7 +29,8 @@ import { cn } from '@/lib/utils';
 import { DatePickerDemo as UIDatePicker } from '@/components/ui/date-picker';
 import { useCreateRoomMutation as useCreateRoomHook, useUpdateRoomMutation as useUpdateRoomHook } from '@/state/api'; // Use actual hooks
 
-import { Loader2 as ModalLoader, Trash2 as ModalTrash, CheckIcon as ModalCheck } from 'lucide-react';
+import { Trash2 as ModalTrash, CheckIcon as ModalCheck } from 'lucide-react';
+import { processImageFiles } from '@/lib/imageUtils';
 import { toast as modalToast } from 'sonner'; // Use toast from sonner
 import { Form } from './ui/form';
 
@@ -152,7 +153,10 @@ export function PropertyEditPageRoomFormModal({
         if (['id', 'photoUrls', 'newPhotos', 'photosToDelete', 'replacePhotos', 'propertyId'].includes(key)) return;
 
         if (key === 'amenities' || key === 'features') {
-            if (Array.isArray(value)) formData.append(key, value.join(','));
+            if (Array.isArray(value)) {
+                // Append each item separately so formData.getAll() works correctly
+                value.forEach(item => formData.append(key, item));
+            }
         } else if (key === 'availableFrom' && value instanceof Date) {
             formData.append(key, value.toISOString());
         } else if (typeof value === 'boolean') {
@@ -163,7 +167,22 @@ export function PropertyEditPageRoomFormModal({
     });
 
     if (newPhotoFilesModal) {
-      Array.from(newPhotoFilesModal).forEach(file => formData.append("photos", file));
+      try {
+        // Process and compress images before uploading
+        const filesToProcess = Array.from(newPhotoFilesModal);
+        const processedImages = await processImageFiles(
+          filesToProcess,
+          2 * 1024 * 1024, // 2MB per file
+          8 * 1024 * 1024  // 8MB total
+        );
+        
+        console.log(`Processed ${processedImages.length} images for room modal`);
+        processedImages.forEach(file => formData.append("photos", file));
+      } catch (imageError) {
+        console.error('Error processing images:', imageError);
+        modalToast.error(`Image processing failed: ${imageError instanceof Error ? imageError.message : 'Unknown error'}`);
+        return;
+      }
     }
     formData.append("replacePhotos", String(replacePhotosFlagModal));
 
@@ -288,7 +307,7 @@ export function PropertyEditPageRoomFormModal({
                 Cancel
               </UIButton>
               <UIButton type="submit" disabled={isLoadingAction} className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
-                {isLoadingAction && <ModalLoader className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoadingAction && <div className="mr-2 h-4 w-4 bg-white/30 rounded animate-pulse" />}
                 {initialRoomData?.id ? "Save Room Changes" : "Create Room"}
               </UIButton>
             </UIDialogFooter>

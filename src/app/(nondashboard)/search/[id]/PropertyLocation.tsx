@@ -1,4 +1,5 @@
 import { useGetPropertyQuery } from "@/state/api";
+import { PropertyCardSkeleton } from "@/components/ui/skeletons";
 import { Compass, MapPin } from "lucide-react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -42,7 +43,7 @@ const PropertyLocation = ({ propertyId }: PropertyDetailsProps) => {
     return () => map.remove();
   }, [property, isError, isLoading]);
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading) return <PropertyCardSkeleton />;
   if (isError || !property) {
     return <>Property not Found</>;
   }

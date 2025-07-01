@@ -2,6 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AmenityIcons, HighlightIcons } from "@/lib/constants";
 import { formatEnumString } from "@/lib/utils";
 import { useGetPropertyQuery } from "@/state/api";
+import { PropertyCardSkeleton } from "@/components/ui/skeletons";
 import { HelpCircle } from "lucide-react";
 import React from "react";
 
@@ -12,7 +13,7 @@ const PropertyDetails = ({ propertyId }: PropertyDetailsProps) => {
     isLoading,
   } = useGetPropertyQuery(propertyId);
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading) return <PropertyCardSkeleton />;
   if (isError || !property) {
     return <>Property not Found</>;
   }

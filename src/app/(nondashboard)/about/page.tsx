@@ -60,7 +60,7 @@ export default function AboutPage() {
                 At Student24, we are dedicated to bridging the gap between student accommodation demand and availability by collaborating with investors. This commitment ensures that students have access to a diverse range of housing options, giving them the freedom to choose the perfect place to stay.
               </p>
               <Link
-                href="/register"
+                href="/signup"
                 className="inline-flex items-center justify-center px-6 py-3 bg-[#00acee] text-white rounded-full text-sm font-medium hover:bg-[#0088cc] transition-colors"
               >
                 Create account

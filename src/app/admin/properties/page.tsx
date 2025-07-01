@@ -8,6 +8,7 @@ import { fetchAuthSession } from "aws-amplify/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { TableSkeleton } from "@/components/ui/skeletons";
 import {
   Search,
   BedDouble,
@@ -17,8 +18,7 @@ import {
   User,
   Home,
   Filter,
-  ArrowUpDown,
-  Loader2
+  ArrowUpDown
 } from 'lucide-react';
 import {
   Table,
@@ -200,7 +200,7 @@ export default function AdminPropertiesPage() {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
         <div className="flex flex-col items-center gap-2">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+          <div className="h-8 w-8 bg-blue-200 dark:bg-blue-800 rounded-full animate-pulse"></div>
           <p className="text-sm text-slate-500 dark:text-slate-400">Initializing admin session...</p>
         </div>
       </div>
@@ -232,7 +232,7 @@ export default function AdminPropertiesPage() {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
         <div className="flex flex-col items-center gap-2">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+          <div className="h-8 w-8 bg-blue-200 dark:bg-blue-800 rounded-full animate-pulse"></div>
           <p className="text-sm text-slate-500 dark:text-slate-400">Loading properties...</p>
         </div>
       </div>

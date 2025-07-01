@@ -33,7 +33,7 @@ export default function LandlordsPage() {
             </Button>
             <Button
               className="bg-[#00acee] border-2 border-white text-white hover:bg-blue-500 font-medium px-8 py-6 rounded-full text-lg"
-              onClick={() => window.location.href = "/register"}
+              onClick={() => window.location.href = "/signup"}
             >
               Create an account
             </Button>

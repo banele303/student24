@@ -325,7 +325,7 @@ export default function AdminSignup() {
               >
                 {isLoading ? (
                   <>
-                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    <div className="mr-2 h-4 w-4 bg-white/30 rounded animate-pulse"></div>
                     Creating Account...
                   </>
                 ) : (
@@ -359,7 +359,7 @@ export default function AdminSignup() {
               >
                 {isLoading ? (
                   <>
-                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    <div className="mr-2 h-4 w-4 bg-white/30 rounded animate-pulse"></div>
                     Verifying...
                   </>
                 ) : (

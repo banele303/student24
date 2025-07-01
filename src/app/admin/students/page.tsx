@@ -137,7 +137,10 @@ export default function StudentsPage() {
 
       {isLoadingTenants ? (
         <div className="flex justify-center items-center p-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="flex flex-col items-center space-y-3">
+            <div className="h-12 w-12 bg-blue-100 dark:bg-blue-900 rounded-full animate-pulse"></div>
+            <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+          </div>
         </div>
       ) : tenants && tenants.length === 0 ? (
         <div className="text-center p-8 text-slate-500 dark:text-slate-400">

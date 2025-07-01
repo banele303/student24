@@ -1,17 +1,18 @@
 "use client";
-
 import SettingsForm from "@/components/SettingsForm";
 import {
   useGetAuthUserQuery,
   useUpdateTenantSettingsMutation,
 } from "@/state/api";
+
+import { FormSkeleton } from "@/components/ui/skeletons";
 import React from "react";
 
 const TenantSettings = () => {
   const { data: authUser, isLoading } = useGetAuthUserQuery();
   const [updateTenant] = useUpdateTenantSettingsMutation();
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading) return <FormSkeleton />;
 
   // Make sure we have valid user data and the correct role
   if (!authUser || authUser.userRole !== 'tenant') {

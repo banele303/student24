@@ -9,6 +9,7 @@ import { useGetAuthUserQuery } from "@/state/api"
 import { usePathname, useRouter } from "next/navigation"
 import { signOut } from "aws-amplify/auth"
 import { ThemeToggle } from "@/components/ThemeToggle"
+import { NavigationSkeleton } from "@/components/ui/skeletons"
 import { cn } from "@/lib/utils"
 import {
   Plus,
@@ -24,7 +25,6 @@ import {
   Home,
   Building2,
   FileText,
-  Loader2,
   BookOpen,
   Shield
 } from "lucide-react"
@@ -110,18 +110,8 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Loading Overlay */}
-      {isLoading && (
-        <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-[100] flex flex-col items-center justify-center gap-4">
-          <div className="relative w-16 h-16">
-            <div className="absolute inset-0 rounded-full border-4 border-blue-600/20 border-t-blue-600 animate-spin"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Loader2 className="h-8 w-8 text-blue-600 animate-pulse" />
-            </div>
-          </div>
-          <p className="text-blue-600 font-medium animate-pulse">Loading...</p>
-        </div>
-      )}
+      {/* Loading Overlay - Replace with Navigation Skeleton */}
+      {isLoading && <NavigationSkeleton />}
 
       <header className="fixed top-0 left-0 w-full z-50">
         <div 
@@ -357,7 +347,7 @@ const Navbar = () => {
                   <Button
                     variant="outline"
                     size="lg"
-                    onClick={() => router.push("/register")}
+                    onClick={() => router.push("/signup")}
                     className={cn(
                       "transition-colors bg-transparent border-2 px-7 py-4 rounded-full text-l shadow-md",
                       scrolled 

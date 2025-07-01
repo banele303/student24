@@ -30,10 +30,11 @@ import { Toaster, toast } from "sonner";
 // Custom Components
 
 import { PropertyEditPageRoomFormModal } from "@/components/PropretyEditPageRoomFormModal";
+import { FormFieldSkeleton, RoomCardSkeleton, PageHeaderSkeleton } from "@/components/ui/skeletons";
 
 // Icons
 import {
-  Building, Home, MapPin, CheckIcon, ChevronDown, ChevronUp, Sparkles, Upload as UploadIcon, Loader2, ArrowLeft, ImageDown, XIcon, CircleDollarSign, Trash2, Edit3, PlusCircle, BedDouble, Bath, Ruler, XCircle as XCircleIcon
+  Building, Home, MapPin, CheckIcon, ChevronDown, ChevronUp, Sparkles, Upload as UploadIcon, ArrowLeft, ImageDown, XIcon, CircleDollarSign, Trash2, Edit3, PlusCircle, BedDouble, Bath, Ruler, XCircle as XCircleIcon
 } from "lucide-react";
 
 // Schemas, Types, Constants, and API Hooks
@@ -153,7 +154,7 @@ const StepNavigation = ({
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <div className="h-4 w-4 bg-white/30 rounded animate-pulse"></div>
               Saving Changes...
             </>
           ) : (
@@ -434,9 +435,25 @@ export default function EditPropertyPage() {
 
   if (isOverallPageLoading || isLoadingProperty) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-screen bg-background dark:bg-gray-900 p-4">
-        <Loader2 className="h-16 w-16 animate-spin text-primary mb-6" />
-        <p className="text-xl text-muted-foreground dark:text-gray-400">Loading Property Details...</p>
+      <div className="min-h-screen bg-background dark:bg-gray-900 p-4">
+        <div className="max-w-6xl mx-auto">
+          <PageHeaderSkeleton />
+          <div className="space-y-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-white dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 p-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded animate-pulse"></div>
+                    <div className="w-32 h-6 bg-gray-300 dark:bg-gray-600 rounded animate-pulse"></div>
+                  </div>
+                  {Array.from({ length: 3 }).map((_, j) => (
+                    <FormFieldSkeleton key={j} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -496,7 +513,7 @@ export default function EditPropertyPage() {
               <UIDialogFooter className="mt-4">
                 <UIDialogClose asChild><UIButton variant="outline">Cancel</UIButton></UIDialogClose>
                 <UIButton variant="destructive" onClick={handleDeleteProperty} disabled={isDeletingProperty}>
-                  {isDeletingProperty && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isDeletingProperty && <div className="mr-2 h-4 w-4 bg-white/30 rounded animate-pulse"></div>}
                   Yes, delete property
                 </UIButton>
               </UIDialogFooter>
@@ -636,7 +653,13 @@ export default function EditPropertyPage() {
                 <PlusCircle className="mr-2 h-4 w-4" /> Add New Room
               </UIButton>
             }>
-              {isLoadingRooms && <div className="flex items-center justify-center p-6"><Loader2 className="mr-3 h-6 w-6 animate-spin text-primary" />Loading rooms...</div>}
+              {isLoadingRooms && (
+                <div className="space-y-4">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <RoomCardSkeleton key={i} />
+                  ))}
+                </div>
+              )}
               {!isLoadingRooms && (!fetchedRoomsData || fetchedRoomsData.length === 0) && (
                 <p className="text-center text-muted-foreground dark:text-gray-400 py-6">No rooms have been added to this property yet. Click &quot;Add New Room&quot; to get started.</p>
               )}
@@ -672,7 +695,7 @@ export default function EditPropertyPage() {
                                 <UIDialogFooter className="mt-4">
                                     <UIDialogClose asChild><UIButton variant="outline">Cancel</UIButton></UIDialogClose>
                                     <UIButton variant="destructive" onClick={() => handleDeleteRoomFromList(room.id, room.name)} disabled={isDeletingRoom}>
-                                        {isDeletingRoom && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Delete Room
+                                        {isDeletingRoom && <div className="mr-2 h-4 w-4 bg-white/30 rounded animate-pulse"></div>} Delete Room
                                     </UIButton>
                                 </UIDialogFooter>
                             </UIDialogContent>
@@ -693,7 +716,7 @@ export default function EditPropertyPage() {
                   className="min-w-[200px] text-base mt-5 bg-blue-600 backdrop-blur-sm border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm hover:shadow-md transition-all duration-300 font-medium rounded-lg" 
                   disabled={isAnyMutationLoading}
                 >
-                  {isUpdatingProperty && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+                  {isUpdatingProperty && <div className="mr-2 h-5 w-5 bg-white/30 rounded animate-pulse"></div>}
                   Save All Property Changes
                 </UIButton>
               </div>

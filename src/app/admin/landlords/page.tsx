@@ -158,7 +158,7 @@ export default function LandlordsPage() {
 
       {isLoading ? (
         <div className="flex justify-center py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="h-12 w-12 bg-blue-200 dark:bg-blue-800 rounded-full animate-pulse"></div>
         </div>
       ) : filteredManagers?.length === 0 ? (
         <Card className="p-8 text-center">

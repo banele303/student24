@@ -21,7 +21,7 @@ export default function AdminLogout() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100 dark:bg-slate-900">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+        <div className="h-12 w-12 bg-purple-200 dark:bg-purple-800 rounded-full mx-auto mb-4 animate-pulse"></div>
         <h1 className="text-xl font-semibold text-slate-700 dark:text-slate-300">Logging out...</h1>
         <p className="text-slate-500 dark:text-slate-400 mt-2">You will be redirected shortly.</p>
       </div>

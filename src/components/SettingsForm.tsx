@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Separator } from "./ui/separator";
 import { Badge } from "./ui/badge";
-import { Loader2, Save, User, Shield, Bell, Key, CheckCircle2 } from "lucide-react";
+import { Save, User, Shield, Bell, Key, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -185,7 +185,7 @@ const SettingsForm = ({
                         >
                           {isSubmitting ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              <div className="mr-2 h-4 w-4 bg-white/30 rounded animate-pulse" />
                               Saving...
                             </>
                           ) : (

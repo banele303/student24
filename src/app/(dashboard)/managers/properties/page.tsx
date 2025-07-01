@@ -6,9 +6,9 @@ import { useGetAuthUserQuery, useGetManagerPropertiesQuery, useDeletePropertyMut
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { GridSkeleton, PropertyCardSkeleton, PageHeaderSkeleton } from "@/components/ui/skeletons";
 import {
   Plus,
-  Loader2,
   Search,
   BedDouble,
   Bath,
@@ -124,10 +124,10 @@ const Properties = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full min-h-[400px]">
-        <div className="flex flex-col items-center gap-2">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <p className="text-sm text-slate-500 dark:text-slate-400">Loading properties...</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <PageHeaderSkeleton />
+          <GridSkeleton items={6} Component={PropertyCardSkeleton} />
         </div>
       </div>
     );
@@ -266,7 +266,7 @@ const Properties = () => {
             >
               {isDeleting ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <div className="h-4 w-4 mr-2 bg-white/30 rounded animate-pulse"></div>
                   Deleting...
                 </>
               ) : (

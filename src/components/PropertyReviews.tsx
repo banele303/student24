@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Star, StarHalf, User, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ListItemSkeleton } from "@/components/ui/skeletons";
 import ReviewForm from "./ReviewForm";
 import { toast } from "sonner";
 
@@ -156,8 +157,10 @@ const PropertyReviews = ({ propertyId }: PropertyReviewsProps) => {
       )}
 
       {isLoading ? (
-        <div className="flex justify-center py-8">
-          <div className="w-8 h-8 rounded-full border-4 border-blue-600/20 border-t-blue-600 animate-spin"></div>
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <ListItemSkeleton key={i} />
+          ))}
         </div>
       ) : (
         <div className="space-y-6">

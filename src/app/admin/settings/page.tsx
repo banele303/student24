@@ -73,7 +73,7 @@ export default function AdminSettings() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="h-12 w-12 bg-blue-200 dark:bg-blue-800 rounded-full animate-pulse"></div>
       </div>
     );
   }
@@ -187,7 +187,7 @@ export default function AdminSettings() {
               >
                 {isUpdating ? (
                   <>
-                    <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full"></div>
+                    <div className="h-4 w-4 mr-2 bg-white/30 rounded animate-pulse"></div>
                     Updating...
                   </>
                 ) : (

@@ -138,9 +138,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           capacity: parseInt(formData.get('capacity')?.toString() || '1'),
           isAvailable: formData.get('isAvailable') === 'true',
           availableFrom: formData.get('availableFrom') ? new Date(formData.get('availableFrom')?.toString() || '') : null,
-          // Handle arrays
-          amenities: processArrayField(formData.get('amenities')),
-          features: processArrayField(formData.get('features')),
+          // Handle arrays - use getAll() to get all values for amenities and features
+          amenities: formData.getAll('amenities') as string[],
+          features: formData.getAll('features') as string[],
           photoUrls: [] as string[]
         };
         

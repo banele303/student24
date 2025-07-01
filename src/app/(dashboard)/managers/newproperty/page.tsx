@@ -31,7 +31,6 @@ import {
   Sparkles,
   Coffee,
   Upload,
-  Loader2,
   ArrowLeft,
   ArrowRight,
   ImageDown,
@@ -146,7 +145,7 @@ const StepNavigation = ({
       >
         {isSubmitting ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <div className="w-4 h-4 bg-white/30 rounded animate-pulse" />
             Processing...
           </>
         ) : isLastStep ? (
