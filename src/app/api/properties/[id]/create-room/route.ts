@@ -3,6 +3,14 @@ import { prisma } from '@/lib/prisma';
 import { S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 
+// Export route configuration for file upload limits
+export const maxDuration = 60; // Maximum execution time in seconds
+export const dynamic = 'force-dynamic'; // Disable static optimization for this route
+
+// File size limits
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB per file
+const MAX_TOTAL_SIZE = 20 * 1024 * 1024; // 20MB total
+
 // S3 configuration
 const s3Client = new S3Client({
   region: process.env.AWS_REGION || 'eu-north-1',
@@ -75,6 +83,15 @@ interface RoomData {
 // This is a specialized endpoint that handles room creation with JSON data
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    // Check content length early to prevent processing oversized requests
+    const contentLength = request.headers.get('content-length');
+    if (contentLength && parseInt(contentLength) > MAX_TOTAL_SIZE) {
+      console.log(`Request rejected: Content-Length ${contentLength} exceeds limit of ${MAX_TOTAL_SIZE}`);
+      return NextResponse.json({ 
+        message: `Request too large. Maximum size is ${Math.round(MAX_TOTAL_SIZE / 1024 / 1024)}MB`,
+      }, { status: 413 });
+    }
+
     // Get property ID from params
     const { id } = await params;
     const propertyId = parseInt(id);
@@ -127,8 +144,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           photoUrls: [] as string[]
         };
         
-        // Process photo uploads
+        // Process photo uploads with size validation
         const photoUrls: string[] = [];
+        let totalSize = 0;
         
         // Try to get photos using both possible keys
         let photoEntries = formData.getAll('photos');
@@ -152,22 +170,38 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
             }
           }
         }
+
+        // Calculate total size first
+        for (const photoEntry of photoEntries) {
+          if (photoEntry instanceof File) {
+            totalSize += photoEntry.size;
+          }
+        }
+
+        // Check total size limit
+        if (totalSize > MAX_TOTAL_SIZE) {
+          return NextResponse.json({ 
+            message: `Total file size (${Math.round(totalSize / 1024 / 1024)}MB) exceeds limit of ${Math.round(MAX_TOTAL_SIZE / 1024 / 1024)}MB`,
+          }, { status: 413 });
+        }
         
         // Now process all found photo entries
         if (photoEntries && photoEntries.length > 0) {
-          console.log(`Processing ${photoEntries.length} photos for room`);
+          console.log(`Processing ${photoEntries.length} photos for room (total size: ${Math.round(totalSize / 1024 / 1024)}MB)`);
           
           // Upload each photo to S3
           for (const photoEntry of photoEntries) {
             try {
               if (photoEntry instanceof File) {
-                // Limit file size to 5MB to prevent 413 errors
-                if (photoEntry.size > 5 * 1024 * 1024) {
-                  console.warn(`File ${photoEntry.name} is too large (${photoEntry.size} bytes), skipping`);
-                  continue;
+                // Check individual file size limit
+                if (photoEntry.size > MAX_FILE_SIZE) {
+                  console.warn(`File ${photoEntry.name} is too large (${Math.round(photoEntry.size / 1024 / 1024)}MB), maximum is ${Math.round(MAX_FILE_SIZE / 1024 / 1024)}MB`);
+                  return NextResponse.json({ 
+                    message: `File ${photoEntry.name} is too large. Maximum file size is ${Math.round(MAX_FILE_SIZE / 1024 / 1024)}MB`,
+                  }, { status: 413 });
                 }
                 
-                console.log(`Processing photo as File: ${photoEntry.name}, size: ${photoEntry.size}, type: ${photoEntry.type}`);
+                console.log(`Processing photo as File: ${photoEntry.name}, size: ${Math.round(photoEntry.size / 1024 / 1024 * 100) / 100}MB, type: ${photoEntry.type}`);
                 const photoBuffer = Buffer.from(await photoEntry.arrayBuffer());
                 const photoUrl = await uploadFileToS3(photoBuffer, photoEntry.name, photoEntry.type);
                 console.log('Successfully uploaded to S3, URL:', photoUrl);
@@ -177,6 +211,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
               }
             } catch (uploadError) {
               console.error('Error uploading photo:', uploadError);
+              return NextResponse.json({ 
+                message: `Error uploading photo ${photoEntry instanceof File ? photoEntry.name : 'unknown'}`,
+                error: uploadError instanceof Error ? uploadError.message : String(uploadError)
+              }, { status: 500 });
             }
           }
         }

@@ -104,12 +104,12 @@ export function PropertyEditPageRoomFormModal({
   const handleFileChangeModal = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      // Check file sizes
-      const maxSize = 5 * 1024 * 1024; // 5MB limit
+      // Check file sizes - reduce limit to 2MB per file for better stability
+      const maxSize = 2 * 1024 * 1024; // 2MB limit
       const oversizedFiles = Array.from(files).filter(file => file.size > maxSize);
       
       if (oversizedFiles.length > 0) {
-        modalToast.error(`Some files are too large (max 5MB): ${oversizedFiles.map(f => f.name).join(', ')}`);
+        modalToast.error(`Some files are too large (max 2MB each): ${oversizedFiles.map(f => f.name).join(', ')}`);
         // Filter out oversized files
         const validFiles = Array.from(files).filter(file => file.size <= maxSize);
         if (validFiles.length > 0) {
@@ -121,7 +121,15 @@ export function PropertyEditPageRoomFormModal({
           setNewPhotoFilesModal(null);
         }
       } else {
-        setNewPhotoFilesModal(files);
+        // Also limit total number of files to 3 to reduce payload size
+        const filesToAdd = Array.from(files).slice(0, 3);
+        if (filesToAdd.length < files.length) {
+          modalToast.warning(`Only the first 3 files will be uploaded. Total limit: 3 photos per room.`);
+        }
+        
+        const dt = new DataTransfer();
+        filesToAdd.forEach(file => dt.items.add(file));
+        setNewPhotoFilesModal(dt.files);
       }
     } else {
       setNewPhotoFilesModal(null);

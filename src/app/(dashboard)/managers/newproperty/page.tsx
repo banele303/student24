@@ -42,6 +42,7 @@ import {
 
 // Data & API
 import { type PropertyFormData, propertySchema } from "@/lib/schemas";
+import { processImageFiles } from "@/lib/imageUtils";
 import { useCreatePropertyMutation, useCreateRoomMutation, useGetAuthUserQuery } from "@/state/api";
 import { AmenityEnum, HighlightEnum, PropertyTypeEnum } from "@/lib/constants";
 
@@ -192,9 +193,9 @@ const NewProperty = () => {
       amenities: [],
       highlights: [],
       propertyType: PropertyTypeEnum.Apartment,
-      beds: 1,
-      baths: 1,
-      squareFeet: 1000,
+      beds: 0,
+      baths: 0,
+      squareFeet: 0,
       address: "",
       city: "",
       state: "",
@@ -219,10 +220,9 @@ const NewProperty = () => {
         isValid = formState.pricePerMonth > 0 && 
                  formState.securityDeposit >= 0;
         break;
-      case 3: // Property Details
-        isValid = formState.beds > 0 && 
-                 formState.baths > 0 && 
-                 formState.squareFeet > 0;
+      case 3: // Rooms
+        // At least one room should be added
+        isValid = rooms.length > 0;
         break;
       case 4: // Amenities & Highlights
         // At least one amenity required
@@ -510,21 +510,35 @@ const NewProperty = () => {
               }
             });
             
-            // Add photo files last
+            // Process and compress image files before adding to FormData
             if (room.photoUrls && Array.isArray(room.photoUrls)) {
-              // First, log what we have in the photo array for debugging
               console.log(`Room photos array has ${room.photoUrls.length} items:`, 
                 room.photoUrls.map(p => p instanceof File ? `File: ${p.name}` : `Other: ${typeof p}`));
               
-              // Use a different FormData key that matches what the server expects
-              room.photoUrls.forEach((photo, index) => {
-                if (photo instanceof File) {
-                  // Try both 'photo' and 'photos' keys to see which one works
-                  roomFormData.append('photo', photo);
-                  roomFormData.append('photos', photo);
-                  console.log(`Appending photo ${index}: ${photo.name}, size: ${photo.size}`);
+              // Filter out only the File objects
+              const imageFiles = room.photoUrls.filter(photo => photo instanceof File) as File[];
+              
+              if (imageFiles.length > 0) {
+                try {
+                  // Process and compress images
+                  const processedImages = await processImageFiles(
+                    imageFiles,
+                    2 * 1024 * 1024, // 2MB per file
+                    8 * 1024 * 1024  // 8MB total
+                  );
+                  
+                  console.log(`Processed ${processedImages.length} images for room`);
+                  
+                  // Add processed files to FormData
+                  processedImages.forEach((photo, index) => {
+                    roomFormData.append('photos', photo);
+                    console.log(`Appending processed photo ${index}: ${photo.name}, size: ${Math.round(photo.size / 1024)}KB`);
+                  });
+                } catch (imageError) {
+                  console.error('Error processing images:', imageError);
+                  throw new Error(`Image processing failed: ${imageError instanceof Error ? imageError.message : 'Unknown error'}`);
                 }
-              });
+              }
             }
             
             // Log FormData keys
@@ -800,9 +814,9 @@ const NewProperty = () => {
                 />
               </FormStep>
 
-              {/* Step 3: Property Details */}
+              {/* Step 3: Rooms */}
               <FormStep 
-                title="Property Details" 
+                title="Rooms" 
                 icon={<Home size={20} />}
                 isActive={currentStep === 3}
                 isCompleted={completedSteps.includes(3)}
@@ -811,40 +825,8 @@ const NewProperty = () => {
                 onStepClick={goToStep}
               >
                 <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <CreateFormField
-                      name="beds"
-                      label="Bedrooms"
-                      type="number"
-                      labelClassName={labelStyle}
-                      inputClassName={inputStyle}
-                      min={0}
-                    />
-
-                    <CreateFormField
-                      name="baths"
-                      label="Bathrooms"
-                      type="number"
-                      labelClassName={labelStyle}
-                      inputClassName={inputStyle}
-                      min={0}
-                    />
-
-                    <CreateFormField
-                      name="squareFeet"
-                      label="Square Feet"
-                      type="number"
-                      labelClassName={labelStyle}
-                      inputClassName={inputStyle}
-                      min={0}
-                    />
-                  </div>
-                  
-                  {/* Rooms Section - Assuming this component handles its own file input logic */}
-                  <div className="mt-6">
-                    <h3 className="text-lg font-medium text-white mb-4">Rooms</h3>
-                    <RoomsSection rooms={rooms} onAddRoom={handleAddRoom} onRemoveRoom={handleRemoveRoom} />
-                  </div>
+                  {/* Rooms Section */}
+                  <RoomsSection rooms={rooms} onAddRoom={handleAddRoom} onRemoveRoom={handleRemoveRoom} />
                 </div>
                 
                 <StepNavigation
