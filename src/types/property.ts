@@ -22,10 +22,10 @@ export interface Property {
   images?: string[];      // Added images property
   beds: number;
   baths: number;
-  kitchens?: number; // Make optional until migration is applied
+  kitchens: number;
   squareFeet: number;
-  pricePerMonth?: number; // Make this optional
-  price?: number;        // Add alternative field name
+  pricePerMonth?: number; // Keep optional for backward compatibility
+  price?: number;        // Add alternative field name for compatibility
   priceUnit?: string;
   securityDeposit?: number;
   isPetsAllowed: boolean;

@@ -286,7 +286,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       if (key !== 'address' && key !== 'city' && key !== 'state' && 
           key !== 'country' && key !== 'postalCode' && 
           key !== 'managerCognitoId' && key !== 'replacePhotos' && 
-          key !== 'kitchens' && // Temporarily exclude kitchens until migration is applied
           !key.startsWith('photos')) {
         propertyData[key] = value;
       }
@@ -335,6 +334,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         }),
         ...(propertyData.baths !== undefined && {
           baths: parseFloat(propertyData.baths) || undefined
+        }),
+        ...(propertyData.kitchens !== undefined && {
+          kitchens: parseInt(propertyData.kitchens) || undefined
         }),
         ...(propertyData.squareFeet !== undefined && {
           squareFeet: parseInt(propertyData.squareFeet) || undefined
