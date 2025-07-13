@@ -258,7 +258,7 @@ const Map = () => {
   }, [isLoading, isError, properties, filters.coordinates, filters.location]);
 
   if (isLoading) return (
-    <div className="hidden pt-5 md:block md:basis-6/12 grow relative rounded-xl flex items-center justify-center">
+    <div className="hidden pt-5 md:flex md:basis-6/12 grow relative rounded-xl items-center justify-center">
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
         <div className="h-8 w-8 bg-blue-200 dark:bg-blue-800 rounded-full mx-auto mb-4 animate-pulse"></div>
         <p className="text-center text-gray-600 dark:text-gray-300">Loading map...</p>
@@ -267,7 +267,7 @@ const Map = () => {
   );
 
   if (isError || !properties) return (
-    <div className="hidden pt-5 md:block md:basis-6/12 grow relative rounded-xl flex items-center justify-center">
+    <div className="hidden pt-5 md:flex md:basis-6/12 grow relative rounded-xl items-center justify-center">
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
         <p className="text-center text-red-500 font-medium">Failed to load map data</p>
       </div>

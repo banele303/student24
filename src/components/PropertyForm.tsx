@@ -175,6 +175,65 @@ export const PropertyForm = ({
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Property Details</h3>
 
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Total Bedrooms
+              </label>
+              <input
+                type="number"
+                name="beds"
+                defaultValue={initialData?.beds}
+                min="0"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Total Bathrooms
+              </label>
+              <input
+                type="number"
+                name="baths"
+                defaultValue={initialData?.baths}
+                min="0"
+                step="0.5"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Total Kitchens
+              </label>
+              <input
+                type="number"
+                name="kitchens"
+                defaultValue={initialData?.kitchens}
+                min="0"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Total Square Feet
+            </label>
+            <input
+              type="number"
+              name="squareFeet"
+              defaultValue={initialData?.squareFeet}
+              min="0"
+              required
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            />
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Price per Month

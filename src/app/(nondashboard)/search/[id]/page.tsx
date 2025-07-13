@@ -12,7 +12,7 @@ import ContactWidget from "./ContactWidget";
 import ApplicationModal from "./ApplicationModal";
 import Loading from "@/components/Loading";
 import PropertyReviews from "@/components/PropertyReviews";
-import { Building2, Phone, Bed, Bath, Users, Home } from "lucide-react";
+import { Building2, Bed, Bath, Users, Home } from "lucide-react";
 import { getRoomStats } from "@/lib/roomUtils";
 
 // Define interfaces for type safety
@@ -56,9 +56,6 @@ const SingleListing = () => {
   const { data: rooms, isLoading: roomsLoading } = useGetRoomsQuery(propertyId, { 
     skip: isError || !propertyId // Skip if there's an error or no propertyId
   });
-  
-  // Use a default phone number since contactPhone is not available on the Property type
-  const propertyPhone = '+27 123 456 7890';
   
   // Process property data to ensure image URLs are valid
   const processedProperty = React.useMemo(() => {
@@ -156,10 +153,6 @@ const SingleListing = () => {
             <div className="flex items-center">
               <Building2 className="w-5 h-5 text-blue-600 mr-2" />
               <span className="text-gray-700">{displaySquareFeet} sq ft</span>
-            </div>
-            <div className="flex items-center">
-              <Phone className="w-5 h-5 text-blue-600 mr-2" />
-              <span className="text-gray-700">+27 123 456 7890</span>
             </div>
           </div>
         </div>

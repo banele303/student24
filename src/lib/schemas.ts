@@ -14,6 +14,7 @@ export const propertySchema = z.object({
   propertyType: z.nativeEnum(PropertyTypeEnum),
   beds: z.number().min(0, "Beds must be 0 or more").optional().default(0),
   baths: z.number().min(0, "Baths must be 0 or more").optional().default(0),
+  kitchens: z.number().min(0, "Kitchens must be 0 or more").optional().default(0),
   squareFeet: z.number().min(0, "Square footage must be 0 or more").optional().default(0),
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),

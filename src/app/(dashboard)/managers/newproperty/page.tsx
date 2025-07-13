@@ -192,6 +192,10 @@ const NewProperty = () => {
       amenities: [],
       highlights: [],
       propertyType: PropertyTypeEnum.Apartment,
+      beds: 0,
+      baths: 0,
+      kitchens: 0,
+      squareFeet: 0,
       address: "",
       city: "",
       state: "",
@@ -798,6 +802,52 @@ const NewProperty = () => {
                     type="switch"
                     labelClassName={labelStyle}
                   />
+
+                  {/* Property Specifications */}
+                  <div className="border-t border-gray-700 pt-6">
+                    <h4 className="text-lg font-medium text-white mb-4">Property Specifications</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <CreateFormField
+                        name="beds"
+                        label="Total Bedrooms"
+                        type="number"
+                        labelClassName={labelStyle}
+                        inputClassName={inputStyle}
+                        min={0}
+                        placeholder="e.g., 4"
+                      />
+                      <CreateFormField
+                        name="baths"
+                        label="Total Bathrooms"
+                        type="number"
+                        labelClassName={labelStyle}
+                        inputClassName={inputStyle}
+                        min={0}
+                        step="0.5"
+                        placeholder="e.g., 2.5"
+                      />
+                      <CreateFormField
+                        name="kitchens"
+                        label="Total Kitchens"
+                        type="number"
+                        labelClassName={labelStyle}
+                        inputClassName={inputStyle}
+                        min={0}
+                        placeholder="e.g., 1"
+                      />
+                    </div>
+                    <div className="mt-4">
+                      <CreateFormField
+                        name="squareFeet"
+                        label="Total Square Feet"
+                        type="number"
+                        labelClassName={labelStyle}
+                        inputClassName={inputStyle}
+                        min={0}
+                        placeholder="e.g., 2500"
+                      />
+                    </div>
+                  </div>
                 </div>
                 
                 <StepNavigation
