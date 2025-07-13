@@ -167,8 +167,18 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Parse the form data
-    const formData = await request.formData();
-    console.log(`Updating property ${id}, request body:`, Object.fromEntries(formData.entries()));
+    let formData;
+    try {
+      console.log('Request content-type:', request.headers.get('content-type'));
+      console.log('Request method:', request.method);
+      formData = await request.formData();
+      console.log(`Updating property ${id}, request body:`, Object.fromEntries(formData.entries()));
+    } catch (parseError) {
+      console.error('Error parsing FormData:', parseError);
+      return NextResponse.json({ 
+        message: `Error updating property: Failed to parse body as FormData.` 
+      }, { status: 500 });
+    }
     
     // Handle authorization check - ensure user can edit this property
     const managerCognitoId = formData.get('managerCognitoId') as string;
@@ -292,60 +302,125 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Update property with proper type handling
-    const updatedProperty = await prisma.property.update({
-      where: { id },
-      data: {
-        ...propertyData,
-        photoUrls,
-        // Parse array fields if present
-        ...(propertyData.amenities && {
-          amenities: Array.isArray(propertyData.amenities) 
-            ? propertyData.amenities 
-            : typeof propertyData.amenities === "string"
-              ? propertyData.amenities.split(",")
-              : undefined
-        }),
-        ...(propertyData.highlights && {
-          highlights: Array.isArray(propertyData.highlights)
-            ? propertyData.highlights
-            : typeof propertyData.highlights === "string"
-              ? propertyData.highlights.split(",")
-              : undefined
-        }),
-        // Parse boolean fields if present
-        ...(propertyData.isPetsAllowed !== undefined && {
-          isPetsAllowed: propertyData.isPetsAllowed === "true"
-        }),
-        ...(propertyData.isParkingIncluded !== undefined && {
-          isParkingIncluded: propertyData.isParkingIncluded === "true"
-        }),
-        ...(propertyData.isNsfassAccredited !== undefined && {
-          isNsfassAccredited: propertyData.isNsfassAccredited === "true"
-        }),
-        // Parse numeric fields if present
-        ...(propertyData.pricePerMonth !== undefined && {
-          pricePerMonth: parseFloat(propertyData.pricePerMonth) || undefined
-        }),
-        ...(propertyData.securityDeposit !== undefined && {
-          securityDeposit: parseFloat(propertyData.securityDeposit) || undefined
-        }),
-        ...(propertyData.beds !== undefined && {
-          beds: parseInt(propertyData.beds) || undefined
-        }),
-        ...(propertyData.baths !== undefined && {
-          baths: parseFloat(propertyData.baths) || undefined
-        }),
-        ...(propertyData.kitchens !== undefined && {
-          kitchens: parseInt(propertyData.kitchens) || undefined
-        }),
-        ...(propertyData.squareFeet !== undefined && {
-          squareFeet: parseInt(propertyData.squareFeet) || undefined
-        }),
-      },
-      include: {
-        location: true,
-      },
-    });
+    let updatedProperty;
+    try {
+      updatedProperty = await prisma.property.update({
+        where: { id },
+        data: {
+          ...propertyData,
+          photoUrls,
+          // Parse array fields if present
+          ...(propertyData.amenities && {
+            amenities: Array.isArray(propertyData.amenities) 
+              ? propertyData.amenities 
+              : typeof propertyData.amenities === "string"
+                ? propertyData.amenities.split(",")
+                : undefined
+          }),
+          ...(propertyData.highlights && {
+            highlights: Array.isArray(propertyData.highlights)
+              ? propertyData.highlights
+              : typeof propertyData.highlights === "string"
+                ? propertyData.highlights.split(",")
+                : undefined
+          }),
+          // Parse boolean fields if present
+          ...(propertyData.isPetsAllowed !== undefined && {
+            isPetsAllowed: propertyData.isPetsAllowed === "true"
+          }),
+          ...(propertyData.isParkingIncluded !== undefined && {
+            isParkingIncluded: propertyData.isParkingIncluded === "true"
+          }),
+          ...(propertyData.isNsfassAccredited !== undefined && {
+            isNsfassAccredited: propertyData.isNsfassAccredited === "true"
+          }),
+          // Parse numeric fields if present
+          ...(propertyData.pricePerMonth !== undefined && {
+            pricePerMonth: parseFloat(propertyData.pricePerMonth) || undefined
+          }),
+          ...(propertyData.securityDeposit !== undefined && {
+            securityDeposit: parseFloat(propertyData.securityDeposit) || undefined
+          }),
+          ...(propertyData.beds !== undefined && {
+            beds: parseInt(propertyData.beds) || undefined
+          }),
+          ...(propertyData.baths !== undefined && {
+            baths: parseFloat(propertyData.baths) || undefined
+          }),
+          // Only include kitchens if it exists in the schema
+          ...(propertyData.kitchens !== undefined && {
+            kitchens: parseInt(propertyData.kitchens) || undefined
+          }),
+          ...(propertyData.squareFeet !== undefined && {
+            squareFeet: parseInt(propertyData.squareFeet) || undefined
+          }),
+        },
+        include: {
+          location: true,
+        },
+      });
+    } catch (dbError: any) {
+      console.error('Database error during property update:', dbError);
+      // Check if it's a column doesn't exist error (for kitchens field)
+      if (dbError.message && dbError.message.includes('kitchens') && dbError.message.includes('does not exist')) {
+        console.log('Retrying update without kitchens field...');
+        // Retry without the kitchens field
+        const { kitchens, ...dataWithoutKitchens } = propertyData;
+        updatedProperty = await prisma.property.update({
+          where: { id },
+          data: {
+            ...dataWithoutKitchens,
+            photoUrls,
+            // Parse array fields if present
+            ...(propertyData.amenities && {
+              amenities: Array.isArray(propertyData.amenities) 
+                ? propertyData.amenities 
+                : typeof propertyData.amenities === "string"
+                  ? propertyData.amenities.split(",")
+                  : undefined
+            }),
+            ...(propertyData.highlights && {
+              highlights: Array.isArray(propertyData.highlights)
+                ? propertyData.highlights
+                : typeof propertyData.highlights === "string"
+                  ? propertyData.highlights.split(",")
+                  : undefined
+            }),
+            // Parse boolean fields if present
+            ...(propertyData.isPetsAllowed !== undefined && {
+              isPetsAllowed: propertyData.isPetsAllowed === "true"
+            }),
+            ...(propertyData.isParkingIncluded !== undefined && {
+              isParkingIncluded: propertyData.isParkingIncluded === "true"
+            }),
+            ...(propertyData.isNsfassAccredited !== undefined && {
+              isNsfassAccredited: propertyData.isNsfassAccredited === "true"
+            }),
+            // Parse numeric fields if present
+            ...(propertyData.pricePerMonth !== undefined && {
+              pricePerMonth: parseFloat(propertyData.pricePerMonth) || undefined
+            }),
+            ...(propertyData.securityDeposit !== undefined && {
+              securityDeposit: parseFloat(propertyData.securityDeposit) || undefined
+            }),
+            ...(propertyData.beds !== undefined && {
+              beds: parseInt(propertyData.beds) || undefined
+            }),
+            ...(propertyData.baths !== undefined && {
+              baths: parseFloat(propertyData.baths) || undefined
+            }),
+            ...(propertyData.squareFeet !== undefined && {
+              squareFeet: parseInt(propertyData.squareFeet) || undefined
+            }),
+          },
+          include: {
+            location: true,
+          },
+        });
+      } else {
+        throw dbError; // Re-throw if it's not a kitchens column error
+      }
+    }
 
     // Fetch the updated location to get coordinates
     const updatedLocation = await prisma.$queryRaw<{ x: number, y: number }[]>`

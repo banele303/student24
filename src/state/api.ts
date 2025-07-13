@@ -587,20 +587,11 @@ export const api = createApi({
 
     updateProperty: build.mutation<Property, { id: string; body: FormData }>({
         query: ({ id, body }) => {
-            // Create a new FormData object to avoid modifying the original
-            const cleanFormData = new FormData();
-            
-            // Copy all fields except replacePhotos
-            for (const [key, value] of body.entries()) {
-                if (key !== 'replacePhotos') {
-                    cleanFormData.append(key, value);
-                }
-            }
-            
             return {
                 url: `properties/${id}`,
                 method: "PUT",
-                body: cleanFormData,
+                body: body,
+                // Don't set Content-Type header - let the browser set it automatically for FormData
             };
         },
         invalidatesTags: (result, error, { id }) => [
