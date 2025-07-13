@@ -169,52 +169,79 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     // Parse the form data with enhanced error handling
     let formData: FormData;
     try {
-      console.log('=== REQUEST DEBUG INFO ===');
+      console.log('=== FORMDATA PARSING ATTEMPT ===');
       console.log('Request content-type:', request.headers.get('content-type'));
       console.log('Request method:', request.method);
       console.log('Request URL:', request.url);
-      console.log('All headers:');
-      for (const [key, value] of request.headers.entries()) {
-        console.log(`  ${key}: ${value}`);
-      }
       
-      // Check if the body is consumable
+      // Check for critical headers
+      const contentType = request.headers.get('content-type');
+      const contentLength = request.headers.get('content-length');
+      console.log('Content-Length:', contentLength);
+      console.log('Content-Type full value:', contentType);
+      
+      // Check if the body is available
       const body = request.body;
       console.log('Request body available:', !!body);
+      console.log('Request body type:', body ? body.constructor.name : 'null');
       
       if (!body) {
-        throw new Error('Request body is null or undefined');
+        console.error('Request body is null');
+        return NextResponse.json({ 
+          message: 'Error updating property: Request body is empty' 
+        }, { status: 400 });
       }
       
-      // Try to parse FormData
+      // Try to parse FormData - this is where the error is occurring
+      console.log('Attempting to parse FormData...');
       formData = await request.formData();
-      console.log(`Successfully parsed FormData for property ${id}`);
-      console.log('FormData entries:');
+      console.log(`✅ Successfully parsed FormData for property ${id}`);
+      console.log('FormData entry count:', Array.from(formData.entries()).length);
+      
+      // Log first few entries for debugging
+      let entryCount = 0;
       for (const [key, value] of formData.entries()) {
-        if (value instanceof File) {
-          console.log(`  ${key}: [File] ${value.name} (${value.size} bytes)`);
-        } else {
-          console.log(`  ${key}: ${value}`);
+        if (entryCount < 5) { // Only log first 5 entries to avoid spam
+          if (value instanceof File) {
+            console.log(`  ${key}: [File] ${value.name} (${value.size} bytes)`);
+          } else {
+            console.log(`  ${key}: ${value}`);
+          }
+          entryCount++;
         }
       }
-      console.log('=== END REQUEST DEBUG ===');
+      console.log('=== END FORMDATA PARSING ===');
     } catch (parseError) {
       console.error('=== FORMDATA PARSE ERROR ===');
       console.error('Error details:', parseError);
       console.error('Error message:', parseError instanceof Error ? parseError.message : String(parseError));
+      console.error('Error name:', parseError instanceof Error ? parseError.name : 'Unknown');
       console.error('Error stack:', parseError instanceof Error ? parseError.stack : 'No stack trace');
       
-      // Try to get more information about the request
-      try {
-        const clonedRequest = request.clone();
-        const text = await clonedRequest.text();
-        console.error('Request body as text (first 500 chars):', text.substring(0, 500));
-      } catch (textError) {
-        console.error('Could not read request body as text:', textError);
+      // Check if this is a specific FormData parsing error
+      const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
+      
+      if (errorMessage.includes('Failed to parse body as FormData')) {
+        console.error('❌ This is a FormData parsing error - likely due to malformed multipart data');
+        
+        // Try to get raw request info for debugging
+        try {
+          // Create a new request to read the body as text (for debugging)
+          const bodyText = await request.text();
+          console.error('Request body first 500 chars:', bodyText.substring(0, 500));
+          console.error('Request body length:', bodyText.length);
+        } catch (textError) {
+          console.error('Could not read request body as text:', textError);
+        }
+        
+        return NextResponse.json({ 
+          message: `Error updating property: Failed to parse request body as FormData. This indicates the request was malformed or not sent as proper multipart/form-data. Original error: ${errorMessage}` 
+        }, { status: 400 });
       }
       
+      // For other parsing errors
       return NextResponse.json({ 
-        message: `Error updating property: Failed to parse request body as FormData. Error: ${parseError instanceof Error ? parseError.message : String(parseError)}. This usually indicates the request was not sent as multipart/form-data.` 
+        message: `Error updating property: Request parsing failed. Error: ${errorMessage}` 
       }, { status: 500 });
     }
     

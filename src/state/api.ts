@@ -43,7 +43,7 @@ export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: API_BASE_URL,
     timeout: 60000, // Increase timeout to 60 seconds
-    prepareHeaders: async (headers) => {
+    prepareHeaders: async (headers, { getState, endpoint }) => {
       try {
         const session = await fetchAuthSession();
         const idToken = session.tokens?.idToken?.toString();
@@ -54,6 +54,11 @@ export const api = createApi({
         // Silently handle auth errors - this allows non-authenticated users to access public endpoints
         // User not authenticated, continuing as guest
       }
+      
+      // Important: Don't set Content-Type for FormData requests
+      // The browser needs to set the correct boundary for multipart/form-data
+      // RTK Query will automatically detect FormData and avoid setting Content-Type
+      
       return headers;
     },
     // Add response handling to properly handle non-JSON responses
@@ -70,8 +75,27 @@ export const api = createApi({
     async fetchFn(input, init) {
       // Check if this is a FormData request - if so, use simple fetch to avoid issues
       if (init?.body instanceof FormData) {
-        console.log('RTK Query: Using simple fetch for FormData request');
-        return fetch(input, init);
+        console.log('RTK Query: FormData detected, bypassing complex retry logic');
+        console.log('FormData entries before sending:', Object.fromEntries(init.body.entries()));
+        
+        // Use a simple, direct fetch for FormData to avoid any potential issues
+        const response = await fetch(input, {
+          method: init.method || 'GET',
+          headers: init.headers || {},
+          body: init.body,
+          credentials: init.credentials || 'same-origin',
+        });
+        
+        console.log('FormData response status:', response.status);
+        console.log('FormData response headers:', Object.fromEntries(response.headers.entries()));
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('FormData request failed:', errorText);
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        
+        return response;
       }
       
       const maxRetries = 3;
@@ -593,13 +617,17 @@ export const api = createApi({
 
     updateProperty: build.mutation<Property, { id: string; body: FormData }>({
         query: ({ id, body }) => {
-            console.log('RTK Query updateProperty - sending FormData:', Object.fromEntries(body.entries()));
+            console.log('RTK Query updateProperty called with:');
+            console.log('- ID:', id);
+            console.log('- Body type:', body.constructor.name);
+            console.log('- FormData entries:', Object.fromEntries(body.entries()));
+            
             return {
                 url: `properties/${id}`,
                 method: "PUT",
                 body: body,
-                // Don't set Content-Type header - let the browser set it automatically for FormData
-                // The browser will set it to multipart/form-data with boundary
+                // Explicitly don't set Content-Type - let browser handle multipart/form-data boundary
+                headers: {},
             };
         },
         invalidatesTags: (result, error, { id }) => [
