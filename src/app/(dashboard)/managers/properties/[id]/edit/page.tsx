@@ -554,11 +554,6 @@ export default function EditPropertyPage() {
             {/* Property Features & Specs */}
             <FormSection title="Property Features & Specs" icon={<Home size={20} />}>
               <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
-                  <CreateFormFieldt name="beds" label="Total Bedrooms (Property)" type="number" control={propertyForm.control} min={0} />
-                  <CreateFormFieldt name="baths" label="Total Bathrooms (Property)" type="number" control={propertyForm.control} min={0} />
-                  <CreateFormFieldt name="squareFeet" label="Total Square Feet (Property)" type="number" control={propertyForm.control} min={0} placeholder="e.g., 2500" />
-                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 items-center pt-2">
                   <CreateFormFieldt name="isNsfassAccredited" label="NSFAS Accredited" type="switch" control={propertyForm.control} />
                 </div>

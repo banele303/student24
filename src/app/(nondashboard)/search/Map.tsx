@@ -3,8 +3,9 @@ import React, { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useAppSelector } from "@/state/redux";
-import { useGetPropertiesQuery } from "@/state/api";
+import { useGetPropertiesQuery, useGetRoomsQuery } from "@/state/api";
 import { Property } from "@/types/prismaTypes";
+import { getRoomStats } from "@/lib/roomUtils";
 
 // Extended Property type with location and other properties needed for the map
 interface PropertyWithLocation extends Property {
@@ -361,7 +362,8 @@ const createPropertyMarker = (property: PropertyWithLocation, map: mapboxgl.Map)
       ? `<div class="mt-1 text-sm"><span class="font-medium">${property.availableRooms}</span> room${property.availableRooms > 1 ? 's' : ''} available</div>` 
       : '';
     
-    // Property features
+    // Property features - using property values for now as fetching room data for all map markers would be inefficient
+    // TODO: Consider optimizing room data loading for map popups if needed
     const features = [];
     if (property.beds) features.push(`${property.beds} beds`);
     if (property.baths) features.push(`${property.baths} baths`);

@@ -46,6 +46,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getRoomStats } from "@/lib/roomUtils";
 
 const Properties = () => {
   const router = useRouter();
@@ -286,6 +287,14 @@ const PropertyCard = ({ property, onEdit, onDelete }: {
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
 }) => {
+  // Calculate room-based statistics
+  const roomStats = getRoomStats(property.rooms);
+  
+  // Use room stats or fallback to property values for backward compatibility
+  const displayBeds = roomStats.totalBeds || property.beds || 0;
+  const displayBaths = roomStats.totalBaths || property.baths || 0;
+  const displaySquareFeet = roomStats.totalSquareFeet || property.squareFeet || 0;
+  const displayPrice = roomStats.minPrice || property.pricePerMonth || 0;
   return (
     <Card className="overflow-hidden border border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-800 hover:shadow-md transition-all duration-200 w-full min-w-[400px] max-w-[800px] mx-auto">
       <div className="flex flex-col lg:flex-row">
@@ -300,7 +309,7 @@ const PropertyCard = ({ property, onEdit, onDelete }: {
           />
           <div className="absolute top-3 left-3 z-10">
             <Badge className="bg-blue-500/90 backdrop-blur-sm text-white hover:bg-blue-600 text-sm px-3 py-1.5 shadow-lg">
-              R{property.pricePerMonth.toLocaleString()}/mo
+              R{displayPrice.toLocaleString()}/mo
             </Badge>
           </div>
         </div>
@@ -330,15 +339,15 @@ const PropertyCard = ({ property, onEdit, onDelete }: {
             <div className="flex items-center gap-3 mb-4">
               <div className="flex items-center text-slate-500 dark:text-slate-400">
                 <BedDouble className="h-4 w-4 mr-1" />
-                <span className="text-sm">{property.beds}</span>
+                <span className="text-sm">{displayBeds}</span>
               </div>
               <div className="flex items-center text-slate-500 dark:text-slate-400">
                 <Bath className="h-4 w-4 mr-1" />
-                <span className="text-sm">{property.baths}</span>
+                <span className="text-sm">{displayBaths}</span>
               </div>
               <div className="flex items-center text-slate-500 dark:text-slate-400">
                 <Ruler className="h-4 w-4 mr-1" />
-                <span className="text-sm">{property.squareFeet} sq ft</span>
+                <span className="text-sm">{displaySquareFeet} sq ft</span>
               </div>
             </div>
           </div>

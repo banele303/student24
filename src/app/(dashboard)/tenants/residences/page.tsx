@@ -51,9 +51,7 @@ const Residences = () => {
           // Use optional chaining to safely access nested properties
           const transformedProperty = {
             ...property,
-            // Ensure all required properties have default values
-            beds: property.beds || 0,
-            baths: property.baths || 0,
+            // Ensure required properties have default values
             squareFeet: property.squareFeet || 0,
             // Map price to pricePerMonth as required by ModernPropertyCard
             pricePerMonth: property.price || 0,

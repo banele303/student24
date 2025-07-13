@@ -8,6 +8,8 @@ import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { getRoomStats } from "@/lib/roomUtils"
+import type { Room } from "@/types/prismaTypes"
 
 interface PropertyCardCompactProps {
   property: {
@@ -30,6 +32,7 @@ interface PropertyCardCompactProps {
     isParkingIncluded?: boolean
     isNsfassAccredited?: boolean
     availableRooms?: number
+    rooms?: Room[] // Add rooms data for calculation
   }
   isFavorite?: boolean
   onFavoriteToggle?: () => void
@@ -57,6 +60,15 @@ export default function PropertyCardCompact({
   )
   const [isHovered, setIsHovered] = useState(false)
 
+  // Calculate room-based statistics
+  const roomStats = getRoomStats(property.rooms);
+  
+  // Use room stats or fallback to property values for backward compatibility
+  const displayBeds = roomStats.totalBeds || property.beds || 0;
+  const displayBaths = roomStats.totalBaths || property.baths || 0;
+  const displaySquareFeet = roomStats.totalSquareFeet || property.squareFeet || 0;
+  const displayPrice = roomStats.minPrice || property.price || property.pricePerMonth || 0;
+
   return (
     <Card 
       className="flex flex-row h-auto min-h-[140px] mt-6 overflow-hidden transition-all duration-300 hover:shadow-md border border-gray-200 bg-white rounded-xl"
@@ -81,7 +93,7 @@ export default function PropertyCardCompact({
         <div className="absolute top-2 left-2 z-20">
           <div className="bg-white shadow-md text-gray-800 px-2 py-1 rounded-md flex items-center border border-gray-100">
             <span className="font-bold text-sm">
-              R{(property.price || property.pricePerMonth || 0).toFixed(0)}
+              R{displayPrice.toFixed(0)}
             </span>
             <span className="text-xs text-gray-500 ml-1">/mo</span>
           </div>
@@ -151,15 +163,15 @@ export default function PropertyCardCompact({
           <div className="flex gap-3 text-xs text-gray-600 sm:text-sm">
             <div className="flex items-center gap-1">
               <Bed className="h-3.5 w-3.5" />
-              <span>{property.beds}</span>
+              <span>{displayBeds}</span>
             </div>
             <div className="flex items-center gap-1">
               <Bath className="h-3.5 w-3.5" />
-              <span>{property.baths}</span>
+              <span>{displayBaths}</span>
             </div>
             <div className="flex items-center gap-1">
               <Home className="h-3.5 w-3.5" />
-              <span>{property.squareFeet ? `${property.squareFeet} m²` : 'N/A'}</span>
+              <span>{displaySquareFeet ? `${displaySquareFeet} m²` : 'N/A'}</span>
             </div>
           </div>
           

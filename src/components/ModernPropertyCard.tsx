@@ -7,6 +7,8 @@ import Link from "next/link"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { getRoomStats } from "@/lib/roomUtils"
+import type { Room } from "@/types/prismaTypes"
 
 interface ModernPropertyCardProps {
   property: {
@@ -28,6 +30,7 @@ interface ModernPropertyCardProps {
     isNsfassAccredited?: boolean
     availableRooms?: number
     price?: number
+    rooms?: Room[] // Add rooms data for calculation
   }
   isFavorite?: boolean
   onFavoriteToggle?: () => void
@@ -46,6 +49,15 @@ function ModernPropertyCard({
   showActions = false,
   userRole = null,
 }: ModernPropertyCardProps) {
+  // Calculate room-based statistics
+  const roomStats = getRoomStats(property.rooms);
+  
+  // Use room stats or fallback to property values for backward compatibility
+  const displayBeds = roomStats.totalBeds || property.beds || 0;
+  const displayBaths = roomStats.totalBaths || property.baths || 0;
+  const displaySquareFeet = roomStats.totalSquareFeet || property.squareFeet || 0;
+  const displayPrice = roomStats.minPrice || property.price || property.pricePerMonth || 0;
+  
   // Add simple debug logging just for price
   console.log("PRICE DEBUG:", {
     price: property.price,
@@ -96,7 +108,7 @@ function ModernPropertyCard({
             <div className="absolute top-2 left-2 z-20">
               <div className="bg-blue-600 backdrop-blur-md text-white px-2 py-1 rounded text-xs flex items-center shadow-sm border border-blue-700">
                 <span className="font-bold">
-                  {property.price || property.pricePerMonth ? `R${property.price || property.pricePerMonth}` : "Price on request"}
+                  {displayPrice ? `R${displayPrice}` : "Price on request"}
                 </span>
                 <span className="text-[10px] text-white/90 ml-1">/mo</span>
               </div>
@@ -146,17 +158,17 @@ function ModernPropertyCard({
             <div className="flex gap-2">
               <div className="flex items-center text-[10px] text-gray-700 dark:text-white/80">
                 <BedDouble className="h-3 w-3 mr-0.5 text-blue-500 dark:text-blue-400" />
-                <span>{property.beds}</span>
+                <span>{displayBeds}</span>
               </div>
 
               <div className="flex items-center text-[10px] text-gray-700 dark:text-white/80">
                 <Bath className="h-3 w-3 mr-0.5 text-blue-500 dark:text-blue-400" />
-                <span>{property.baths}</span>
+                <span>{displayBaths}</span>
               </div>
 
               <div className="flex items-center text-[10px] text-gray-700 dark:text-white/80">
                 <Ruler className="h-3 w-3 mr-0.5 text-blue-500 dark:text-blue-400" />
-                <span>{property.squareFeet} sq ft</span>
+                <span>{displaySquareFeet} sq ft</span>
               </div>
             </div>
           </div>

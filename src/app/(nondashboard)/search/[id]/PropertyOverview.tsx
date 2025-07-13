@@ -1,8 +1,9 @@
-import { useGetPropertyQuery } from "@/state/api";
+import { useGetPropertyQuery, useGetRoomsQuery } from "@/state/api";
 import { PropertyCardSkeleton } from "@/components/ui/skeletons";
 import { MapPin, Star } from "lucide-react";
 import React from "react";
 import { Property } from "@/types/property";
+import { getRoomStats } from "@/lib/roomUtils";
 
 interface PropertyOverviewProps {
   propertyId: string | number;
@@ -17,6 +18,19 @@ const PropertyOverview = ({ propertyId }: PropertyOverviewProps) => {
     isError,
     isLoading,
   } = useGetPropertyQuery(numericPropertyId);
+
+  // Fetch rooms data for calculating stats
+  const { data: rooms } = useGetRoomsQuery(numericPropertyId, { 
+    skip: !property 
+  });
+
+  // Calculate room-based statistics
+  const roomStats = getRoomStats(rooms);
+  
+  // Use room stats or fallback to property values for backward compatibility
+  const displayBeds = roomStats.totalBeds || property?.beds || 0;
+  const displayBaths = roomStats.totalBaths || property?.baths || 0;
+  const displaySquareFeet = roomStats.totalSquareFeet || property?.squareFeet || 0;
 
   if (isLoading) return <PropertyCardSkeleton />;
   if (isError || !property) {
@@ -63,18 +77,18 @@ const PropertyOverview = ({ propertyId }: PropertyOverviewProps) => {
           <div className="border-l border-gray-300 h-10"></div>
           <div>
             <div className="text-sm text-gray-500">Bedrooms</div>
-            <div className="font-semibold">{property.beds} bd</div>
+            <div className="font-semibold">{displayBeds} bd</div>
           </div>
           <div className="border-l border-gray-300 h-10"></div>
           <div>
             <div className="text-sm text-gray-500">Bathrooms</div>
-            <div className="font-semibold">{property.baths} ba</div>
+            <div className="font-semibold">{displayBaths} ba</div>
           </div>
           <div className="border-l border-gray-300 h-10"></div>
           <div>
             <div className="text-sm text-gray-500">Square Feet</div>
             <div className="font-semibold">
-              {property.squareFeet ? property.squareFeet.toLocaleString() : 'N/A'} sq ft
+              {displaySquareFeet ? displaySquareFeet.toLocaleString() : 'N/A'} sq ft
             </div>
           </div>
         </div>

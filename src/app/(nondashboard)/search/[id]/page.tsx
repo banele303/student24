@@ -13,6 +13,7 @@ import ApplicationModal from "./ApplicationModal";
 import Loading from "@/components/Loading";
 import PropertyReviews from "@/components/PropertyReviews";
 import { Building2, Phone, Bed, Bath, Users, Home } from "lucide-react";
+import { getRoomStats } from "@/lib/roomUtils";
 
 // Define interfaces for type safety
 interface Room {
@@ -115,6 +116,14 @@ const SingleListing = () => {
   // Use processed data
   const propertyRooms = processedRooms || [];
 
+  // Calculate room-based statistics
+  const roomStats = getRoomStats(rooms);
+  
+  // Use room stats or fallback to property values for backward compatibility
+  const displayBeds = roomStats.totalBeds || property?.beds || 0;
+  const displayBaths = roomStats.totalBaths || property?.baths || 0;
+  const displaySquareFeet = roomStats.totalSquareFeet || property?.squareFeet || 0;
+
   if (isLoading || roomsLoading) return <div><Loading/></div>;
   if (isError || !property || !processedProperty) return <div>Property not found</div>;
 
@@ -138,15 +147,15 @@ const SingleListing = () => {
           <div className="flex flex-wrap gap-6 mt-4">
             <div className="flex items-center">
               <Bed className="w-5 h-5 text-blue-600 mr-2" />
-              <span className="text-gray-700">{property.beds} {property.beds === 1 ? 'Bedroom' : 'Bedrooms'}</span>
+              <span className="text-gray-700">{displayBeds} {displayBeds === 1 ? 'Bedroom' : 'Bedrooms'}</span>
             </div>
             <div className="flex items-center">
               <Bath className="w-5 h-5 text-blue-600 mr-2" />
-              <span className="text-gray-700">{property.baths} {property.baths === 1 ? 'Bathroom' : 'Bathrooms'}</span>
+              <span className="text-gray-700">{displayBaths} {displayBaths === 1 ? 'Bathroom' : 'Bathrooms'}</span>
             </div>
             <div className="flex items-center">
               <Building2 className="w-5 h-5 text-blue-600 mr-2" />
-              <span className="text-gray-700">{property.squareFeet} sq ft</span>
+              <span className="text-gray-700">{displaySquareFeet} sq ft</span>
             </div>
             <div className="flex items-center">
               <Phone className="w-5 h-5 text-blue-600 mr-2" />
@@ -294,7 +303,6 @@ const SingleListing = () => {
             <div className="sticky top-24">
               <ContactWidget 
                 onOpenModal={() => setIsModalOpen(true)} 
-                phoneNumber={propertyPhone}
               />
             </div>
           </div>

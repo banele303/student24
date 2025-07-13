@@ -142,9 +142,9 @@ const TenantDashboard = () => {
                 // Convert null values to undefined for type compatibility
                 averageRating: property.averageRating ?? undefined,
                 numberOfReviews: property.numberOfReviews ?? undefined,
-                beds: property.beds || 0,
-                baths: property.baths || 0,
                 squareFeet: property.squareFeet || 0,
+                beds: (property as any).beds || 0,
+                baths: (property as any).baths || 0,
                 // Use a type assertion to access pricePerMonth, or fall back to a default
                 // This handles the case where the property might have a different field structure
                 pricePerMonth: (property as any).pricePerMonth || 

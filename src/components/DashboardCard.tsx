@@ -21,6 +21,8 @@ import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { getRoomStats } from "@/lib/roomUtils";
+import type { Room } from "@/types/prismaTypes";
 
 interface PropertyCardProps {
   property: {
@@ -40,6 +42,7 @@ interface PropertyCardProps {
     isPetsAllowed?: boolean;
     isParkingIncluded?: boolean;
     isNsfassAccredited?: boolean;
+    rooms?: Room[]; // Add rooms data for calculation
   };
   isFavorite?: boolean;
   onFavoriteToggle?: () => void;
@@ -63,6 +66,15 @@ export default function PropertyCardDashboard({
 
   const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
+
+  // Calculate room-based statistics
+  const roomStats = getRoomStats(property.rooms);
+  
+  // Use room stats or fallback to property values for backward compatibility
+  const displayBeds = roomStats.totalBeds || property.beds || 0;
+  const displayBaths = roomStats.totalBaths || property.baths || 0;
+  const displaySquareFeet = roomStats.totalSquareFeet || property.squareFeet || 0;
+  const displayPrice = roomStats.minPrice || property.pricePerMonth || 0;
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -121,7 +133,7 @@ export default function PropertyCardDashboard({
         <div className="absolute top-4 left-4 z-20">
           <div className="bg-[#0F1112]/80 backdrop-blur-md text-white px-3 py-1.5 rounded-md flex items-center shadow-lg border border-[#333]">
             <span className="font-bold">
-              R{property.pricePerMonth.toFixed(0)}
+              R{displayPrice.toFixed(0)}
             </span>
             <span className="text-xs text-white/80 ml-1">/mo</span>
           </div>
@@ -179,20 +191,20 @@ export default function PropertyCardDashboard({
         <div className="grid grid-cols-3 gap-2 text-sm">
           <div className="flex flex-col items-center justify-center p-2 rounded-md bg-[#111]/80 backdrop-blur-sm border border-[#333]">
             <Bed className="h-4 w-4 mb-1 text-blue-400" />
-            <span className="font-medium text-white">{property.beds}</span>
+            <span className="font-medium text-white">{displayBeds}</span>
             <span className="text-xs text-gray-400">Beds</span>
           </div>
 
           <div className="flex flex-col items-center justify-center p-2 rounded-md bg-[#111]/80 backdrop-blur-sm border border-[#333]">
             <Bath className="h-4 w-4 mb-1 text-blue-400" />
-            <span className="font-medium text-white">{property.baths}</span>
+            <span className="font-medium text-white">{displayBaths}</span>
             <span className="text-xs text-gray-400">Baths</span>
           </div>
 
           <div className="flex flex-col items-center justify-center p-2 rounded-md bg-[#111]/80 backdrop-blur-sm border border-[#333]">
             <Home className="h-4 w-4 mb-1 text-blue-400" />
             <span className="font-medium text-white">
-              {property.squareFeet}
+              {displaySquareFeet}
             </span>
             <span className="text-xs text-gray-400">sq ft</span>
           </div>

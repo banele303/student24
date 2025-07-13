@@ -9,7 +9,6 @@ import { useGetAuthUserQuery } from "@/state/api"
 import { usePathname, useRouter } from "next/navigation"
 import { signOut } from "aws-amplify/auth"
 import { ThemeToggle } from "@/components/ThemeToggle"
-import { NavigationSkeleton } from "@/components/ui/skeletons"
 import { cn } from "@/lib/utils"
 import {
   Plus,
@@ -110,9 +109,6 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Loading Overlay - Replace with Navigation Skeleton */}
-      {isLoading && <NavigationSkeleton />}
-
       <header className="fixed top-0 left-0 w-full z-50">
         <div 
           className={cn(

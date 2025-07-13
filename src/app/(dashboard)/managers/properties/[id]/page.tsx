@@ -36,6 +36,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { getRoomStats } from "@/lib/roomUtils";
 
 const PropertyDetails = () => {
   const { id } = useParams();
@@ -48,6 +49,15 @@ const PropertyDetails = () => {
   const { data: leases, isLoading: leasesLoading } =
     useGetPropertyLeasesQuery(propertyId, { skip: !!propertyError });
   const { data: rooms, isLoading: roomsLoading } =
+    useGetRoomsQuery(propertyId, { skip: !!propertyError });
+
+  // Calculate room-based statistics
+  const roomStats = getRoomStats(rooms);
+  
+  // Use room stats or fallback to property values for backward compatibility
+  const displayBeds = roomStats.totalBeds || property?.beds || 0;
+  const displayBaths = roomStats.totalBaths || property?.baths || 0;
+  const displaySquareFeet = roomStats.totalSquareFeet || property?.squareFeet || 0;
     useGetRoomsQuery(propertyId, { skip: !!propertyError });
     
   // We don't fetch all payments at once since we need lease-specific payments
@@ -131,17 +141,17 @@ const PropertyDetails = () => {
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="flex flex-col items-center justify-center p-3 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
                   <BedDouble className="h-5 w-5 text-blue-400 mb-1" />
-                  <span className="font-medium text-gray-800 dark:text-white">{property?.beds || 0}</span>
+                  <span className="font-medium text-gray-800 dark:text-white">{displayBeds}</span>
                   <span className="text-xs text-gray-400">Beds</span>
                 </div>
                 <div className="flex flex-col items-center justify-center p-3 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
                   <Bath className="h-5 w-5 text-blue-400 mb-1" />
-                  <span className="font-medium text-gray-800 dark:text-white">{property?.baths || 0}</span>
+                  <span className="font-medium text-gray-800 dark:text-white">{displayBaths}</span>
                   <span className="text-xs text-gray-400">Baths</span>
                 </div>
                 <div className="flex flex-col items-center justify-center p-3 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
                   <Ruler className="h-5 w-5 text-blue-400 mb-1" />
-                  <span className="font-medium text-gray-800 dark:text-white">{property?.squareFeet || 0}</span>
+                  <span className="font-medium text-gray-800 dark:text-white">{displaySquareFeet}</span>
                   <span className="text-xs text-gray-400">sq ft</span>
                 </div>
               </div>

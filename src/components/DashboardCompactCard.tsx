@@ -8,6 +8,8 @@ import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { getRoomStats } from "@/lib/roomUtils"
+import type { Room } from "@/types/prismaTypes"
 
 interface PropertyCardCompactProps {
   property: {
@@ -26,6 +28,7 @@ interface PropertyCardCompactProps {
     isPetsAllowed?: boolean
     isParkingIncluded?: boolean
     isNsfassAccredited?: boolean
+    rooms?: Room[] // Add rooms data for calculation
   }
   isFavorite?: boolean
   onFavoriteToggle?: () => void
@@ -42,6 +45,15 @@ export default function DashboardCardCompact({
 }: PropertyCardCompactProps) {
   const [imgSrc, setImgSrc] = useState(property.photoUrls?.[0] || "/placeholder.svg?height=300&width=300")
   const [isHovered, setIsHovered] = useState(false)
+
+  // Calculate room-based statistics
+  const roomStats = getRoomStats(property.rooms);
+  
+  // Use room stats or fallback to property values for backward compatibility
+  const displayBeds = roomStats.totalBeds || property.beds || 0;
+  const displayBaths = roomStats.totalBaths || property.baths || 0;
+  const displaySquareFeet = roomStats.totalSquareFeet || property.squareFeet || 0;
+  const displayPrice = roomStats.minPrice || property.pricePerMonth || 0;
 
   return (
     <Card 
@@ -127,21 +139,21 @@ export default function DashboardCardCompact({
           <div className="flex gap-2 text-xs text-gray-400 sm:text-sm">
             <div className="flex items-center gap-1">
               <Bed className="h-3.5 w-3.5" />
-              <span>{property.beds}</span>
+              <span>{displayBeds}</span>
             </div>
             <div className="flex items-center gap-1">
               <Bath className="h-3.5 w-3.5" />
-              <span>{property.baths}</span>
+              <span>{displayBaths}</span>
             </div>
             <div className="flex items-center gap-1">
               <Home className="h-3.5 w-3.5" />
-              <span>{property.squareFeet}</span>
+              <span>{displaySquareFeet}</span>
             </div>
           </div>
           
           <div className="bg-black/80 backdrop-blur-md text-white px-2 py-1 rounded-md flex items-center shadow-md border border-[#333]">
             <span className="font-bold text-sm sm:text-base">
-              R{property.pricePerMonth.toFixed(0)}
+              R{displayPrice.toFixed(0)}
             </span>
             <span className="text-xs text-white/80 ml-1">/mo</span>
           </div>

@@ -421,6 +421,7 @@ export default function AdminPropertiesPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">
+                        {/* Using property-level data for efficiency in table view */}
                         <div className="flex items-center gap-1">
                           <BedDouble className="h-4 w-4 text-slate-400" />
                           <span>{property.beds}</span>

@@ -10,6 +10,8 @@ import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { getRoomStats } from "@/lib/roomUtils"
+import type { Room } from "@/types/prismaTypes"
 
 interface PropertyCardProps {
   property: {
@@ -32,6 +34,7 @@ interface PropertyCardProps {
     isParkingIncluded?: boolean
     isNsfassAccredited?: boolean
     availableRooms?: number
+    rooms?: Room[] // Add rooms data for calculation
   }
   isFavorite?: boolean
   onFavoriteToggle?: () => void
@@ -63,6 +66,15 @@ function PropertyCard({
   )
   const [isHovered, setIsHovered] = useState(false)
   const [imgError, setImgError] = useState(false)
+
+  // Calculate room-based statistics
+  const roomStats = getRoomStats(property.rooms);
+  
+  // Use room stats or fallback to property values for backward compatibility
+  const displayBeds = roomStats.totalBeds || property.beds || 0;
+  const displayBaths = roomStats.totalBaths || property.baths || 0;
+  const displaySquareFeet = roomStats.totalSquareFeet || property.squareFeet || 0;
+  const displayPrice = roomStats.minPrice || property.price || property.pricePerMonth || 0;
 
   // Custom loader that just returns the URL as-is
   const loaderFunc = ({ src }: ImageLoaderProps) => {
@@ -111,7 +123,7 @@ function PropertyCard({
         {/* Price tag - Now clearly in Rands */}
         <div className="absolute top-3 right-4 z-20">
           <div className="bg-[#00acee] shadow-md text-white px-3 py-1.5 rounded-lg flex items-center border border-[#00acee]">
-            <span className="font-bold">R {(property.price || property.pricePerMonth || 0).toLocaleString('en-ZA')}</span>
+            <span className="font-bold">R {displayPrice.toLocaleString('en-ZA')}</span>
             <span className="text-xs text-blue-100 ml-1">/month</span>
           </div>
         </div>
@@ -174,19 +186,19 @@ function PropertyCard({
         <div className="grid grid-cols-3 gap-2 text-sm">
           <div className="flex flex-col items-center justify-center p-2 rounded-md bg-gray-50 border border-gray-100">
             <Bed className="h-4 w-4 mb-1 text-blue-500" />
-            <span className="font-medium text-gray-800">{property.beds}</span>
+            <span className="font-medium text-gray-800">{displayBeds}</span>
             <span className="text-xs text-gray-500">Beds</span>
           </div>
 
           <div className="flex flex-col items-center justify-center p-2 rounded-md bg-gray-50 border border-gray-100">
             <Bath className="h-4 w-4 mb-1 text-blue-500" />
-            <span className="font-medium text-gray-800">{property.baths}</span>
+            <span className="font-medium text-gray-800">{displayBaths}</span>
             <span className="text-xs text-gray-500">Baths</span>
           </div>
 
           <div className="flex flex-col items-center justify-center p-2 rounded-md bg-gray-50 border border-gray-100">
             <Home className="h-4 w-4 mb-1 text-blue-500" />
-            <span className="font-medium text-gray-800">{property.squareFeet}</span>
+            <span className="font-medium text-gray-800">{displaySquareFeet}</span>
             <span className="text-xs text-gray-500">m²</span>
           </div>
         </div>
@@ -205,7 +217,7 @@ function PropertyCard({
                   <p className="text-xs text-gray-500">Private Bath • 18m²</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-[#00acee]">R {Math.round((property.pricePerMonth || property.price || 0) * 0.6).toLocaleString('en-ZA')}</p>
+                  <p className="text-sm font-bold text-[#00acee]">R {Math.round(displayPrice * 0.6).toLocaleString('en-ZA')}</p>
                   <p className="text-xs text-gray-500">per month</p>
                 </div>
               </div>
@@ -218,7 +230,7 @@ function PropertyCard({
                     <p className="text-xs text-gray-500">Private Bath • 22m²</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold text-blue-600">R {Math.round((property.pricePerMonth || property.price || 0) * 0.8).toLocaleString('en-ZA')}</p>
+                    <p className="text-sm font-bold text-blue-600">R {Math.round(displayPrice * 0.8).toLocaleString('en-ZA')}</p>
                     <p className="text-xs text-gray-500">per month</p>
                   </div>
                 </div>
