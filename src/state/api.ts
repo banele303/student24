@@ -75,8 +75,8 @@ export const api = createApi({
     async fetchFn(input, init) {
       // Check if this is a FormData request - if so, use simple fetch to avoid issues
       if (init?.body instanceof FormData) {
-        console.log('RTK Query: FormData detected, bypassing complex retry logic');
-        console.log('FormData entries before sending:', Object.fromEntries(init.body.entries()));
+        console.log('RTK Query fetchFn: FormData detected, using simple fetch');
+        console.log('Note: For updateProperty, this should be bypassed by queryFn');
         
         // Use a simple, direct fetch for FormData to avoid any potential issues
         const response = await fetch(input, {
@@ -85,9 +85,6 @@ export const api = createApi({
           body: init.body,
           credentials: init.credentials || 'same-origin',
         });
-        
-        console.log('FormData response status:', response.status);
-        console.log('FormData response headers:', Object.fromEntries(response.headers.entries()));
         
         if (!response.ok) {
           const errorText = await response.text();
@@ -616,19 +613,71 @@ export const api = createApi({
     }),
 
     updateProperty: build.mutation<Property, { id: string; body: FormData }>({
-        query: ({ id, body }) => {
-            console.log('RTK Query updateProperty called with:');
+        // Use queryFn instead of query to completely bypass fetchBaseQuery for FormData
+        async queryFn({ id, body }, { getState, extra, endpoint, forced, type }, extraOptions, baseQuery) {
+            console.log('RTK Query updateProperty queryFn called with:');
             console.log('- ID:', id);
             console.log('- Body type:', body.constructor.name);
             console.log('- FormData entries:', Object.fromEntries(body.entries()));
             
-            return {
-                url: `properties/${id}`,
-                method: "PUT",
-                body: body,
-                // Explicitly don't set Content-Type - let browser handle multipart/form-data boundary
-                headers: {},
-            };
+            try {
+                // Get auth token manually
+                let authToken = '';
+                try {
+                    const session = await fetchAuthSession();
+                    authToken = session.tokens?.idToken?.toString() || '';
+                } catch (authError) {
+                    console.warn('Could not get auth token:', authError);
+                }
+                
+                // Use direct fetch to completely bypass RTK Query's request handling
+                const response = await fetch(`${API_BASE_URL}/properties/${id}`, {
+                    method: 'PUT',
+                    body: body, // Send FormData directly
+                    headers: {
+                        // Only include Authorization header, let browser set Content-Type for FormData
+                        ...(authToken && { 'Authorization': `Bearer ${authToken}` }),
+                    },
+                });
+                
+                console.log('Direct fetch response status:', response.status);
+                console.log('Direct fetch response headers:', Object.fromEntries(response.headers.entries()));
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Direct fetch failed:', errorText);
+                    
+                    // Parse error message if it's JSON
+                    let errorData;
+                    try {
+                        errorData = JSON.parse(errorText);
+                    } catch {
+                        errorData = { message: errorText };
+                    }
+                    
+                    return {
+                        error: {
+                            status: response.status,
+                            data: errorData,
+                        }
+                    };
+                }
+                
+                // Parse successful response
+                const data = await response.json();
+                console.log('Property update successful:', data);
+                
+                return { data };
+                
+            } catch (error) {
+                console.error('Property update error:', error);
+                return {
+                    error: {
+                        status: 'FETCH_ERROR',
+                        error: error instanceof Error ? error.message : 'Unknown error occurred',
+                    } as FetchBaseQueryError
+                };
+            }
         },
         invalidatesTags: (result, error, { id }) => [
             { type: "Properties", id: "LIST" },

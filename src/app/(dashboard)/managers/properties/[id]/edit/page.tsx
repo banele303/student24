@@ -379,6 +379,20 @@ export default function EditPropertyPage() {
       }
       console.log('=== END FORM DEBUG ===');
       
+      // Validate FormData before sending
+      console.log('FormData validation:');
+      console.log('- Constructor:', formData.constructor.name);
+      console.log('- Has entries:', Array.from(formData.entries()).length > 0 ? 'Yes' : 'No');
+      console.log('- Entry count:', Array.from(formData.entries()).length);
+      
+      // Test if FormData can be iterated (basic validity check)
+      let entryCount = 0;
+      for (const [key, value] of formData.entries()) {
+        entryCount++;
+        if (entryCount >= 3) break; // Just test first few entries
+      }
+      console.log('- Iteration test passed, entries found:', entryCount);
+      
       // Make the API call to update the property
       const result = await updateProperty({ id: propertyIdString, body: formData }).unwrap();
       toast.dismiss();
