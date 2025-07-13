@@ -22,6 +22,7 @@ export interface Property {
   images?: string[];      // Added images property
   beds: number;
   baths: number;
+  kitchens: number;
   squareFeet: number;
   pricePerMonth?: number; // Make this optional
   price?: number;        // Add alternative field name

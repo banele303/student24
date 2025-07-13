@@ -56,6 +56,7 @@ interface FormFieldProps {
   initialValue?: string | number | boolean | string[];
   min?: number;
   max?: number;
+  step?: number | string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   render?: (props: { field: any }) => React.ReactNode;
 }
@@ -65,6 +66,7 @@ export const CustomFormField = ({
   label,
   type = "text",
   options = [],
+  step,
   ...props
 }: FormFieldProps) => {
   const { control } = useFormContext();
@@ -167,6 +169,7 @@ export const CustomFormField = ({
                 {...field}
                 {...props}
                 type="number"
+                step={step}
                 className={props.inputClassName}
                 onChange={(e) => {
                   const value =

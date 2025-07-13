@@ -86,6 +86,7 @@ model Property {
   isNsfassAccredited Boolean     @default(false)
   beds              Int
   baths             Float
+  kitchens          Int          @default(0)
   squareFeet        Int
   propertyType      PropertyType
   postedDate        DateTime     @default(now())

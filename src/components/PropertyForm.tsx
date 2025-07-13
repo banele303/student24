@@ -266,48 +266,21 @@ export const PropertyForm = ({
             />
           </div>
 
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              name="isNsfassAccredited"
-              defaultChecked={initialData?.isNsfassAccredited}
-              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-            />
-            <label className="ml-2 block text-sm text-gray-700">
-              NSFAS Accredited
-            </label>
-          </div>
-        </div>
-
-        {/* Pricing */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Pricing and Fees</h3>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Price per Month
-            </label>
-            <input
-              type="number"
-              name="pricePerMonth"
-              defaultValue={initialData?.pricePerMonth}
-              min="0"
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Security Deposit
-            </label>
-            <input
-              type="number"
-              name="securityDeposit"
-              defaultValue={initialData?.securityDeposit}
-              min="0"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            />
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                name="isNsfassAccredited"
+                defaultChecked={initialData?.isNsfassAccredited}
+                className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <label className="ml-3 block text-sm font-semibold text-blue-800">
+                NSFAS Accredited Property
+              </label>
+            </div>
+            <p className="mt-2 text-xs text-blue-600">
+              Check this box if your property is accredited to accept NSFAS students
+            </p>
           </div>
 
           <div className="flex items-center">

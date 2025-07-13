@@ -21,6 +21,7 @@ interface FormFieldProps<TFieldValues extends FieldValues> {
   labelClassName?: string;
   description?: string;
   min?: number;
+  step?: number | string;
 }
 
 export function CreateFormFieldt<TFieldValues extends FieldValues>({
@@ -34,6 +35,7 @@ export function CreateFormFieldt<TFieldValues extends FieldValues>({
   labelClassName = "",
   description,
   min,
+  step,
 }: FormFieldProps<TFieldValues>) {
   return (
     <div className="space-y-1.5 w-full">
@@ -118,6 +120,7 @@ export function CreateFormFieldt<TFieldValues extends FieldValues>({
                 }}
                 placeholder={placeholder}
                 min={min}
+                step={step}
                 className={`mt-1 block w-full dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 ${inputClassName} ${error ? 'border-destructive' : 'border-border dark:border-gray-600'}`}
               />
             )}

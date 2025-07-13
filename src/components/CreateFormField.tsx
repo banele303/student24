@@ -25,6 +25,7 @@ interface CustomFormFieldProps {
   inputClassName?: string
   min?: number
   max?: number
+  step?: string | number
   accept?: string
   multiple?: boolean
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -42,6 +43,7 @@ export const CreateFormField: React.FC<CustomFormFieldProps> = ({
   inputClassName = "",
   min,
   max,
+  step,
   accept,
   multiple,
   onChange,
@@ -109,6 +111,7 @@ export const CreateFormField: React.FC<CustomFormFieldProps> = ({
                 className={inputClassName}
                 min={min}
                 max={max}
+                step={step}
                 onChange={(e) => {
                   // Convert empty string to 0 or the string value to a number
                   const value = e.target.value === "" ? "" : Number(e.target.value);
