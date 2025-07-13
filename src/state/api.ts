@@ -1066,23 +1066,87 @@ export const api = createApi({
     }),
 
     updateRoom: build.mutation<Room, { propertyId: number, roomId: number; data: FormData }>({
-      query: ({ propertyId, roomId, data }) => ({
-        url: `rooms/${roomId}`,
-        method: "PUT",
-        body: data,
-      }),
-      transformResponse: (response: any) => {
-        // The server returns the room directly
-        return response;
-      },
-      transformErrorResponse: (response: any) => {
-        if (response.status === 404) {
-          return { message: "Room not found" };
+      queryFn: async ({ propertyId, roomId, data }, { getState }) => {
+        try {
+          console.log('=== updateRoom queryFn DEBUG ===');
+          console.log('updateRoom: Using direct fetch bypass for FormData');
+          console.log('- Property ID:', propertyId);
+          console.log('- Room ID:', roomId);
+          console.log('- FormData entries:');
+          
+          // Log FormData contents for debugging
+          for (const [key, value] of data.entries()) {
+            if (value instanceof File) {
+              console.log(`  ${key}: [File] ${value.name} (${value.size} bytes, ${value.type})`);
+            } else {
+              console.log(`  ${key}: ${value}`);
+            }
+          }
+          
+          // Get auth token manually since we're bypassing RTK Query's baseQuery
+          const session = await fetchAuthSession();
+          const idToken = session.tokens?.idToken?.toString();
+          
+          const headers: HeadersInit = {};
+          if (idToken) {
+            headers["Authorization"] = `Bearer ${idToken}`;
+          }
+          
+          console.log('- Auth token present:', !!idToken);
+          console.log('- Fetch URL:', `${API_BASE_URL}/rooms/${roomId}`);
+          
+          // Use direct fetch to avoid RTK Query's fetchBaseQuery interference
+          const response = await fetch(`${API_BASE_URL}/rooms/${roomId}`, {
+            method: 'PUT',
+            headers,
+            body: data, // FormData - don't set Content-Type, let browser handle it
+          });
+          
+          console.log('- Response status:', response.status);
+          console.log('- Response headers:', Object.fromEntries(response.headers.entries()));
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('updateRoom fetch failed:');
+            console.error('- Status:', response.status);
+            console.error('- Error text:', errorText);
+            
+            // Try to parse error as JSON for better error message
+            let errorData;
+            try {
+              errorData = JSON.parse(errorText);
+            } catch {
+              errorData = { message: errorText || "Failed to update room" };
+            }
+            
+            return {
+              error: {
+                status: response.status,
+                data: errorData
+              }
+            };
+          }
+          
+          const result = await response.json();
+          console.log('updateRoom: Direct fetch successful');
+          console.log('- Result:', result);
+          console.log('=== END updateRoom DEBUG ===');
+          return { data: result };
+          
+        } catch (error: any) {
+          console.error('=== updateRoom CATCH ERROR ===');
+          console.error('updateRoom: Direct fetch error:', error);
+          console.error('Error type:', error.constructor.name);
+          console.error('Error message:', error.message);
+          console.error('Full error:', error);
+          console.error('=== END CATCH ERROR ===');
+          return {
+            error: {
+              status: 'FETCH_ERROR',
+              error: error.message || "Network error updating room"
+            }
+          };
         }
-        if (response.status === 400) {
-          return { message: response.data?.message || "Invalid room data" };
-        }
-        return { message: response.data?.message || "Failed to update room" };
       },
       invalidatesTags: (result, error, { roomId, propertyId }) => {
         if (error) return [];

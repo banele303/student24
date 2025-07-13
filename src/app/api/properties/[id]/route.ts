@@ -361,6 +361,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       if (key !== 'address' && key !== 'city' && key !== 'state' && 
           key !== 'country' && key !== 'postalCode' && 
           key !== 'managerCognitoId' && key !== 'replacePhotos' && 
+          key !== 'locationId' && // Exclude locationId - location is updated separately above
+          key !== 'photoUrls' && // Exclude photoUrls - handled separately
           !key.startsWith('photos')) {
         propertyData[key] = value;
       }
