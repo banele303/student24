@@ -167,16 +167,21 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Parse the form data
-    let formData;
+    let formData: FormData;
     try {
+      console.log('=== REQUEST DEBUG INFO ===');
       console.log('Request content-type:', request.headers.get('content-type'));
       console.log('Request method:', request.method);
+      console.log('Request URL:', request.url);
+      
       formData = await request.formData();
-      console.log(`Updating property ${id}, request body:`, Object.fromEntries(formData.entries()));
+      console.log(`Successfully parsed FormData for property ${id}`);
+      console.log('FormData entries:', Object.fromEntries(formData.entries()));
     } catch (parseError) {
-      console.error('Error parsing FormData:', parseError);
+      console.error('=== FORMDATA PARSE ERROR ===');
+      console.error('Error details:', parseError);
       return NextResponse.json({ 
-        message: `Error updating property: Failed to parse body as FormData.` 
+        message: `Error updating property: Failed to parse request body as FormData. This might be due to incorrect Content-Type header or malformed request body.` 
       }, { status: 500 });
     }
     

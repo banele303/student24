@@ -5,6 +5,7 @@ import type React from "react";
 import {
   Bath,
   Bed,
+  ChefHat,
   Copy,
   Edit,
   Heart,
@@ -35,6 +36,7 @@ interface PropertyCardProps {
     photoUrls?: string[];
     beds: number;
     baths: number;
+    kitchens?: number;
     squareFeet: number;
     pricePerMonth: number;
     averageRating?: number;
@@ -70,10 +72,11 @@ export default function PropertyCardDashboard({
   // Calculate room-based statistics
   const roomStats = getRoomStats(property.rooms);
   
-  // Use room stats or fallback to property values for backward compatibility
-  const displayBeds = roomStats.totalBeds || property.beds || 0;
-  const displayBaths = roomStats.totalBaths || property.baths || 0;
-  const displaySquareFeet = roomStats.totalSquareFeet || property.squareFeet || 0;
+  // Use property values primarily, fallback to room stats for backward compatibility
+  const displayBeds = property.beds || 0;
+  const displayBaths = property.baths || 0;
+  const displayKitchens = property.kitchens || 0;
+  const displaySquareFeet = property.squareFeet || 0;
   const displayPrice = roomStats.minPrice || property.pricePerMonth || 0;
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -188,7 +191,7 @@ export default function PropertyCardDashboard({
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 text-sm">
+        <div className="grid grid-cols-4 gap-2 text-sm">
           <div className="flex flex-col items-center justify-center p-2 rounded-md bg-[#111]/80 backdrop-blur-sm border border-[#333]">
             <Bed className="h-4 w-4 mb-1 text-blue-400" />
             <span className="font-medium text-white">{displayBeds}</span>
@@ -199,6 +202,12 @@ export default function PropertyCardDashboard({
             <Bath className="h-4 w-4 mb-1 text-blue-400" />
             <span className="font-medium text-white">{displayBaths}</span>
             <span className="text-xs text-gray-400">Baths</span>
+          </div>
+
+          <div className="flex flex-col items-center justify-center p-2 rounded-md bg-[#111]/80 backdrop-blur-sm border border-[#333]">
+            <ChefHat className="h-4 w-4 mb-1 text-blue-400" />
+            <span className="font-medium text-white">{displayKitchens}</span>
+            <span className="text-xs text-gray-400">Kitchens</span>
           </div>
 
           <div className="flex flex-col items-center justify-center p-2 rounded-md bg-[#111]/80 backdrop-blur-sm border border-[#333]">

@@ -1,6 +1,6 @@
 "use client"
 
-import { Bath, Bed, Heart, Home, MapPin, Star } from "lucide-react"
+import { Bath, Bed, ChefHat, Heart, Home, MapPin, Star } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
@@ -21,6 +21,7 @@ interface PropertyCardCompactProps {
     photoUrls?: string[]
     beds: number
     baths: number
+    kitchens?: number
     squareFeet: number
     pricePerMonth: number
     averageRating: number
@@ -49,10 +50,11 @@ export default function DashboardCardCompact({
   // Calculate room-based statistics
   const roomStats = getRoomStats(property.rooms);
   
-  // Use room stats or fallback to property values for backward compatibility
-  const displayBeds = roomStats.totalBeds || property.beds || 0;
-  const displayBaths = roomStats.totalBaths || property.baths || 0;
-  const displaySquareFeet = roomStats.totalSquareFeet || property.squareFeet || 0;
+  // Use property values primarily, fallback to room stats for backward compatibility
+  const displayBeds = property.beds || 0;
+  const displayBaths = property.baths || 0;
+  const displayKitchens = property.kitchens || 0;
+  const displaySquareFeet = property.squareFeet || 0;
   const displayPrice = roomStats.minPrice || property.pricePerMonth || 0;
 
   return (
@@ -144,6 +146,10 @@ export default function DashboardCardCompact({
             <div className="flex items-center gap-1">
               <Bath className="h-3.5 w-3.5" />
               <span>{displayBaths}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <ChefHat className="h-3.5 w-3.5" />
+              <span>{displayKitchens}</span>
             </div>
             <div className="flex items-center gap-1">
               <Home className="h-3.5 w-3.5" />

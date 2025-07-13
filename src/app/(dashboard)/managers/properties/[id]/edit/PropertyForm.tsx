@@ -56,7 +56,7 @@ const PROPERTY_TYPES = [
 
 // Extend the Property type if needed
 interface ExtendedProperty extends Partial<Property> {
-  // Add any additional properties if needed
+  kitchens?: number; // Explicitly add kitchens field
 }
 
 interface PropertyFormProps {
@@ -79,9 +79,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
   const [propertyType, setPropertyType] = useState(property?.propertyType || 'APARTMENT');
   const [price, setPrice] = useState(property?.price?.toString() || '');
   const [securityDeposit, setSecurityDeposit] = useState(property?.securityDeposit?.toString() || '');
-  const [beds, setBeds] = useState(property?.beds?.toString() || '');
-  const [baths, setBaths] = useState(property?.baths?.toString() || '');
-  const [squareFeet, setSquareFeet] = useState(property?.squareFeet?.toString() || '');
+  const [beds, setBeds] = useState(property?.beds && property.beds > 0 ? property.beds.toString() : '');
+  const [baths, setBaths] = useState(property?.baths && property.baths > 0 ? property.baths.toString() : '');
+  const [kitchens, setKitchens] = useState(property?.kitchens && property.kitchens > 0 ? property.kitchens.toString() : '');
+  const [squareFeet, setSquareFeet] = useState(property?.squareFeet && property.squareFeet > 0 ? property.squareFeet.toString() : '');
   const [isPetsAllowed, setIsPetsAllowed] = useState(property?.isPetsAllowed || false);
   const [isParkingIncluded, setIsParkingIncluded] = useState(property?.isParkingIncluded || false);
   const [isNsfassAccredited, setIsNsfassAccredited] = useState(property?.isNsfassAccredited || false);
@@ -116,6 +117,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
     formData.append('securityDeposit', securityDeposit);
     formData.append('beds', beds);
     formData.append('baths', baths);
+    formData.append('kitchens', kitchens);
     formData.append('squareFeet', squareFeet);
     formData.append('isPetsAllowed', isPetsAllowed.toString());
     formData.append('isParkingIncluded', isParkingIncluded.toString());
@@ -221,7 +223,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
       {/* Property Details */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Property Details</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="space-y-2">
             <Label htmlFor="beds">Bedrooms *</Label>
             <Input
@@ -247,6 +249,19 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
               onChange={(e) => setBaths(e.target.value)}
               placeholder="Number of bathrooms"
               required
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="kitchens">Kitchens</Label>
+            <Input
+              id="kitchens"
+              type="number"
+              min="0"
+              step="1"
+              value={kitchens}
+              onChange={(e) => setKitchens(e.target.value)}
+              placeholder="Number of kitchens"
             />
           </div>
           

@@ -62,6 +62,7 @@ export interface Property {
   securityDeposit?: number;
   beds: number;
   baths: number;
+  kitchens?: number;
   squareFeet?: number;
   locationId?: number;
   isAvailable: boolean;

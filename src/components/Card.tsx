@@ -2,7 +2,7 @@
 
 import type React from "react"
 import type { ImageLoaderProps } from "next/image"
-import { Bath, Bed, Edit, Heart, Home, MapPin, Star, Trash2 } from "lucide-react"
+import { Bath, Bed, ChefHat, Edit, Heart, Home, MapPin, Star, Trash2 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
@@ -25,6 +25,7 @@ interface PropertyCardProps {
     images?: string[]
     beds: number
     baths: number
+    kitchens?: number
     squareFeet: number
     pricePerMonth?: number
     price?: number
@@ -67,13 +68,14 @@ function PropertyCard({
   const [isHovered, setIsHovered] = useState(false)
   const [imgError, setImgError] = useState(false)
 
-  // Calculate room-based statistics
+  // Calculate room-based statistics for price fallback
   const roomStats = getRoomStats(property.rooms);
   
-  // Use room stats or fallback to property values for backward compatibility
-  const displayBeds = roomStats.totalBeds || property.beds || 0;
-  const displayBaths = roomStats.totalBaths || property.baths || 0;
-  const displaySquareFeet = roomStats.totalSquareFeet || property.squareFeet || 0;
+  // Use property-level specifications directly
+  const displayBeds = property.beds || 0;
+  const displayBaths = property.baths || 0;
+  const displayKitchens = property.kitchens || 0;
+  const displaySquareFeet = property.squareFeet || 0;
   const displayPrice = roomStats.minPrice || property.price || property.pricePerMonth || 0;
 
   // Custom loader that just returns the URL as-is
@@ -183,7 +185,7 @@ function PropertyCard({
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 text-sm">
+        <div className="grid grid-cols-4 gap-2 text-sm">
           <div className="flex flex-col items-center justify-center p-2 rounded-md bg-gray-50 border border-gray-100">
             <Bed className="h-4 w-4 mb-1 text-blue-500" />
             <span className="font-medium text-gray-800">{displayBeds}</span>
@@ -194,6 +196,12 @@ function PropertyCard({
             <Bath className="h-4 w-4 mb-1 text-blue-500" />
             <span className="font-medium text-gray-800">{displayBaths}</span>
             <span className="text-xs text-gray-500">Baths</span>
+          </div>
+
+          <div className="flex flex-col items-center justify-center p-2 rounded-md bg-gray-50 border border-gray-100">
+            <ChefHat className="h-4 w-4 mb-1 text-blue-500" />
+            <span className="font-medium text-gray-800">{displayKitchens}</span>
+            <span className="text-xs text-gray-500">Kitchens</span>
           </div>
 
           <div className="flex flex-col items-center justify-center p-2 rounded-md bg-gray-50 border border-gray-100">

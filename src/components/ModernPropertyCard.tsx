@@ -1,7 +1,7 @@
 "use client"
 
 import type { ImageLoaderProps } from "next/image"
-import { Bath, BedDouble, Heart, Home, MapPin, Ruler, Star } from "lucide-react"
+import { Bath, BedDouble, ChefHat, Heart, Home, MapPin, Ruler, Star } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
@@ -21,6 +21,7 @@ interface ModernPropertyCardProps {
     photoUrls?: string[]
     beds: number
     baths: number
+    kitchens?: number
     squareFeet: number
     pricePerMonth?: number
     averageRating?: number
@@ -52,10 +53,11 @@ function ModernPropertyCard({
   // Calculate room-based statistics
   const roomStats = getRoomStats(property.rooms);
   
-  // Use room stats or fallback to property values for backward compatibility
-  const displayBeds = roomStats.totalBeds || property.beds || 0;
-  const displayBaths = roomStats.totalBaths || property.baths || 0;
-  const displaySquareFeet = roomStats.totalSquareFeet || property.squareFeet || 0;
+  // Use property values primarily, fallback to room stats for backward compatibility
+  const displayBeds = property.beds || 0;
+  const displayBaths = property.baths || 0;
+  const displayKitchens = property.kitchens || 0;
+  const displaySquareFeet = property.squareFeet || 0;
   const displayPrice = roomStats.minPrice || property.price || property.pricePerMonth || 0;
   
   // Add simple debug logging just for price
@@ -164,6 +166,11 @@ function ModernPropertyCard({
               <div className="flex items-center text-[10px] text-gray-700 dark:text-white/80">
                 <Bath className="h-3 w-3 mr-0.5 text-blue-500 dark:text-blue-400" />
                 <span>{displayBaths}</span>
+              </div>
+
+              <div className="flex items-center text-[10px] text-gray-700 dark:text-white/80">
+                <ChefHat className="h-3 w-3 mr-0.5 text-blue-500 dark:text-blue-400" />
+                <span>{displayKitchens}</span>
               </div>
 
               <div className="flex items-center text-[10px] text-gray-700 dark:text-white/80">
