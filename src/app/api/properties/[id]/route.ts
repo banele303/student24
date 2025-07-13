@@ -286,6 +286,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       if (key !== 'address' && key !== 'city' && key !== 'state' && 
           key !== 'country' && key !== 'postalCode' && 
           key !== 'managerCognitoId' && key !== 'replacePhotos' && 
+          key !== 'kitchens' && // Temporarily exclude kitchens until migration is applied
           !key.startsWith('photos')) {
         propertyData[key] = value;
       }
