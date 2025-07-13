@@ -367,6 +367,18 @@ export default function EditPropertyPage() {
     }
 
     try {
+      // Debug: Log FormData contents
+      console.log('=== FORM SUBMISSION DEBUG ===');
+      console.log('FormData entries:');
+      for (const [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          console.log(`${key}: [File] ${value.name} (${value.size} bytes, ${value.type})`);
+        } else {
+          console.log(`${key}: ${value}`);
+        }
+      }
+      console.log('=== END FORM DEBUG ===');
+      
       // Make the API call to update the property
       const result = await updateProperty({ id: propertyIdString, body: formData }).unwrap();
       toast.dismiss();

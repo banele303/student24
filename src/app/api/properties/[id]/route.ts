@@ -166,22 +166,55 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ message: "Property not found" }, { status: 404 });
     }
 
-    // Parse the form data
+    // Parse the form data with enhanced error handling
     let formData: FormData;
     try {
       console.log('=== REQUEST DEBUG INFO ===');
       console.log('Request content-type:', request.headers.get('content-type'));
       console.log('Request method:', request.method);
       console.log('Request URL:', request.url);
+      console.log('All headers:');
+      for (const [key, value] of request.headers.entries()) {
+        console.log(`  ${key}: ${value}`);
+      }
       
+      // Check if the body is consumable
+      const body = request.body;
+      console.log('Request body available:', !!body);
+      
+      if (!body) {
+        throw new Error('Request body is null or undefined');
+      }
+      
+      // Try to parse FormData
       formData = await request.formData();
       console.log(`Successfully parsed FormData for property ${id}`);
-      console.log('FormData entries:', Object.fromEntries(formData.entries()));
+      console.log('FormData entries:');
+      for (const [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          console.log(`  ${key}: [File] ${value.name} (${value.size} bytes)`);
+        } else {
+          console.log(`  ${key}: ${value}`);
+        }
+      }
+      console.log('=== END REQUEST DEBUG ===');
     } catch (parseError) {
       console.error('=== FORMDATA PARSE ERROR ===');
       console.error('Error details:', parseError);
+      console.error('Error message:', parseError instanceof Error ? parseError.message : String(parseError));
+      console.error('Error stack:', parseError instanceof Error ? parseError.stack : 'No stack trace');
+      
+      // Try to get more information about the request
+      try {
+        const clonedRequest = request.clone();
+        const text = await clonedRequest.text();
+        console.error('Request body as text (first 500 chars):', text.substring(0, 500));
+      } catch (textError) {
+        console.error('Could not read request body as text:', textError);
+      }
+      
       return NextResponse.json({ 
-        message: `Error updating property: Failed to parse request body as FormData. This might be due to incorrect Content-Type header or malformed request body.` 
+        message: `Error updating property: Failed to parse request body as FormData. Error: ${parseError instanceof Error ? parseError.message : String(parseError)}. This usually indicates the request was not sent as multipart/form-data.` 
       }, { status: 500 });
     }
     

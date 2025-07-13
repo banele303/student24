@@ -68,6 +68,12 @@ export const api = createApi({
     },
     // Add custom response handling with retry logic
     async fetchFn(input, init) {
+      // Check if this is a FormData request - if so, use simple fetch to avoid issues
+      if (init?.body instanceof FormData) {
+        console.log('RTK Query: Using simple fetch for FormData request');
+        return fetch(input, init);
+      }
+      
       const maxRetries = 3;
       let retries = 0;
       let lastError;
@@ -587,11 +593,13 @@ export const api = createApi({
 
     updateProperty: build.mutation<Property, { id: string; body: FormData }>({
         query: ({ id, body }) => {
+            console.log('RTK Query updateProperty - sending FormData:', Object.fromEntries(body.entries()));
             return {
                 url: `properties/${id}`,
                 method: "PUT",
                 body: body,
                 // Don't set Content-Type header - let the browser set it automatically for FormData
+                // The browser will set it to multipart/form-data with boundary
             };
         },
         invalidatesTags: (result, error, { id }) => [
