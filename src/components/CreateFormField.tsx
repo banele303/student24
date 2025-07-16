@@ -79,8 +79,12 @@ export const CreateFormField: React.FC<CustomFormFieldProps> = ({
               </Select>
             ) : type === "switch" ? (
               <div className="flex items-center space-x-2">
-                <Switch checked={field.value} onCheckedChange={field.onChange} {...props} />
-                <span className="text-sm text-gray-400">{field.value ? "Yes" : "No"}</span>
+                <Switch 
+                  checked={Boolean(field.value)} 
+                  onCheckedChange={(checked) => field.onChange(checked)} 
+                  {...props} 
+                />
+                <span className="text-sm text-gray-400">{Boolean(field.value) ? "Yes" : "No"}</span>
               </div>
             ) : type === "multi-select" ? (
               <MultiSelect

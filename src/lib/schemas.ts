@@ -6,8 +6,8 @@ export const propertySchema = z.object({
   description: z.string().min(1, "Description is required"),
   pricePerMonth: z.number().min(0, "Price must be positive"),
   securityDeposit: z.number().min(0, "Security deposit must be positive"),
-  isNsfassAccredited: z.boolean(),
-  isParkingIncluded: z.boolean(),
+  isNsfassAccredited: z.boolean().default(false),
+  isParkingIncluded: z.boolean().default(true),
   photoUrls: z.any(), // This will be handled by the file input
   amenities: z.array(z.string()).min(1, "At least one amenity is required"),
   highlights: z.array(z.string()).min(1, "At least one highlight is required"),
