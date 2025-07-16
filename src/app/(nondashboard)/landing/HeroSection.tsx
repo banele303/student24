@@ -253,7 +253,7 @@ const HeroSection = () => {
 
       {/* Background Image */}
       <Image
-        src="/hero-1.jpg"
+        src="/houses.jpg"
         alt="Rentiful Rental Platform Hero Section"
         fill
         className="object-cover object-center brightness-125"
