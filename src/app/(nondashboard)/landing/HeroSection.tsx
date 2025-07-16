@@ -218,7 +218,7 @@ const HeroSection = () => {
     <div className="relative h-[80vh] md:h-[80vh]">
       {/* Animated background overlay */}
 
-      {/* <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/80 to-black/90 z-10"></div> */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-black/30 to-black/40 z-10"></div>
       {/* 
 <!-- Blue gradient background --> */}
       {/* <div className="absolute inset-0 bg-gradient-to-br from-blue-500/40 via-blue-600/50 to-blue-700/70 z-0"></div> */}
