@@ -274,7 +274,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-6xl pt-6 md:text-7xl lg:text-8xl xl:text-9xl pt-19 font-bold text-[#00acee] mb-6 tracking-tight drop-shadow-lg"
+              className="text-6xl pt-6 md:text-7xl lg:text-8xl xl:text-9xl pt-19 font-bold text-white mb-6 tracking-tight drop-shadow-lg"
             >
               Find Any Res.
             </motion.h1>

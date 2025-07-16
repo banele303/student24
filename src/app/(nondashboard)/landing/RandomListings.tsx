@@ -72,7 +72,7 @@ const RandomListings = () => {
     }
     
     // Return a limited number of properties
-    return propertiesCopy.slice(0, 6).map(property => ({
+    return propertiesCopy.slice(0, 8).map(property => ({
       ...property,
       price: typeof property.price === 'number' ? property.price : 0,
       squareFeet: typeof property.squareFeet === 'number' ? property.squareFeet : 0,
@@ -407,21 +407,21 @@ const RandomListings = () => {
         
         {/* Properties Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 overflow-hidden mt-6">
+              <div key={i} className="bg-white rounded-3xl border border-gray-200 overflow-hidden mt-6 shadow-sm">
                 {/* Image skeleton */}
                 <div className="relative w-full aspect-[4/3] px-2 pt-2">
-                  <div className="w-full h-full bg-gray-200 rounded-xl animate-pulse"></div>
+                  <div className="w-full h-full bg-gray-200 rounded-2xl animate-pulse"></div>
                   
                   {/* Price tag skeleton */}
                   <div className="absolute top-3 right-3">
-                    <div className="bg-gray-300 rounded-lg w-20 h-8 animate-pulse"></div>
+                    <div className="bg-gray-300 rounded-xl w-20 h-8 animate-pulse"></div>
                   </div>
                   
                   {/* Available rooms badge skeleton */}
                   <div className="absolute top-3 left-3">
-                    <div className="bg-gray-300 rounded w-16 h-6 animate-pulse"></div>
+                    <div className="bg-gray-300 rounded-xl w-16 h-6 animate-pulse"></div>
                   </div>
                   
                   {/* Bottom right icons skeleton */}
@@ -435,26 +435,26 @@ const RandomListings = () => {
                 <div className="p-4 pt-5 space-y-3">
                   {/* Title skeleton */}
                   <div className="space-y-2">
-                    <div className="h-6 bg-gray-200 rounded animate-pulse w-3/4"></div>
+                    <div className="h-6 bg-gray-200 rounded-xl animate-pulse w-3/4"></div>
                     {/* Review skeleton */}
-                    <div className="h-4 bg-gray-200 rounded animate-pulse w-20"></div>
+                    <div className="h-4 bg-gray-200 rounded-xl animate-pulse w-20"></div>
                   </div>
                   
                   {/* Description skeleton */}
                   <div className="space-y-2">
-                    <div className="h-4 bg-gray-200 rounded animate-pulse w-full"></div>
-                    <div className="h-4 bg-gray-200 rounded animate-pulse w-2/3"></div>
+                    <div className="h-4 bg-gray-200 rounded-xl animate-pulse w-full"></div>
+                    <div className="h-4 bg-gray-200 rounded-xl animate-pulse w-2/3"></div>
                   </div>
                   
                   {/* Location and university skeleton */}
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
-                      <div className="h-3 bg-gray-200 rounded animate-pulse flex-1"></div>
+                      <div className="w-4 h-4 bg-gray-200 rounded-full animate-pulse"></div>
+                      <div className="h-3 bg-gray-200 rounded-xl animate-pulse flex-1"></div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
-                      <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4"></div>
+                      <div className="w-4 h-4 bg-gray-200 rounded-full animate-pulse"></div>
+                      <div className="h-3 bg-gray-200 rounded-xl animate-pulse w-3/4"></div>
                     </div>
                   </div>
                 </div>
@@ -467,7 +467,7 @@ const RandomListings = () => {
             <p className="text-gray-600">Try adjusting your filters or selecting a different city</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {filteredProperties.map((property) => (
               <Card
                 key={property.id}

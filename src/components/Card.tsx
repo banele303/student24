@@ -96,7 +96,7 @@ function PropertyCard({
 
   return (
     <Card
-      className="group overflow-hidden transition-all mt-6 duration-300 hover:shadow-xl hover:ring-2 hover:ring-[#00acee]/30 border border-gray-200 bg-white rounded-xl relative w-full cursor-pointer transform hover:scale-[1.02]"
+      className="group overflow-hidden transition-all mt-6 duration-300 hover:shadow-xl hover:ring-2 hover:ring-[#00acee]/30 border border-gray-200 bg-white rounded-3xl relative w-full cursor-pointer transform hover:scale-[1.02] shadow-sm"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
@@ -110,12 +110,12 @@ function PropertyCard({
               fill
               loader={loaderFunc}
               unoptimized={true}
-              className={`object-cover transition-transform rounded-xl duration-500 ${isHovered ? "scale-110" : "scale-100"}`}
+              className={`object-cover transition-transform rounded-2xl duration-500 ${isHovered ? "scale-110" : "scale-100"}`}
               onError={handleImageError}
               
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-xl">
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-2xl">
               <Home className="h-12 w-12 text-gray-400" />
             </div>
           )}
@@ -123,7 +123,7 @@ function PropertyCard({
 
         {/* Price tag - Now clearly in Rands */}
         <div className="absolute top-3 right-3 z-20">
-          <div className="bg-[#00acee] shadow-md text-white px-3 py-1.5 rounded-lg flex items-center border border-[#00acee]">
+          <div className="bg-[#00acee] shadow-md text-white px-3 py-1.5 rounded-2xl flex items-center border border-[#00acee]">
             <span className="font-bold">R {displayPrice.toLocaleString('en-ZA')}</span>
             <span className="text-xs text-blue-100 ml-1">/month</span>
           </div>
@@ -132,7 +132,7 @@ function PropertyCard({
         {/* Available rooms badge */}
         {property.availableRooms !== undefined && property.availableRooms > 0 && (
           <div className="absolute top-3 left-3 z-20">
-            <Badge className="bg-green-500 text-white text-xs font-medium">
+            <Badge className="bg-green-500 text-white text-xs font-medium rounded-2xl">
               {property.availableRooms} {property.availableRooms === 1 ? 'Room' : 'Rooms'} Available
             </Badge>
           </div>
@@ -141,12 +141,12 @@ function PropertyCard({
         {/* Feature badges */}
         <div className="absolute bottom-3 left-3 flex flex-wrap gap-2 z-20">
           {property.isPetsAllowed && (
-            <Badge className="bg-white/90 text-gray-800 text-xs font-medium backdrop-blur-sm border border-gray-200">
+            <Badge className="bg-white/90 text-gray-800 text-xs font-medium backdrop-blur-sm border border-gray-200 rounded-2xl">
               Pets Allowed
             </Badge>
           )}
           {property.isParkingIncluded && (
-            <Badge className="bg-white/90 text-gray-800 text-xs font-medium backdrop-blur-sm border border-gray-200">
+            <Badge className="bg-white/90 text-gray-800 text-xs font-medium backdrop-blur-sm border border-gray-200 rounded-2xl">
               Parking Included
             </Badge>
           )}
