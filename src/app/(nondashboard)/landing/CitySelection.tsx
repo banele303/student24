@@ -32,7 +32,7 @@ const cities = [
     shortName: "Jo'burg",
     description: "Find res in Jo'burg",
     image:
-      "/universities/johannesburg.webp",
+      "/johannesburg.webp",
     coordinates: [28.042114, -26.204678] as [number, number],
     lat: -26.1825,
     lng: 28.0002,
@@ -50,7 +50,7 @@ const cities = [
     name: "Durban",
     description: "Accommodations Durban",
     image:
-      "/universities/durban.webp",
+      "/durban.webp",
     coordinates: [31.0218, -29.8587] as [number, number],
     lat: -29.8587,
     lng: 31.0218,
@@ -68,7 +68,7 @@ const cities = [
     name: "Bloemfontein",
     description: "Find res in Bloemfontein",
     image:
-      "/universities/Bloemfontein.webp",
+      "/bloemfontein.webp",
     coordinates: [26.2041, -29.0852] as [number, number],
     lat: -29.0852,
     lng: 26.2041,
@@ -165,6 +165,35 @@ export default function CitySelection() {
   const [activeTab, setActiveTab] = useState<string>("rent");
   const [scrolled, setScrolled] = useState<boolean>(false);
 
+  // Function to shuffle array based on date seed
+  const shuffleArrayByDate = (array: any[], date: Date) => {
+    const shuffled = [...array];
+    // Use date as seed for consistent daily randomization
+    const seed = date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
+    
+    // Simple seeded random function
+    let randomSeed = seed;
+    const seededRandom = () => {
+      randomSeed = (randomSeed * 9301 + 49297) % 233280;
+      return randomSeed / 233280;
+    };
+
+    // Fisher-Yates shuffle with seeded random
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(seededRandom() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Get shuffled cities based on current date
+  const getShuffledCities = () => {
+    const today = new Date();
+    return shuffleArrayByDate(cities, today);
+  };
+
+  const shuffledCities = getShuffledCities();
+
   const handleLocationSearch = async () => {
     try {
       const trimmedQuery = searchQuery.trim();
@@ -225,7 +254,7 @@ export default function CitySelection() {
     <div className="py-12 px-4 md:px-8 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
-          {cities.map((city, index) => (
+          {shuffledCities.map((city, index) => (
             <CityCard key={city.name} city={city} index={index} />
           ))}
         </div>
