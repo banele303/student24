@@ -39,7 +39,7 @@ const components = {
   },
   SignIn: {
     Footer() {
-      const { toSignUp, toResetPassword } = useAuthenticator();
+      const { toSignUp, toForgotPassword } = useAuthenticator((context) => [context.toSignUp, context.toForgotPassword]);
       return (
         <View className="text-center mt-4 space-y-2">
           <p className="text-muted-foreground">
@@ -54,7 +54,7 @@ const components = {
           <p className="text-muted-foreground">
             Forgot your password?{" "}
             <button
-              onClick={toResetPassword}
+              onClick={toForgotPassword}
               className="text-primary hover:underline bg-transparent border-none p-0"
             >
               Reset password
@@ -110,7 +110,7 @@ const components = {
             Reset Password
           </Heading>
           <p className="text-muted-foreground mt-2">
-            Enter your email address and we'll send you a link to reset your password.
+            Enter your email address and we&apos;ll send you a link to reset your password.
           </p>
         </View>
       );

@@ -249,7 +249,7 @@ const Listings = () => {
         {filters.location && filters.location !== 'any' && (
           <h2 className="text-xl font-semibold mb-2">
             {filters.propertyName ? (
-              <>Properties matching "{filters.propertyName}"</>
+              <>Properties matching &quot;{filters.propertyName}&quot;</>
             ) : (
               <>Properties in {filters.location.replace(/,\s*South Africa/i, '')}</>
             )}
