@@ -1,7 +1,7 @@
 "use client";
 
 import Header from "@/components/Header";
-import Loading from "@/components/Loading";
+import { ApplicationsPageSkeleton } from "@/components/ui/skeletons";
 import { useGetApplicationsQuery, useGetAuthUserQuery } from "@/state/api";
 import { CircleCheckBig, Clock, Download, FileText, Home, XCircle } from "lucide-react";
 import React from "react";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
+import { Application, Room } from "@/types/prismaTypes";
 
 const Applications = () => {
   const { data: authUser } = useGetAuthUserQuery();
@@ -58,8 +59,8 @@ const Applications = () => {
     }
   };
 
-  if (isLoading) return <Loading />;
-  if (isError || !applications) return <div>Error fetching applications</div>;
+  if (isLoading) return <ApplicationsPageSkeleton />;
+  if (isError) return <div>Error loading applications</div>;
 
   return (
     <div className="dashboard-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -69,94 +70,112 @@ const Applications = () => {
       />
       
       <div className="space-y-6 mt-8">
-        {applications?.length > 0 ? (
-          applications.map((application) => (
+        {applications && applications.length > 0 ? (
+          applications.map((application: Application) => (
             <Card key={application.id} className="border border-[#333] shadow-md overflow-hidden">
-            <div className="flex flex-col md:flex-row">
-              {/* Property Image - Reduced height, added padding and rounded corners */}
-              <div className="relative md:w-1/4 h-28 md:h-auto p-2 overflow-hidden">
-                <div className="relative w-full h-full rounded-md overflow-hidden">
-                  {application.property?.photoUrls?.[0] ? (
-                    <Image
-                      src={application.property.photoUrls[0] || "/placeholder.svg"}
-                      alt={application.property.name}
-                      fill
-                      className="object-cover rounded-md"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-900 rounded-md">
-                      <Home className="h-10 w-10 text-gray-600" />
-                    </div>
-                  )}
-                </div>
-              </div>
-      
-              {/* Content - Reduced padding for more compact layout */}
-              <div className="flex-1 p-4 flex flex-col">
-                {/* Status Row */}
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center space-x-2">
-                    <h3 className="text-base font-semibold text-white">{application.property?.name || "Unknown Property"}</h3>
-                    {getStatusBadge(application.status)}
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    Submitted: {new Date(application.createdAt).toLocaleDateString()}
+              <div className="flex flex-col md:flex-row">
+                {/* Property Image - Reduced height, added padding and rounded corners */}
+                <div className="relative md:w-1/4 h-28 md:h-auto p-2 overflow-hidden">
+                  <div className="relative w-full h-full rounded-md overflow-hidden">
+                    {application.property?.photoUrls?.[0] ? (
+                      <Image
+                        src={application.property.photoUrls[0] || "/placeholder.svg"}
+                        alt={application.property.name}
+                        fill
+                        className="object-cover rounded-md"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-900 rounded-md">
+                        <Home className="h-10 w-10 text-gray-600" />
+                      </div>
+                    )}
                   </div>
                 </div>
-      
-                {/* Property Details */}
-                <div className="mb-3">
-                  <p className="text-gray-400 text-xs">
-                    {application.property?.location.address}, {application.property?.location.city}
-                  </p>
-                </div>
-      
-                {/* Status Details - Reduced padding for more compact layout */}
-                <div className="flex-1">
-                  {application.status === "Approved" ? (
-                    <div className="bg-green-900/20 p-3 rounded-md text-green-300 flex items-center border border-green-800/30 text-sm">
-                      <CircleCheckBig className="w-4 h-4 mr-2 flex-shrink-0" />
-                      <p>
-                        Your application has been approved! The property is being rented by you until{" "}
-                        <span className="font-semibold">
-                          {new Date((application as any).lease?.endDate).toLocaleDateString()}
-                        </span>
-                      </p>
+
+                {/* Content - Reduced padding for more compact layout */}
+                <div className="flex-1 p-4 flex flex-col">
+                  {/* Status Row */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-2">
+                      <h3 className="text-base font-semibold text-white">
+                        {application.property?.name || "Unknown Property"}
+                        {application.room && (
+                          <span className="text-sm font-normal text-gray-400 ml-2">
+                            - {application.room.name}
+                          </span>
+                        )}
+                      </h3>
+                      {getStatusBadge(application.status)}
                     </div>
-                  ) : application.status === "Pending" ? (
-                    <div className="bg-yellow-900/20 p-3 rounded-md text-yellow-300 flex items-center border border-yellow-800/30 text-sm">
-                      <Clock className="w-4 h-4 mr-2 flex-shrink-0" />
-                      <p>Your application is pending approval. We&apos;ll notify you once there&apos;s an update.</p>
+                    <div className="text-xs text-gray-400">
+                      Submitted: {new Date(application.createdAt).toLocaleDateString()}
                     </div>
-                  ) : (
-                    <div className="bg-red-900/20 p-3 rounded-md text-red-300 flex items-center border border-red-800/30 text-sm">
-                      <XCircle className="w-4 h-4 mr-2 flex-shrink-0" />
-                      <p>
-                        Your application has been denied. You can apply to other properties or contact support for more
-                        information.
-                      </p>
-                    </div>
-                  )}
-                </div>
-      
-                {/* Actions - Reduced top margin */}
-                <div className="mt-4 flex justify-end space-x-3">
-                  <Link href={`/properties/${application.property?.id}`}>
-                    <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-                      View Property
-                    </Button>
-                  </Link>
-      
-                  {application.status === "Approved" && (
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-                      <Download className="w-3 h-3 mr-2" />
-                      Download Agreement
-                    </Button>
-                  )}
+                  </div>
+
+                  {/* Property Details */}
+                  <div className="mb-3">
+                    <p className="text-gray-400 text-xs">
+                      {application.property?.location.address}, {application.property?.location.city}
+                    </p>
+                    {application.room && (
+                      <div className="mt-1 flex items-center gap-2">
+                        <span className="text-xs text-gray-500">Room:</span>
+                        <span className="text-xs text-gray-300">{application.room.name}</span>
+                        {application.room.pricePerMonth && (
+                          <span className="text-xs text-blue-400">
+                            R{application.room.pricePerMonth.toLocaleString('en-ZA')}/month
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Status Details - Reduced padding for more compact layout */}
+                  <div className="flex-1">
+                    {application.status === "Approved" ? (
+                      <div className="bg-green-900/20 p-3 rounded-md text-green-300 flex items-center border border-green-800/30 text-sm">
+                        <CircleCheckBig className="w-4 h-4 mr-2 flex-shrink-0" />
+                        <p>
+                          Your application has been approved! The property is being rented by you until{" "}
+                          <span className="font-semibold">
+                            {new Date((application as any).lease?.endDate).toLocaleDateString()}
+                          </span>
+                        </p>
+                      </div>
+                    ) : application.status === "Pending" ? (
+                      <div className="bg-yellow-900/20 p-3 rounded-md text-yellow-300 flex items-center border border-yellow-800/30 text-sm">
+                        <Clock className="w-4 h-4 mr-2 flex-shrink-0" />
+                        <p>Your application is pending approval. We&apos;ll notify you once there&apos;s an update.</p>
+                      </div>
+                    ) : (
+                      <div className="bg-red-900/20 p-3 rounded-md text-red-300 flex items-center border border-red-800/30 text-sm">
+                        <XCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+                        <p>
+                          Your application has been denied. You can apply to other properties or contact support for more
+                          information.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Actions - Reduced top margin */}
+                  <div className="mt-4 flex justify-end space-x-3">
+                    <Link href={`/properties/${application.property?.id}`}>
+                      <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+                        View Property
+                      </Button>
+                    </Link>
+
+                    {application.status === "Approved" && (
+                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                        <Download className="w-3 h-3 mr-2" />
+                        Download Agreement
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Card>
+            </Card>
           ))
         ) : (
           <div className="flex flex-col items-center justify-center p-12 mt-8  border border-[#333] rounded-xl text-center">

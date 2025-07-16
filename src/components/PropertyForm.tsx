@@ -21,10 +21,11 @@ export const PropertyForm = ({
   const [previewUrls, setPreviewUrls] = useState<string[]>(
     initialData?.photoUrls || []
   );
+  const [featuredImageIndex, setFeaturedImageIndex] = useState<number>(0);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    setSelectedFiles(files);
+    setSelectedFiles(prev => [...prev, ...files]);
 
     // Create preview URLs for selected files
     const newPreviewUrls = files.map((file) => URL.createObjectURL(file));
@@ -37,16 +38,49 @@ export const PropertyForm = ({
 
     const formData = new FormData(formRef.current);
 
-    // Append selected files
-    selectedFiles.forEach((file) => {
+    // Create ordered files array with featured image first
+    const orderedFiles: File[] = [];
+    const orderedUrls: string[] = [];
+    
+    // Add featured image first
+    if (featuredImageIndex < selectedFiles.length) {
+      orderedFiles.push(selectedFiles[featuredImageIndex]);
+      orderedUrls.push(previewUrls[featuredImageIndex]);
+    }
+    
+    // Add remaining files
+    selectedFiles.forEach((file, index) => {
+      if (index !== featuredImageIndex) {
+        orderedFiles.push(file);
+        orderedUrls.push(previewUrls[index]);
+      }
+    });
+
+    // Append files to form data in the correct order
+    orderedFiles.forEach((file) => {
       formData.append("photos", file);
     });
+
+    // Also send the featured image index for reference
+    formData.append("featuredImageIndex", featuredImageIndex.toString());
 
     await onSubmit(formData);
   };
 
   const removeImage = (index: number) => {
     setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    
+    // Adjust featured image index if necessary
+    if (index === featuredImageIndex) {
+      setFeaturedImageIndex(0); // Reset to first image
+    } else if (index < featuredImageIndex) {
+      setFeaturedImageIndex(prev => prev - 1); // Shift down
+    }
+  };
+
+  const setAsFeatured = (index: number) => {
+    setFeaturedImageIndex(index);
   };
 
   return (
@@ -298,57 +332,108 @@ export const PropertyForm = ({
 
         {/* Photos */}
         <div className="col-span-2 space-y-4">
-          <h3 className="text-lg font-semibold">Photos</h3>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {previewUrls.map((url, index) => (
-              <div key={index} className="relative">
-                {/* <img
-                  src={url}
-                  alt={`Property photo ${index + 1}`}
-                  className="w-full h-32 object-cover rounded-lg"
-                /> */}
-
-                <div className="relative w-full h-32 rounded-lg overflow-hidden">
-                  <Image
-                    src={url}
-                    alt={`Property photo ${index + 1}`}
-                    fill
-                    className="object-cover rounded-lg"
-                    unoptimized={
-                      url.startsWith("blob:") || url.startsWith("data:")
-                    }
-                  />
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => removeImage(index)}
-                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
+          <div>
+            <h3 className="text-lg font-semibold">Property Photos</h3>
+            <p className="text-sm text-gray-600 mt-1">
+              Upload property images and select which one to use as the featured image for listing cards.
+            </p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Add More Photos
-            </label>
-            <input
-              type="file"
-              name="photos"
-              multiple
-              accept="image/*"
-              onChange={handleFileChange}
-              className="mt-1 block w-full text-sm text-gray-500
-                file:mr-4 file:py-2 file:px-4
-                file:rounded-md file:border-0
-                file:text-sm file:font-semibold
-                file:bg-indigo-50 file:text-indigo-700
-                hover:file:bg-indigo-100"
-            />
+          {previewUrls.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {previewUrls.map((url, index) => (
+                <div key={index} className="relative group">
+                  <div className="relative w-full h-32 rounded-lg overflow-hidden">
+                    <Image
+                      src={url}
+                      alt={`Property photo ${index + 1}`}
+                      fill
+                      className="object-cover rounded-lg"
+                      unoptimized={
+                        url.startsWith("blob:") || url.startsWith("data:")
+                      }
+                    />
+                    
+                    {/* Featured image badge */}
+                    {index === featuredImageIndex && (
+                      <div className="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded-md font-medium flex items-center gap-1">
+                        ⭐ Featured
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {index !== featuredImageIndex && (
+                      <button
+                        type="button"
+                        onClick={() => setAsFeatured(index)}
+                        className="bg-green-500 text-white rounded-full p-1 hover:bg-green-600 text-xs"
+                        title="Set as featured image"
+                      >
+                        ⭐
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      title="Remove image"
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  {/* Image order indicator */}
+                  <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                    {index + 1}
+                  </div>
+
+                  {/* Featured indicator at bottom */}
+                  {index === featuredImageIndex && (
+                    <div className="absolute bottom-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
+                      Main Image
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Featured image info */}
+          {previewUrls.length > 0 && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-sm text-blue-800">
+                <strong>Featured Image:</strong> Image #{featuredImageIndex + 1} will be displayed on property cards and search results.
+                Click the ⭐ button on any image to make it the featured image.
+              </p>
+            </div>
+          )}
+
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+            <div className="text-center">
+              <div className="mb-4">
+                <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                  <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <label className="cursor-pointer">
+                <span className="text-sm font-medium text-gray-700">
+                  {previewUrls.length === 0 ? 'Upload Property Photos' : 'Add More Photos'}
+                </span>
+                <input
+                  type="file"
+                  name="photos"
+                  multiple
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="sr-only"
+                />
+                <span className="block text-xs text-gray-500 mt-1">
+                  PNG, JPG, GIF up to 10MB each. You can select any image as featured after upload.
+                </span>
+              </label>
+            </div>
           </div>
         </div>
       </div>

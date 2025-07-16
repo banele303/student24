@@ -153,7 +153,7 @@ function ModernPropertyCard({
             <div className="flex items-center text-sm text-gray-700 dark:text-white/80 mb-1">
               <MapPin className="h-3 w-3 mr-1 flex-shrink-0 text-gray-500 dark:text-gray-400" />
               <p className="line-clamp-1 text-[10px]">
-                {property.location.address}, {property.location.city}
+                {property.location?.address || 'No address'}, {property.location?.city || 'No city'}
               </p>
             </div>
 

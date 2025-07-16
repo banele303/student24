@@ -16,6 +16,7 @@ export const propertySchema = z.object({
   baths: z.number().min(0, "Baths must be 0 or more").optional().default(0),
   kitchens: z.number().min(0, "Kitchens must be 0 or more").optional().default(0),
   squareFeet: z.number().min(0, "Square footage must be 0 or more").optional().default(0),
+  closestUniversities: z.array(z.string()).min(1, "At least one closest university is required"),
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
   state: z.string().optional(),

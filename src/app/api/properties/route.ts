@@ -125,6 +125,9 @@ export async function GET(request: NextRequest) {
     const availableFrom = searchParams.get('availableFrom');
     const latitude = searchParams.get('latitude');
     const longitude = searchParams.get('longitude');
+    const propertyName = searchParams.get('propertyName'); // New parameter for property name search
+
+    console.log('API Query params:', { propertyName, latitude, longitude });
 
     const whereConditions: Prisma.Sql[] = [];
 
@@ -167,6 +170,20 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    if (propertyName && propertyName !== "any") {
+      // Search in property name, property description, and location address/city
+      const searchTerm = `%${propertyName.toLowerCase()}%`;
+      console.log('Searching for property name:', propertyName, 'with search term:', searchTerm);
+      whereConditions.push(
+        Prisma.sql`(
+          LOWER(p.name) LIKE ${searchTerm} OR 
+          LOWER(p.description) LIKE ${searchTerm} OR
+          LOWER(l.address) LIKE ${searchTerm} OR
+          LOWER(l.city) LIKE ${searchTerm}
+        )`
+      );
+    }
+
     if (propertyType && propertyType !== "any") {
       whereConditions.push(
         Prisma.sql`p."propertyType" = ${propertyType}::"PropertyType"`
@@ -194,16 +211,20 @@ export async function GET(request: NextRequest) {
     if (latitude && longitude) {
       const lat = parseFloat(latitude);
       const lng = parseFloat(longitude);
-      const radiusInKilometers = 1000;
-      const degrees = radiusInKilometers / 111; // Converts kilometers to degrees
+      
+      // Only apply geographical filtering if coordinates are meaningful (not 0,0)
+      if (lat !== 0 || lng !== 0) {
+        const radiusInKilometers = 1000;
+        const degrees = radiusInKilometers / 111; // Converts kilometers to degrees
 
-      whereConditions.push(
-        Prisma.sql`ST_DWithin(
-          l.coordinates::geometry,
-          ST_SetSRID(ST_MakePoint(${lng}, ${lat}), 4326),
-          ${degrees}
-        )`
-      );
+        whereConditions.push(
+          Prisma.sql`ST_DWithin(
+            l.coordinates::geometry,
+            ST_SetSRID(ST_MakePoint(${lng}, ${lat}), 4326),
+            ${degrees}
+          )`
+        );
+      }
     }
 
     const completeQuery = Prisma.sql`
@@ -232,6 +253,8 @@ export async function GET(request: NextRequest) {
     `;
 
     const properties = await prisma.$queryRaw(completeQuery) as Property[];
+
+    console.log(`Query returned ${properties.length} properties for search:`, { propertyName, latitude, longitude });
 
     return NextResponse.json(properties);
   } catch (error: any) {

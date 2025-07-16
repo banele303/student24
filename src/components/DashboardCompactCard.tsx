@@ -126,7 +126,7 @@ export default function DashboardCardCompact({
           <div className="flex items-center text-xs text-gray-400">
             <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
             <p className="line-clamp-1">
-              {property.location.address}, {property.location.city}
+              {property.location?.address || 'No address'}, {property.location?.city || 'No city'}
             </p>
           </div>
           

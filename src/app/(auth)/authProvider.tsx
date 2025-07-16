@@ -39,9 +39,9 @@ const components = {
   },
   SignIn: {
     Footer() {
-      const { toSignUp } = useAuthenticator();
+      const { toSignUp, toResetPassword } = useAuthenticator();
       return (
-        <View className="text-center mt-4">
+        <View className="text-center mt-4 space-y-2">
           <p className="text-muted-foreground">
             Don&apos;t have an account?{" "}
             <button
@@ -49,6 +49,15 @@ const components = {
               className="text-primary hover:underline bg-transparent border-none p-0"
             >
               Sign up here
+            </button>
+          </p>
+          <p className="text-muted-foreground">
+            Forgot your password?{" "}
+            <button
+              onClick={toResetPassword}
+              className="text-primary hover:underline bg-transparent border-none p-0"
+            >
+              Reset password
             </button>
           </p>
         </View>
@@ -93,6 +102,66 @@ const components = {
       );
     },
   },
+  ResetPassword: {
+    Header() {
+      return (
+        <View className="mt-4 mb-7">
+          <Heading level={3} className="!text-2xl !font-bold">
+            Reset Password
+          </Heading>
+          <p className="text-muted-foreground mt-2">
+            Enter your email address and we'll send you a link to reset your password.
+          </p>
+        </View>
+      );
+    },
+    Footer() {
+      const { toSignIn } = useAuthenticator();
+      return (
+        <View className="text-center mt-4">
+          <p className="text-muted-foreground">
+            Remember your password?{" "}
+            <button
+              onClick={toSignIn}
+              className="text-primary hover:underline bg-transparent border-none p-0"
+            >
+              Back to sign in
+            </button>
+          </p>
+        </View>
+      );
+    },
+  },
+  ConfirmResetPassword: {
+    Header() {
+      return (
+        <View className="mt-4 mb-7">
+          <Heading level={3} className="!text-2xl !font-bold">
+            Confirm New Password
+          </Heading>
+          <p className="text-muted-foreground mt-2">
+            Enter the verification code sent to your email and your new password.
+          </p>
+        </View>
+      );
+    },
+    Footer() {
+      const { toSignIn } = useAuthenticator();
+      return (
+        <View className="text-center mt-4">
+          <p className="text-muted-foreground">
+            Remember your password?{" "}
+            <button
+              onClick={toSignIn}
+              className="text-primary hover:underline bg-transparent border-none p-0"
+            >
+              Back to sign in
+            </button>
+          </p>
+        </View>
+      );
+    },
+  },
 };
 
 const formFields = {
@@ -131,6 +200,35 @@ const formFields = {
       order: 4,
       placeholder: "Confirm your password",
       label: "Confirm Password",
+      isRequired: true,
+    },
+  },
+  resetPassword: {
+    username: {
+      placeholder: "Enter your email address",
+      label: "Email",
+      isRequired: true,
+    },
+  },
+  confirmResetPassword: {
+    username: {
+      placeholder: "Enter your email address",
+      label: "Email",
+      isRequired: true,
+    },
+    confirmation_code: {
+      placeholder: "Enter verification code",
+      label: "Verification Code",
+      isRequired: true,
+    },
+    password: {
+      placeholder: "Enter your new password",
+      label: "New Password",
+      isRequired: true,
+    },
+    confirm_password: {
+      placeholder: "Confirm your new password",
+      label: "Confirm New Password",
       isRequired: true,
     },
   },

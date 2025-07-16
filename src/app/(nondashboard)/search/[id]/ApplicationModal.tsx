@@ -17,10 +17,20 @@ import { toast } from "sonner";
 // Used for direct token import in the fallback authentication path
 import { fetchAuthSession } from "aws-amplify/auth";
 
+interface ApplicationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  propertyId: number;
+  roomId?: number;
+  roomName?: string;
+}
+
 const ApplicationModal = ({
   isOpen,
   onClose,
   propertyId,
+  roomId,
+  roomName,
 }: ApplicationModalProps) => {
   const [createApplication] = useCreateApplicationMutation();
   const { data: authUser } = useGetAuthUserQuery();
@@ -42,7 +52,7 @@ const ApplicationModal = ({
         description: "You must be logged in as a tenant to submit an application",
         action: {
           label: "Login",
-          onClick: () => window.location.href = "/login"
+          onClick: () => window.location.href = "/signin"
         }
       });
       return;
@@ -115,6 +125,7 @@ const ApplicationModal = ({
         createdAt: currentDate, // Add createdAt for display in applications page
         status: ApplicationStatus.Pending,
         propertyId: Number(propertyId),
+        roomId: roomId ? Number(roomId) : undefined,
         tenantCognitoId: authUser.cognitoInfo.userId,
       };
       
@@ -167,7 +178,9 @@ const ApplicationModal = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-white">
         <DialogHeader className="mb-4">
-          <DialogTitle>Submit Application for this Property</DialogTitle>
+          <DialogTitle>
+            {roomName ? `Apply for ${roomName}` : 'Submit Application for this Property'}
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">

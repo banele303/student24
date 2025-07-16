@@ -42,6 +42,7 @@ export interface Application {
   id: number;
   tenantCognitoId: string;
   propertyId: number;
+  roomId?: number;
   applicationDate: string | Date;
   status: ApplicationStatus;
   moveInDate?: string | Date;
@@ -50,6 +51,7 @@ export interface Application {
   // Related models
   property?: any;
   tenant?: Tenant;
+  room?: Room;
 }
 
 // Property model
@@ -77,6 +79,7 @@ export interface Property {
   isNsfassAccredited?: boolean;
   amenities?: string[];
   highlights?: string[];
+  closestUniversities?: string[];
   // Related models
   location?: any;
   leases?: any[];

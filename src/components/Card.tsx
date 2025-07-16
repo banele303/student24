@@ -17,6 +17,7 @@ interface PropertyCardProps {
   property: {
     id: number
     name: string
+    description?: string
     location: {
       address: string
       city: string
@@ -36,6 +37,7 @@ interface PropertyCardProps {
     isNsfassAccredited?: boolean
     availableRooms?: number
     rooms?: Room[] // Add rooms data for calculation
+    closestUniversities?: string[]
   }
   isFavorite?: boolean
   onFavoriteToggle?: () => void
@@ -94,12 +96,12 @@ function PropertyCard({
 
   return (
     <Card
-      className="group overflow-hidden transition-all mt-6 duration-300 hover:shadow-md border border-gray-200 bg-white rounded-xl relative max-w-sm cursor-pointer"
+      className="group overflow-hidden transition-all mt-6 duration-300 hover:shadow-xl hover:ring-2 hover:ring-[#00acee]/30 border border-gray-200 bg-white rounded-xl relative w-full cursor-pointer transform hover:scale-[1.02]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      <div className="relative w-full aspect-[4/3] px-2 overflow-hidden">
+      <div className="relative w-full aspect-[4/3] px-2 mt-[-1rem] ">
         <div className="relative w-full h-full">
           {!imgError ? (
             <Image
@@ -108,22 +110,19 @@ function PropertyCard({
               fill
               loader={loaderFunc}
               unoptimized={true}
-              className={`object-cover   transition-transform rounded-xl duration-500 ${isHovered ? "scale-110" : "scale-100"}`}
+              className={`object-cover transition-transform rounded-xl duration-500 ${isHovered ? "scale-110" : "scale-100"}`}
               onError={handleImageError}
               
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-xl">
               <Home className="h-12 w-12 text-gray-400" />
             </div>
           )}
         </div>
 
-        {/* Subtle overlay gradient */}
-        {/* <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/20 z-10" /> */}
-
         {/* Price tag - Now clearly in Rands */}
-        <div className="absolute top-3 right-4 z-20">
+        <div className="absolute top-3 right-3 z-20">
           <div className="bg-[#00acee] shadow-md text-white px-3 py-1.5 rounded-lg flex items-center border border-[#00acee]">
             <span className="font-bold">R {displayPrice.toLocaleString('en-ZA')}</span>
             <span className="text-xs text-blue-100 ml-1">/month</span>
@@ -132,7 +131,7 @@ function PropertyCard({
         
         {/* Available rooms badge */}
         {property.availableRooms !== undefined && property.availableRooms > 0 && (
-          <div className="absolute top-3 right-3 z-20">
+          <div className="absolute top-3 left-3 z-20">
             <Badge className="bg-green-500 text-white text-xs font-medium">
               {property.availableRooms} {property.availableRooms === 1 ? 'Room' : 'Rooms'} Available
             </Badge>
@@ -151,17 +150,51 @@ function PropertyCard({
               Parking Included
             </Badge>
           )}
+        </div>
+
+        {/* NSFAS and Favorite Icons - Positioned above the white background */}
+        <div className="absolute bottom-2 right-3 flex items-center gap-2 z-50">
+          {/* NSFAS Accredited Badge with Image */}
           {property.isNsfassAccredited && (
-            <Badge className="bg-green-100/90 text-green-800 text-xs font-medium backdrop-blur-sm border border-green-300">
-              NSFAS Accredited
-            </Badge>
+            <div className="relative w-11 h-11 bg-white rounded-full p-1 shadow-lg border border-gray-200">
+              <Image
+                src="/universities/nasfas.png"
+                alt="NSFAS Accredited"
+                width={36}
+                height={36}
+                className="w-full h-full rounded-full object-contain hover:scale-110 transition-transform duration-200"
+                title="NSFAS Accredited Property"
+              />
+            </div>
+          )}
+
+          {/* Favorite button */}
+          {showFavoriteButton && (
+            <Button
+              size="icon"
+              variant="ghost"
+              className={`h-11 w-11 rounded-full p-0 transition-all duration-300 ${
+                isFavorite 
+                  ? "bg-white text-red-500 shadow-lg border border-gray-200 scale-105" 
+                  : "bg-white/95 text-gray-600 border border-gray-200 shadow-lg hover:text-red-400 hover:scale-105"
+              }`}
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                onFavoriteToggle?.()
+              }}
+              title="Add to favorites"
+            >
+              <Heart className={`h-5 w-5 transition-all duration-300 ${isFavorite ? "fill-red-500" : ""}`} />
+              <span className="sr-only">Toggle favorite</span>
+            </Button>
           )}
         </div>
       </div>
 
-      <div className="p-4 space-y-3 bg-white">
+      <div className="p-4 pt-5 space-y-3 bg-white">
         <div>
-          <div className="flex items-start justify-between mb-1">
+          <div className="flex items-start justify-between mb-2">
             <h2 className="line-clamp-1 text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
               {propertyLink ? (
                 <Link href={propertyLink} className="hover:text-blue-600" scroll={false}>
@@ -171,44 +204,43 @@ function PropertyCard({
                 property.name
               )}
             </h2>
-            <div className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded-md">
-              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-              <span className="text-xs font-medium text-gray-800">{(property.averageRating || 0).toFixed(1)}</span>
-            </div>
           </div>
 
-          <div className="flex items-center text-sm text-gray-500">
-            <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
-            <p className="line-clamp-1">
-              {property.location.address}, {property.location.city}
-            </p>
+          {/* Review moved below heading */}
+          <div className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded-md w-fit mb-2">
+            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+            <span className="text-xs font-medium text-gray-800">{(property.averageRating || 0).toFixed(1)} ({property.numberOfReviews || 0} reviews)</span>
           </div>
+
+          {/* Description */}
+          {property.description && (
+            <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+              {property.description}
+            </p>
+          )}
         </div>
 
-        <div className="grid grid-cols-4 gap-2 text-sm">
-          <div className="flex flex-col items-center justify-center p-2 rounded-md bg-gray-50 border border-gray-100">
-            <Bed className="h-4 w-4 mb-1 text-blue-500" />
-            <span className="font-medium text-gray-800">{displayBeds}</span>
-            <span className="text-xs text-gray-500">Beds</span>
+        {/* Location and University Information */}
+        <div className="space-y-2">
+          <div className="flex items-center text-sm text-gray-600">
+            <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0 text-blue-500" />
+            <p className="line-clamp-1">
+              {property.location?.address || 'No address'}, {property.location?.city || 'No city'}
+            </p>
           </div>
-
-          <div className="flex flex-col items-center justify-center p-2 rounded-md bg-gray-50 border border-gray-100">
-            <Bath className="h-4 w-4 mb-1 text-blue-500" />
-            <span className="font-medium text-gray-800">{displayBaths}</span>
-            <span className="text-xs text-gray-500">Baths</span>
-          </div>
-
-          <div className="flex flex-col items-center justify-center p-2 rounded-md bg-gray-50 border border-gray-100">
-            <ChefHat className="h-4 w-4 mb-1 text-blue-500" />
-            <span className="font-medium text-gray-800">{displayKitchens}</span>
-            <span className="text-xs text-gray-500">Kitchens</span>
-          </div>
-
-          <div className="flex flex-col items-center justify-center p-2 rounded-md bg-gray-50 border border-gray-100">
-            <Home className="h-4 w-4 mb-1 text-blue-500" />
-            <span className="font-medium text-gray-800">{displaySquareFeet}</span>
-            <span className="text-xs text-gray-500">m²</span>
-          </div>
+          
+          {/* Closest University */}
+          {property.closestUniversities && property.closestUniversities.length > 0 && (
+            <div className="flex items-center text-sm text-gray-600">
+              <svg className="h-3.5 w-3.5 mr-1 flex-shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              <p className="line-clamp-1">
+                Close to {property.closestUniversities.slice(0, 2).join(", ")}
+                {property.closestUniversities.length > 2 && ` +${property.closestUniversities.length - 2} more`}
+              </p>
+            </div>
+          )}
         </div>
         
         {/* Room Information Section - Detailed view */}
@@ -251,28 +283,6 @@ function PropertyCard({
               </div>
             </div>
           </div>
-        )}
-
-        {/* Favorite button - always visible for all users */}
-        {showFavoriteButton && (
-          <Button
-            size="icon"
-            variant="ghost"
-            className={`absolute top-3 right-3 h-8 w-8 rounded-full p-0 z-20 transition-all duration-300 ${
-              isFavorite 
-                ? "bg-white text-red-500 shadow-md border border-red-200" 
-                : "bg-white/90 text-gray-600 backdrop-blur-sm border border-gray-200 shadow-sm hover:text-red-400"
-            }`}
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              onFavoriteToggle?.()
-            }}
-            title="Add to favorites"
-          >
-            <Heart className={`h-4 w-4 transition-all duration-300 ${isFavorite ? "fill-red-500 scale-110" : ""}`} />
-            <span className="sr-only">Toggle favorite</span>
-          </Button>
         )}
         
         {/* The tooltip for managers is now handled through the disabled state of the main button */}

@@ -82,6 +82,11 @@ const Listings = () => {
     // If no specific location is searched, show all properties
     if (filters.location === 'any') return processedProperties;
     
+    // If we have a property name filter, skip location filtering since API already handled it
+    if (filters.propertyName) {
+      return processedProperties;
+    }
+    
     // Normalize the searched location (remove 'South Africa' and lowercase)
     const searchedLocation = filters.location
       .replace(/,\s*south africa/i, '')
@@ -130,7 +135,7 @@ const Listings = () => {
       
       return addressMatch;
     });
-  }, [filters.location, processedProperties]);
+  }, [filters.location, filters.propertyName, processedProperties]);
 
   // Local state to track favorite status changes for immediate UI feedback
   const [localFavorites, setLocalFavorites] = useState<Record<number, boolean>>({});
@@ -158,7 +163,7 @@ const Listings = () => {
           id: 'login-required',
           action: {
             label: 'Log in',
-            onClick: () => window.location.href = '/auth/login'
+            onClick: () => window.location.href = '/signin'
           }
         }
       );
@@ -240,9 +245,22 @@ const Listings = () => {
     <div className="w-full">
       {/* Property count heading */}
       <div className="mb-4">
-        {/* Location-based heading */}
+        {/* Location-based or Property name-based heading */}
         {filters.location && filters.location !== 'any' && (
-          <h2 className="text-xl font-semibold mb-2">Properties in {filters.location.replace(/,\s*South Africa/i, '')}</h2>
+          <h2 className="text-xl font-semibold mb-2">
+            {filters.propertyName ? (
+              <>Properties matching "{filters.propertyName}"</>
+            ) : (
+              <>Properties in {filters.location.replace(/,\s*South Africa/i, '')}</>
+            )}
+          </h2>
+        )}
+        {filters.propertyName && (
+          <div className="mb-2">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+              🏠 Property Name Search
+            </span>
+          </div>
         )}
         <div className="text-sm text-gray-600">
           Showing {startIndex + 1}-{endIndex} of {totalProperties} properties

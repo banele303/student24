@@ -101,8 +101,41 @@ const FiltersBar = () => {
       // Don't search if input is empty
       if (!searchInput.trim()) return
       
+      const trimmedQuery = searchInput.trim();
+      
+      // First, search for properties by name/description
+      try {
+        const propertySearchResponse = await fetch(
+          `/api/properties?propertyName=${encodeURIComponent(trimmedQuery)}`
+        );
+        
+        if (propertySearchResponse.ok) {
+          const properties = await propertySearchResponse.json();
+          
+          // If we found exact property matches, set property name search
+          if (properties && properties.length > 0) {
+            console.log(`Found ${properties.length} property matches for "${trimmedQuery}"`);
+            
+            const newFilters = {
+              ...filters,
+              location: trimmedQuery,
+              coordinates: [0, 0] as [number, number], // Default coordinates for property name search
+              propertyName: trimmedQuery, // Add property name to filters
+            }
+            dispatch(setFilters(newFilters))
+            updateURL(newFilters)
+            return; // Exit early since we found property matches
+          }
+        }
+      } catch (err) {
+        console.log("Property search failed, falling back to geocoding:", err);
+      }
+      
+      // If no property matches found, fallback to geocoding search
+      console.log(`No property matches found for "${trimmedQuery}", trying geocoding...`);
+      
       // Always append South Africa to the search query if not already present
-      let searchQuery = searchInput.trim()
+      let searchQuery = trimmedQuery
       if (!searchQuery.toLowerCase().includes('south africa')) {
         searchQuery += ', South Africa'
       }
@@ -155,12 +188,33 @@ const FiltersBar = () => {
           ...filters,
           location: locationName,
           coordinates: [lng, lat] as [number, number],
+          propertyName: undefined, // Clear property name when using geocoding
+        }
+        dispatch(setFilters(newFilters))
+        updateURL(newFilters)
+      } else {
+        // No geocoding results, still search with the raw query as location
+        console.log("No geocoding results found, searching with raw query");
+        const newFilters = {
+          ...filters,
+          location: trimmedQuery,
+          coordinates: [0, 0] as [number, number],
+          propertyName: undefined,
         }
         dispatch(setFilters(newFilters))
         updateURL(newFilters)
       }
     } catch (err) {
       console.error("Error searching location:", err)
+      // Fallback: search with the raw query
+      const newFilters = {
+        ...filters,
+        location: searchInput.trim(),
+        coordinates: [0, 0] as [number, number],
+        propertyName: undefined,
+      }
+      dispatch(setFilters(newFilters))
+      updateURL(newFilters)
     }
   }
 

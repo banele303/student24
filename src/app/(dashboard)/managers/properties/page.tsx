@@ -18,7 +18,8 @@ import {
   Trash2,
   ArrowUpDown,
   Home,
-  Filter
+  Filter,
+  Image as ImageIcon
 } from 'lucide-react';
 import {
   Dialog,
@@ -87,6 +88,10 @@ const Properties = () => {
 
   const handleEditProperty = (id: number) => {
     router.push(`/managers/properties/${id}/edit`);
+  };
+
+  const handleManagePhotos = (id: number) => {
+    router.push(`/managers/properties/${id}/photos`);
   };
 
   const handleDeleteProperty = (id: number) => {
@@ -222,6 +227,7 @@ const Properties = () => {
               key={property.id} 
               property={property} 
               onEdit={handleEditProperty} 
+              onManagePhotos={handleManagePhotos}
               onDelete={handleDeleteProperty} 
             />
           ))}
@@ -282,9 +288,10 @@ const Properties = () => {
 };
 
 // Property Card component
-const PropertyCard = ({ property, onEdit, onDelete }: {
+const PropertyCard = ({ property, onEdit, onManagePhotos, onDelete }: {
   property: any;
   onEdit: (id: number) => void;
+  onManagePhotos: (id: number) => void;
   onDelete: (id: number) => void;
 }) => {
   // Calculate room-based statistics
@@ -326,13 +333,25 @@ const PropertyCard = ({ property, onEdit, onDelete }: {
             <div className="space-y-2 text-slate-500 dark:text-slate-400 text-sm mb-3">
               <div className="flex items-center">
                 <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
-                <span className="line-clamp-1">{property.location?.address || property.address}</span>
+                <span className="line-clamp-1">
+                  {property.location?.address || 'No address'}
+                </span>
               </div>
               <div className="flex items-center pl-6">
-                <span className="line-clamp-1">{property.location?.city || property.city}, {property.location?.state || property.state}</span>
+                <span className="line-clamp-1">
+                  {property.location?.city ? 
+                    `${property.location.city}, ${property.location.state || ''}` : 
+                    'No city'
+                  }
+                </span>
               </div>
               <div className="flex items-center pl-6">
-                <span>{property.location?.postalCode || property.postalCode}, {property.location?.country || property.country || 'South Africa'}</span>
+                <span>
+                  {property.location?.postalCode ? 
+                    `${property.location.postalCode}, ${property.location.country || 'South Africa'}` : 
+                    `South Africa`
+                  }
+                </span>
               </div>
             </div>
             
@@ -353,6 +372,15 @@ const PropertyCard = ({ property, onEdit, onDelete }: {
           </div>
           
           <div className="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onManagePhotos(property.id)}
+              className="text-purple-600 border-purple-200 hover:bg-purple-50 dark:text-purple-400 dark:border-purple-800 dark:hover:bg-purple-900/20"
+            >
+              <ImageIcon className="h-4 w-4 mr-1" />
+              Photos
+            </Button>
             <Button
               variant="outline"
               size="sm"

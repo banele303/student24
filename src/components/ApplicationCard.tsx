@@ -58,7 +58,7 @@ const ApplicationCard = ({
               </h2>
               <div className="flex items-center mb-2">
                 <MapPin className="w-5 h-5 mr-1" />
-                <span>{`${application.property.location.city}, ${application.property.location.country}`}</span>
+                <span>{`${application.property.location?.city || 'No city'}, ${application.property.location?.country || 'No country'}`}</span>
               </div>
             </div>
             <div className="text-xl font-semibold">

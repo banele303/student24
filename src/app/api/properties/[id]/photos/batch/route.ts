@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { S3Client, ObjectCannedACL, PutObjectAclCommand } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
-import { verifyAuth } from '@/lib/auth';
 
 // Configure S3 client with credentials
 const s3Client = new S3Client({
@@ -73,7 +72,7 @@ async function uploadFileToS3(file: Buffer, originalName: string, mimeType: stri
   }
 }
 
-// POST handler for uploading a photo to a property
+// POST handler for batch uploading photos to a property with featured image support
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // Get property ID from params
@@ -91,94 +90,107 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     if (!property) {
       return NextResponse.json({ message: 'Property not found' }, { status: 404 });
     }
-    
-    // Skip manager verification for now to allow photo uploads
-    // We'll add proper authentication later when the basic flow works
 
-    // Parse the form data with better error handling
+    // Parse the form data
     let formData;
     try {
       formData = await request.formData();
-      console.log("FormData parsed successfully for photo upload");
+      console.log("FormData parsed successfully for batch photo upload");
     } catch (error) {
-      console.error("Error parsing FormData for photo upload:", error);
+      console.error("Error parsing FormData for batch photo upload:", error);
       return NextResponse.json({ 
-        message: 'Error uploading photo: Failed to parse form data',
+        message: 'Error uploading photos: Failed to parse form data',
         error: error instanceof Error ? error.message : String(error)
       }, { status: 500 });
     }
     
-    // Get the photo file
-    const photoFile = formData.get('photo');
-    if (!photoFile || !(photoFile instanceof File)) {
-      return NextResponse.json({ message: 'No photo file provided' }, { status: 400 });
+    // Get all photo files
+    const photoFiles = formData.getAll('photos') as File[];
+    if (photoFiles.length === 0) {
+      return NextResponse.json({ message: 'No photo files provided' }, { status: 400 });
     }
 
-    // Get featured image index if provided (for batch uploads)
+    // Get featured image index (default to 0)
     const featuredImageIndexParam = formData.get('featuredImageIndex');
-    const featuredImageIndex = featuredImageIndexParam ? parseInt(featuredImageIndexParam as string) : null;
+    const featuredImageIndex = featuredImageIndexParam ? parseInt(featuredImageIndexParam as string) : 0;
 
-    console.log(`Processing photo: ${photoFile.name}, size: ${photoFile.size}, type: ${photoFile.type}`);
-    if (featuredImageIndex !== null) {
-      console.log(`Featured image index: ${featuredImageIndex}`);
-    }
+    console.log(`Processing ${photoFiles.length} photos for property ${propertyId}`);
+    console.log(`Featured image index: ${featuredImageIndex}`);
 
-    // Upload the file to S3
-    try {
-      const buffer = await photoFile.arrayBuffer();
-      const photoUrl = await uploadFileToS3(Buffer.from(buffer), photoFile.name, photoFile.type);
+    // Upload all files to S3
+    const uploadedUrls: string[] = [];
+    const uploadPromises = photoFiles.map(async (file, index) => {
+      console.log(`Processing photo ${index + 1}: ${file.name}, size: ${file.size}, type: ${file.type}`);
       
-      // Get current property to check existing photos
+      try {
+        const buffer = await file.arrayBuffer();
+        const photoUrl = await uploadFileToS3(Buffer.from(buffer), file.name, file.type);
+        return { url: photoUrl, index };
+      } catch (error) {
+        console.error(`Error uploading photo ${file.name}:`, error);
+        throw new Error(`Failed to upload ${file.name}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    });
+
+    try {
+      const uploadResults = await Promise.all(uploadPromises);
+      
+      // Sort by original index to maintain order
+      uploadResults.sort((a, b) => a.index - b.index);
+      const sortedUrls = uploadResults.map(result => result.url);
+      
+      // Reorder URLs so featured image is first
+      const reorderedUrls: string[] = [];
+      if (featuredImageIndex < sortedUrls.length) {
+        // Add featured image first
+        reorderedUrls.push(sortedUrls[featuredImageIndex]);
+        // Add remaining images
+        sortedUrls.forEach((url, index) => {
+          if (index !== featuredImageIndex) {
+            reorderedUrls.push(url);
+          }
+        });
+      } else {
+        // Featured index is out of bounds, use original order
+        reorderedUrls.push(...sortedUrls);
+      }
+
+      // Update the property with the new photo URLs (append to existing)
       const currentProperty = await prisma.property.findUnique({
         where: { id: propertyId },
         select: { photoUrls: true }
       });
+      
+      const existingPhotos = (currentProperty?.photoUrls as string[]) || [];
+      const allPhotos = [...existingPhotos, ...reorderedUrls];
 
-      let updatedPhotoUrls: string[];
-      
-      if (featuredImageIndex !== null && currentProperty?.photoUrls) {
-        // This is a batch upload - handle featured image positioning
-        const currentPhotos = currentProperty.photoUrls as string[];
-        const newPhotoIndex = currentPhotos.length; // Index where this new photo would be added
-        
-        if (featuredImageIndex === newPhotoIndex) {
-          // This new photo should be the featured image - add it at the beginning
-          updatedPhotoUrls = [photoUrl, ...currentPhotos];
-        } else {
-          // This is not the featured image - add it normally
-          updatedPhotoUrls = [...currentPhotos, photoUrl];
-        }
-      } else {
-        // Single photo upload or no featured image specified - add normally
-        const currentPhotos = (currentProperty?.photoUrls as string[]) || [];
-        updatedPhotoUrls = [...currentPhotos, photoUrl];
-      }
-      
-      // Update the property with the new photo URLs array
       const updatedProperty = await prisma.property.update({
         where: { id: propertyId },
         data: {
-          photoUrls: updatedPhotoUrls
+          photoUrls: allPhotos
         }
       });
 
       return NextResponse.json({ 
-        message: 'Photo uploaded successfully',
-        photoUrl,
+        message: 'Photos uploaded successfully',
+        photoUrls: reorderedUrls, // Return only the newly uploaded photos
+        allPhotoUrls: allPhotos, // Return all photos including existing ones
         propertyId,
-        totalPhotos: updatedPhotoUrls.length
+        totalPhotos: allPhotos.length,
+        newPhotosCount: reorderedUrls.length
       }, { status: 200 });
+      
     } catch (error) {
-      console.error("Error uploading photo to S3:", error);
+      console.error("Error uploading photos to S3:", error);
       return NextResponse.json({ 
-        message: 'Error uploading photo to S3',
+        message: 'Error uploading photos to S3',
         error: error instanceof Error ? error.message : String(error)
       }, { status: 500 });
     }
   } catch (error) {
-    console.error("Unexpected error in photo upload:", error);
+    console.error("Unexpected error in batch photo upload:", error);
     return NextResponse.json({ 
-      message: 'Unexpected error during photo upload',
+      message: 'Unexpected error during batch photo upload',
       error: error instanceof Error ? error.message : String(error)
     }, { status: 500 });
   }

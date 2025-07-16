@@ -466,7 +466,7 @@ export const api = createApi({
     }),
 
     // Property related endpoints
-    getProperties: build.query<Property[], Partial<FiltersState> & { favoriteIds?: number[] }>({
+    getProperties: build.query<Property[], Partial<FiltersState> & { favoriteIds?: number[]; propertyName?: string }>({
       query: (filters) => {
         const params = cleanParams({
           location: filters.location,
@@ -482,6 +482,7 @@ export const api = createApi({
           favoriteIds: filters.favoriteIds?.join(","),
           latitude: filters.coordinates?.[1],
           longitude: filters.coordinates?.[0],
+          propertyName: filters.propertyName,
         });
 
         return { url: "properties", params };

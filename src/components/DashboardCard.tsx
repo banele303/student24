@@ -8,6 +8,7 @@ import {
   ChefHat,
   Copy,
   Edit,
+  Eye,
   Heart,
   Home,
   MapPin,
@@ -186,7 +187,7 @@ export default function PropertyCardDashboard({
           <div className="flex items-center text-sm text-gray-400 mb-3">
             <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
             <p className="line-clamp-1">
-              {property.location.address}, {property.location.city}
+              {property.location?.address || 'No address'}, {property.location?.city || 'No city'}
             </p>
           </div>
         </div>
@@ -222,6 +223,17 @@ export default function PropertyCardDashboard({
         {/* Action buttons - always visible */}
 
         <div className="flex items-center justify-between gap-2 pt-4 border-t border-[#333]/80 mt-4">
+          <Link href={propertyLink || '#'} className="flex-1">
+            <Button
+              variant="default"
+              size="sm"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              View
+            </Button>
+          </Link>
+
           <Button
             variant="outline"
             size="sm"

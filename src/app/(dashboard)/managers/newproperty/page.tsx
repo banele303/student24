@@ -43,7 +43,7 @@ import {
 import { type PropertyFormData, propertySchema } from "@/lib/schemas";
 import { processImageFiles } from "@/lib/imageUtils";
 import { useCreatePropertyMutation, useCreateRoomMutation, useGetAuthUserQuery } from "@/state/api";
-import { AmenityEnum, HighlightEnum, PropertyTypeEnum } from "@/lib/constants";
+import { AmenityEnum, HighlightEnum, PropertyTypeEnum, UNIVERSITY_OPTIONS } from "@/lib/constants";
 
 
 // Form step component for slider form
@@ -200,7 +200,7 @@ const NewProperty = () => {
       city: "",
       state: "",
       country: "",
-      postalCode: "",
+      closestUniversities: [],
     },
     mode: "onChange", // Validate on change for better UX
   });
@@ -231,12 +231,12 @@ const NewProperty = () => {
       case 5: // Property Photos
         // At least one photo required
         isValid = (uploadedFiles.length > 0 || (formState.photoUrls && formState.photoUrls.length > 0));
-        break;
-      case 6: // Location Information
+        break;      case 6: // Location Information
         isValid = !!formState.address && formState.address.trim() !== '' && 
                  !!formState.city && formState.city.trim() !== '' && 
-                 !!formState.country && formState.country.trim() !== '' && 
-                 !!formState.postalCode && formState.postalCode.trim() !== '';
+                 !!formState.country && formState.country.trim() !== '' &&
+                 !!formState.postalCode && formState.postalCode.trim() !== '' &&
+                 formState.closestUniversities && formState.closestUniversities.length > 0;
         break;
       default:
         isValid = true;
@@ -1109,6 +1109,18 @@ const NewProperty = () => {
                     inputClassName={inputStyle}
                     placeholder="South Africa"
                   />
+
+                  <CreateFormField
+                    name="closestUniversities"
+                    label="Closest Universities"
+                    type="multi-select"
+                    options={UNIVERSITY_OPTIONS}
+                    labelClassName={labelStyle}
+                    inputClassName={`${inputStyle} bg-[#0B1120] !text-white`}
+                  />
+                  <p className="text-xs text-gray-400 mt-1">
+                    Select the universities that are closest to this property. This helps students find accommodation near their campus.
+                  </p>
                 </div>
                 
                 <StepNavigation

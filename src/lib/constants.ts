@@ -137,7 +137,6 @@ export const testUsers = {
 };
 
 
-
 // Add these to your lib/constants.ts file
 
 // Room type enum
@@ -183,6 +182,35 @@ export enum RoomFeatureEnum {
   NATURAL_LIGHT = "NATURAL_LIGHT",
 }
 
+// University enum for closest universities selection
+export enum UniversityEnum {
+  UCT = "University of Cape Town",
+  WITS = "University of the Witwatersrand", 
+  UJ = "University of Johannesburg",
+  UKZN = "University of KwaZulu-Natal",
+  UWC = "University of the Western Cape",
+  UP = "University of Pretoria",
+  SU = "Stellenbosch University",
+  CPUT = "Cape Peninsula University of Technology",
+  TUT = "Tshwane University of Technology",
+  UNISA = "University of South Africa",
+  NWU = "North-West University",
+  UFS = "University of the Free State",
+  UFH = "University of Fort Hare",
+  RU = "Rhodes University",
+  WSU = "Walter Sisulu University",
+  UL = "University of Limpopo",
+  UZ = "University of Zululand",
+  CUT = "Central University of Technology",
+  MUT = "Mangosuthu University of Technology",
+  SPU = "Sol Plaatje University"
+}
+
+// Array of university options for easy use in forms
+export const UNIVERSITY_OPTIONS = Object.entries(UniversityEnum).map(([key, value]) => ({
+  value: key,
+  label: value
+}));
 
 
 // --- BEGIN FILE: @/lib/constants.ts ---

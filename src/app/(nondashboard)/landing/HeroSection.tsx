@@ -69,6 +69,41 @@ const HeroSection = () => {
       const trimmedQuery = searchQuery.trim();
       if (!trimmedQuery) return;
       
+      // First, search for properties by name/description
+      const propertySearchResponse = await fetch(
+        `/api/properties?propertyName=${encodeURIComponent(trimmedQuery)}`
+      );
+      
+      if (propertySearchResponse.ok) {
+        const properties = await propertySearchResponse.json();
+        
+        // If we found exact property matches, navigate directly to search results
+        if (properties && properties.length > 0) {
+          console.log(`Found ${properties.length} property matches for "${trimmedQuery}"`);
+          
+          // Update the filters in the redux store
+          dispatch(
+            setFilters({
+              location: trimmedQuery,
+              coordinates: [0, 0] as [number, number], // Default coordinates for property name search
+              propertyName: trimmedQuery, // Add property name to filters
+            })
+          );
+          
+          // Navigate to the search page with the property name search
+          const params = new URLSearchParams({
+            location: trimmedQuery,
+            propertyName: trimmedQuery,
+          });
+          
+          router.push(`/search?${params.toString()}`);
+          return; // Exit early since we found property matches
+        }
+      }
+      
+      // If no property matches found, fallback to geocoding search
+      console.log(`No property matches found for "${trimmedQuery}", trying geocoding...`);
+      
       // Search for locations without country restriction
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
@@ -103,9 +138,37 @@ const HeroSection = () => {
         });
         
         router.push(`/search?${params.toString()}`);
+      } else {
+        console.log("No location results found");
+        // Still search with the raw query as location
+        dispatch(
+          setFilters({
+            location: trimmedQuery,
+            coordinates: [0, 0] as [number, number],
+          })
+        );
+        
+        const params = new URLSearchParams({
+          location: trimmedQuery,
+        });
+        
+        router.push(`/search?${params.toString()}`);
       }
     } catch (error) {
-      console.error("Error searching location:", error);
+      console.error("Error searching:", error);
+      // Fallback: search with the raw query
+      dispatch(
+        setFilters({
+          location: searchQuery.trim(),
+          coordinates: [0, 0] as [number, number],
+        })
+      );
+      
+      const params = new URLSearchParams({
+        location: searchQuery.trim(),
+      });
+      
+      router.push(`/search?${params.toString()}`);
     }
   };
 
@@ -193,7 +256,7 @@ const HeroSection = () => {
         src="/hero-1.jpg"
         alt="Rentiful Rental Platform Hero Section"
         fill
-        className="object-cover object-center"
+        className="object-cover object-center brightness-125"
         priority
       />
 
@@ -211,7 +274,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-4xl pt-6 md:text-4xl lg:text-5xl pt-19 font-bold text-[#00acee] mb-6 tracking-tight drop-shadow-lg"
+              className="text-6xl pt-6 md:text-7xl lg:text-8xl xl:text-9xl pt-19 font-bold text-[#00acee] mb-6 tracking-tight drop-shadow-lg"
             >
               Find Any Res.
             </motion.h1>

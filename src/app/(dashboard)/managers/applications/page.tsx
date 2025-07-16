@@ -107,6 +107,10 @@ interface ApplicationItemProps {
       pricePerMonth: number;
       address: string;
     };
+    room?: {
+      name: string;
+      pricePerMonth: number;
+    };
   };
   handleStatusChange: (id: number, status: 'Approved' | 'Denied' | 'Pending') => Promise<void>;
 }
@@ -182,13 +186,22 @@ const ApplicationItem = ({ application, handleStatusChange }: ApplicationItemPro
                       <span className="dark:text-gray-400 text-gray-500">Name: </span>
                       <span className="dark:text-white text-gray-900">{application.property.name}</span>
                     </div>
-                    <div>
-                      <span className="dark:text-gray-400 text-gray-500">Unit: </span>
-                      <span className="dark:text-white text-gray-900">{application.property.unit || "N/A"}</span>
-                    </div>
+                    {application.room ? (
+                      <div>
+                        <span className="dark:text-gray-400 text-gray-500">Room: </span>
+                        <span className="dark:text-white text-gray-900">{application.room.name}</span>
+                      </div>
+                    ) : (
+                      <div>
+                        <span className="dark:text-gray-400 text-gray-500">Unit: </span>
+                        <span className="dark:text-white text-gray-900">{application.property.unit || "N/A"}</span>
+                      </div>
+                    )}
                     <div>
                       <span className="dark:text-gray-400 text-gray-500">Monthly Rent: </span>
-                      <span className="dark:text-white text-gray-900">${application.property.pricePerMonth}</span>
+                      <span className="dark:text-white text-gray-900">
+                        R{application.room?.pricePerMonth?.toLocaleString('en-ZA') || application.property.pricePerMonth}
+                      </span>
                     </div>
                     <div>
                       <span className="dark:text-gray-400 text-gray-500">Address: </span>
@@ -287,7 +300,7 @@ const Applications = () => {
   const [filterOpen, setFilterOpen] = useState(false);
 
   const {
-    data: applications,
+    data: applicationsList,
     isLoading,
     isError,
   } = useGetApplicationsQuery(
@@ -330,7 +343,7 @@ const Applications = () => {
   );
 
   // Filter applications based on tab and search term
-  const filteredApplications = applications?.filter((application) => {
+  const filteredApplications = applicationsList?.filter((application) => {
     const matchesTab = activeTab === "all" || application.status.toLowerCase() === activeTab;
     
     if (!searchTerm) return matchesTab;
@@ -345,11 +358,15 @@ const Applications = () => {
     
     const searchLower = searchTerm.toLowerCase();
     
-    return matchesTab && (name.includes(searchLower) || email.includes(searchLower) || propertyName.includes(searchLower));
-  }) || [];
-  
+    return matchesTab && (
+      name.includes(searchLower) || 
+      email.includes(searchLower) || 
+      propertyName.includes(searchLower)
+    );
+  });
+
   // Transform applications to include the property object required by ApplicationItem
-  const transformedApplications = filteredApplications.map(application => {
+  const transformedApplications = filteredApplications?.map(application => {
     // Find the matching property from our properties data
     const matchingProperty = properties?.find(p => p.id === application.propertyId);
     
@@ -375,19 +392,24 @@ const Applications = () => {
         name: 'Unknown Property',
         pricePerMonth: 0,
         address: ''
-      }
+      },
+      // Add room object if it exists in the original application
+      room: (application as any).room ? {
+        name: (application as any).room.name || '',
+        pricePerMonth: (application as any).room.pricePerMonth || 0
+      } : undefined
     };
   });
 
   // Count applications by status
-  const statusCounts = applications?.reduce((acc: any, app: any) => {
+  const statusCounts = filteredApplications?.reduce((acc: any, app: any) => {
     const status = app.status.toLowerCase();
     acc[status] = (acc[status] || 0) + 1;
     return acc;
   }, {}) || {};
 
   return (
-    <div className="min-h-screen  text-white dark:bg-slate-950 dark:text-white bg-white text-gray-900">
+    <div className="min-h-screen dark:bg-slate-950 dark:text-white bg-white text-gray-900">
       <div className="max-w-5xl mx-auto px-4 py-6">
         {/* Header */}
         <div className="mb-8">
@@ -442,9 +464,9 @@ const Applications = () => {
                 className="flex-1 data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-md py-2 px-4"
               >
                 All
-                {applications && applications.length > 0 && (
+                {applicationsList && applicationsList.length > 0 && (
                   <span className="ml-2 dark:bg-gray-800 bg-gray-200 dark:text-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs">
-                    {applications.length}
+                    {applicationsList.length}
                   </span>
                 )}
               </TabsTrigger>
@@ -494,7 +516,7 @@ const Applications = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {filteredApplications.length === 0 ? (
+                {(filteredApplications || []).length === 0 ? (
                   <div className="text-center p-8 dark:bg-gray-900/50 bg-gray-50 dark:border-gray-800 border-gray-200 rounded-lg">
                     <CircleCheckBig className="w-10 h-10 dark:text-gray-400 text-gray-500 mx-auto mb-4" />
                     <h3 className="text-xl font-medium dark:text-gray-300 text-gray-700 mb-2">No Applications Found</h3>
@@ -508,7 +530,7 @@ const Applications = () => {
                   </div>
                 ) : (
                   <AnimatePresence>
-                    {transformedApplications.map((application) => (
+                    {(transformedApplications || []).map((application) => (
                       <ApplicationItem
                         key={application.id}
                         application={application}

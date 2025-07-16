@@ -53,6 +53,29 @@ enum PropertyType {
   Cottage
 }
 
+enum University {
+  UCT
+  WITS  
+  UJ
+  UKZN
+  UWC
+  UP
+  SU
+  CPUT
+  TUT
+  UNISA
+  NWU
+  UFS
+  UFH
+  RU
+  WSU
+  UL
+  UZ
+  CUT
+  MUT
+  SPU
+}
+
 enum ApplicationStatus {
   Pending
   Denied
@@ -81,6 +104,7 @@ model Property {
   photoUrls         String[]
   amenities         Amenity[]
   highlights        Highlight[]
+  closestUniversities University[]
   isPetsAllowed     Boolean      @default(false)
   isParkingIncluded Boolean      @default(false)
   isNsfassAccredited Boolean     @default(false)
@@ -127,6 +151,7 @@ model Room {
   // Relations
   property          Property     @relation("PropertyRooms", fields: [propertyId], references: [id], onDelete: Cascade)
   propertyId        Int
+  applications      Application[]
 
   @@index([propertyId])
 }
@@ -192,6 +217,7 @@ model Application {
   applicationDate DateTime
   status          ApplicationStatus
   propertyId      Int
+  roomId          Int?
   tenantCognitoId String
   name            String
   email           String
@@ -200,6 +226,7 @@ model Application {
   leaseId         Int?              @unique
 
   property    Property     @relation(fields: [propertyId], references: [id])
+  room        Room?        @relation(fields: [roomId], references: [id])
   tenant      Tenant       @relation(fields: [tenantCognitoId], references: [cognitoId])
   lease       Lease?       @relation(fields: [leaseId], references: [id])
 }

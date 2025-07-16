@@ -313,3 +313,75 @@ export function SearchResultsSkeleton() {
     </div>
   )
 }
+
+// Application Card Skeleton
+export function ApplicationCardSkeleton() {
+  return (
+    <div className="border border-[#333] shadow-md overflow-hidden rounded-lg">
+      <div className="flex flex-col md:flex-row">
+        {/* Property Image skeleton */}
+        <div className="relative md:w-1/4 h-28 md:h-auto p-2">
+          <Skeleton className="w-full h-full bg-gray-800 rounded-md" />
+        </div>
+
+        {/* Content skeleton */}
+        <div className="flex-1 p-4 flex flex-col space-y-3">
+          {/* Status Row skeleton */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Skeleton className="w-48 h-6 bg-gray-800" />
+              <Skeleton className="w-20 h-6 bg-gray-700 rounded-full" />
+            </div>
+            <Skeleton className="w-24 h-4 bg-gray-700" />
+          </div>
+
+          {/* Property Details skeleton */}
+          <div className="space-y-2">
+            <Skeleton className="w-64 h-4 bg-gray-800" />
+            <div className="flex items-center gap-2">
+              <Skeleton className="w-12 h-4 bg-gray-700" />
+              <Skeleton className="w-20 h-4 bg-gray-800" />
+              <Skeleton className="w-24 h-4 bg-gray-700" />
+            </div>
+          </div>
+
+          {/* Status Details skeleton */}
+          <div className="flex-1">
+            <div className="p-3 rounded-md border border-gray-700/30">
+              <div className="flex items-center">
+                <Skeleton className="w-4 h-4 bg-gray-700 mr-2" />
+                <Skeleton className="flex-1 h-4 bg-gray-800" />
+              </div>
+            </div>
+          </div>
+
+          {/* Actions skeleton */}
+          <div className="flex justify-end space-x-3">
+            <Skeleton className="w-28 h-8 bg-gray-800" />
+            <Skeleton className="w-32 h-8 bg-gray-700" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Applications Page Skeleton
+export function ApplicationsPageSkeleton() {
+  return (
+    <div className="dashboard-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header skeleton */}
+      <div className="mb-8">
+        <Skeleton className="w-32 h-8 bg-gray-800 mb-2" />
+        <Skeleton className="w-96 h-4 bg-gray-700" />
+      </div>
+      
+      {/* Applications list skeleton */}
+      <div className="space-y-6">
+        {[1, 2, 3].map((i) => (
+          <ApplicationCardSkeleton key={i} />
+        ))}
+      </div>
+    </div>
+  );
+}

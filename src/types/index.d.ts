@@ -67,6 +67,8 @@ declare global {
     isOpen: boolean;
     onClose: () => void;
     propertyId: number;
+    roomId?: number;
+    roomName?: string;
   }
 
   interface ContactWidgetProps {

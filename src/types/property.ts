@@ -33,6 +33,7 @@ export interface Property {
   isNsfassAccredited: boolean;
   amenities?: string[];
   highlights?: string[];
+  closestUniversities?: string[];
   averageRating?: number;
   numberOfReviews?: number;
   managerCognitoId: string;

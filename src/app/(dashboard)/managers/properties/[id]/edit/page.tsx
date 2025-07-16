@@ -40,7 +40,7 @@ import {
 // Schemas, Types, Constants, and API Hooks
 import { PropertyFormData, propertySchema } from "@/lib/schemas";
 import { RoomFormData } from "@/lib/schemas"; // Use for typing
-import { PropertyTypeEnum, AmenityEnum, HighlightEnum } from "@/lib/constants";
+import { PropertyTypeEnum, AmenityEnum, HighlightEnum, UNIVERSITY_OPTIONS } from "@/lib/constants";
 import { ApiProperty, ApiRoom } from "@/lib/schemas"; // Use defined API types
 import { useGetPropertyQuery, useUpdatePropertyMutation, useDeletePropertyMutation, useGetRoomsQuery, useDeleteRoomMutation } from "@/state/api"; // Use the re-exported hooks
 import type { Property } from "@/types/property";
@@ -271,8 +271,27 @@ export default function EditPropertyPage() {
   }, [fetchedRoomsData, isLoadingRooms]);
 
   useEffect(() => {
-    if (isRoomsError) {
+    if (isRoomsError && roomsError) {
       console.error("Error fetching rooms:", roomsError);
+      
+      // Provide more detailed error information for debugging
+      if ('status' in roomsError) {
+        console.error("Room error status:", roomsError.status);
+      }
+      
+      if ('data' in roomsError && roomsError.data) {
+        console.error("Room error data:", roomsError.data);
+        if (typeof roomsError.data === 'object' && 'message' in roomsError.data) {
+          console.error("Room error message:", (roomsError.data as any).message);
+        }
+      } else if ('message' in roomsError) {
+        console.error("Room error message:", roomsError.message);
+      }
+      
+      // Only show user-facing error if it's not a 404 (rooms might just not exist yet)
+      if ('status' in roomsError && roomsError.status !== 404) {
+        console.warn("Rooms query failed with non-404 error. This might indicate a server issue.");
+      }
     }
   }, [isRoomsError, roomsError]);
 
@@ -294,6 +313,7 @@ export default function EditPropertyPage() {
         isNsfassAccredited: fetchedPropertyData.isNsfassAccredited || false,
         amenities: fetchedPropertyData.amenities || [],
         highlights: fetchedPropertyData.highlights || [],
+        closestUniversities: [],
         propertyType: fetchedPropertyData.propertyType ? (fetchedPropertyData.propertyType as PropertyTypeEnum) : PropertyTypeEnum.Apartment,
         beds: fetchedPropertyData.beds || 0,
         baths: fetchedPropertyData.baths || 0,
@@ -671,6 +691,15 @@ export default function EditPropertyPage() {
                   <CreateFormFieldt name="country" label="Country" control={propertyForm.control} placeholder="e.g., South Africa" />
                 </div>
                  <p className="text-xs text-muted-foreground dark:text-gray-400">Note: Changing address details will re-geocode the location and update its coordinates on the map upon saving.</p>
+
+                 <CreateFormFieldt 
+                   name="closestUniversities" 
+                   label="Closest Universities" 
+                   type="multi-select" 
+                   control={propertyForm.control} 
+                   options={UNIVERSITY_OPTIONS}
+                   description="Select the universities that are closest to this property to help students find accommodation."
+                 />
               </div>
             </FormSection>
 

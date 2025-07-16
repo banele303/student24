@@ -10,6 +10,7 @@ export interface FiltersState {
   priceRange: [number, number] | [null, null];
   squareFeet: [number, number] | [null, null];
   coordinates: [number, number];
+  propertyName?: string; // Optional property name search
 }
 
 interface InitialStateTypes {

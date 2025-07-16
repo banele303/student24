@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
             location: true
           }
         },
+        room: true,
         tenant: true
       },
       orderBy: {
@@ -153,11 +154,35 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    // Check if room exists (if roomId is provided)
+    let room = null;
+    if (body.roomId) {
+      room = await prisma.room.findUnique({
+        where: { id: parseInt(body.roomId) }
+      });
+      
+      if (!room) {
+        return NextResponse.json(
+          { message: 'Room not found' },
+          { status: 404 }
+        );
+      }
+
+      // Verify room belongs to the property
+      if (room.propertyId !== parseInt(body.propertyId)) {
+        return NextResponse.json(
+          { message: 'Room does not belong to the specified property' },
+          { status: 400 }
+        );
+      }
+    }
     
     // Create the application
     const application = await prisma.application.create({
       data: {
         propertyId: parseInt(body.propertyId),
+        roomId: body.roomId ? parseInt(body.roomId) : null,
         tenantCognitoId: body.tenantCognitoId,
         applicationDate: new Date(),
         status: 'Pending',
@@ -172,6 +197,7 @@ export async function POST(request: NextRequest) {
             location: true
           }
         },
+        room: true,
         tenant: true
       }
     });

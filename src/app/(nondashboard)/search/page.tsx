@@ -27,6 +27,8 @@ const SearchPageContent = () => {
           acc[key] = value.split(",").map((v) => (v === "" ? null : Number(v)));
         } else if (key === "coordinates") {
           acc[key] = value.split(",").map(Number);
+        } else if (key === "propertyName") {
+          acc[key] = value; // Handle property name search parameter
         } else {
           acc[key] = value === "any" ? null : value;
         }
