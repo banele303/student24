@@ -37,6 +37,65 @@ const SingleListing = () => {
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
   const [expandedDescriptions, setExpandedDescriptions] = useState<{[key: string]: boolean}>({});
   const [imgErrors, setImgErrors] = useState<{[key: string]: boolean}>({});
+
+  // University logo mapping
+  const getUniversityLogo = (universityName: string): string | null => {
+    const universityMap: { [key: string]: string } = {
+      // University of Cape Town variations
+      "UCT": "/universities/UCT-university.png",
+      "University of Cape Town": "/universities/UCT-university.png",
+      "uct": "/universities/UCT-university.png",
+      
+      // University of the Witwatersrand variations
+      "Wits": "/universities/Witwatersrand,-univesity.jpg",
+      "University of the Witwatersrand": "/universities/Witwatersrand,-univesity.jpg",
+      "Witwatersrand": "/universities/Witwatersrand,-univesity.jpg",
+      "wits": "/universities/Witwatersrand,-univesity.jpg",
+      
+      // University of the Western Cape variations
+      "UWC": "/universities/UWC_Logo.svg",
+      "University of the Western Cape": "/universities/UWC_Logo.svg",
+      "uwc": "/universities/UWC_Logo.svg",
+      
+      // University of Johannesburg variations
+      "UJ": "/universities/University-Johannesburg.svg",
+      "University of Johannesburg": "/universities/University-Johannesburg.svg",
+      "uj": "/universities/University-Johannesburg.svg",
+      
+      // University of Limpopo variations
+      "UL": "/universities/University_of_Limpopo_logo.svg",
+      "University of Limpopo": "/universities/University_of_Limpopo_logo.svg",
+      "ul": "/universities/University_of_Limpopo_logo.svg",
+      
+      // University of the Free State variations
+      "UFS": "/universities/University-FreeState.svg",
+      "University of the Free State": "/universities/University-FreeState.svg",
+      "ufs": "/universities/University-FreeState.svg",
+      
+      // Stellenbosch University variations
+      "Stellenbosch": "/universities/Stellenbosch.jpg",
+      "Stellenbosch University": "/universities/Stellenbosch.jpg",
+      "stellenbosch": "/universities/Stellenbosch.jpg",
+      
+      // Rhodes University variations
+      "Rhodes": "/universities/Rhodes-university.png",
+      "Rhodes University": "/universities/Rhodes-university.png",
+      "rhodes": "/universities/Rhodes-university.png",
+      
+      // University of Pretoria variations
+      "UP": "/universities/pretoria.webp",
+      "University of Pretoria": "/universities/pretoria.webp",
+      "up": "/universities/pretoria.webp",
+      
+      // University of KwaZulu-Natal variations
+      "UKZN": "/universities/kzn.png",
+      "University of KwaZulu-Natal": "/universities/kzn.png",
+      "ukzn": "/universities/kzn.png",
+    };
+
+    // Check for exact match first, then try lowercase
+    return universityMap[universityName] || universityMap[universityName.toLowerCase()] || null;
+  };
   
   // Debug modal state changes
   React.useEffect(() => {
@@ -141,9 +200,9 @@ const SingleListing = () => {
         {/* Full Width Image Gallery */}
         <div className="mb-8">
           {/* Desktop Layout */}
-          <div className="hidden md:grid md:grid-cols-4 gap-4 h-[500px]">
-            {/* Main large image - takes 2/3 of the width */}
-            <div className="col-span-2 relative rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
+          <div className="hidden md:grid md:grid-cols-6 gap-4 h-[600px]">
+            {/* Main large image - takes 4/6 of the width (66.67%) */}
+            <div className="col-span-4 relative rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
               <Image
                 src={processedProperty.images?.[0] || "/placeholder.jpg"}
                 alt={property.name}
@@ -153,10 +212,10 @@ const SingleListing = () => {
               />
             </div>
             
-            {/* Right side images - takes 1/3 of the width with 2 columns */}
-            <div className="col-span-2 grid grid-cols-2 gap-4">
+            {/* Right side images - takes 2/6 of the width with 1 column and rectangular layout */}
+            <div className="col-span-2 flex flex-col gap-4">
               {processedProperty.images?.slice(1, 5).map((image, index) => (
-                <div key={index} className="relative rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
+                <div key={index} className="relative h-[140px] rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
                   <Image
                     src={image || "/placeholder.jpg"}
                     alt={`${property.name} ${index + 2}`}
@@ -168,7 +227,7 @@ const SingleListing = () => {
               )) || 
               // Fallback images if not enough property images
               Array.from({ length: 4 }, (_, index) => (
-                <div key={`fallback-${index}`} className="relative rounded-lg overflow-hidden bg-gray-200">
+                <div key={`fallback-${index}`} className="relative h-[140px] rounded-lg overflow-hidden bg-gray-200">
                   <div className="w-full h-full flex items-center justify-center">
                     <Home className="h-8 w-8 text-gray-400" />
                   </div>
@@ -190,7 +249,7 @@ const SingleListing = () => {
           {/* Mobile Layout */}
           <div className="md:hidden">
             {/* Main image for mobile */}
-            <div className="relative h-[300px] rounded-lg overflow-hidden cursor-pointer mb-4" onClick={() => setIsImageModalOpen(true)}>
+            <div className="relative h-[350px] rounded-lg overflow-hidden cursor-pointer mb-4" onClick={() => setIsImageModalOpen(true)}>
               <Image
                 src={processedProperty.images?.[0] || "/placeholder.jpg"}
                 alt={property.name}
@@ -200,10 +259,10 @@ const SingleListing = () => {
               />
             </div>
             
-            {/* Mobile image grid - 2 columns */}
-            <div className="grid grid-cols-2 gap-3">
-              {processedProperty.images?.slice(1, 5).map((image, index) => (
-                <div key={index} className="relative h-24 rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
+            {/* Mobile image grid - rectangular layout */}
+            <div className="grid grid-cols-1 gap-3">
+              {processedProperty.images?.slice(1, 4).map((image, index) => (
+                <div key={index} className="relative h-32 rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
                   <Image
                     src={image || "/placeholder.jpg"}
                     alt={`${property.name} ${index + 2}`}
@@ -214,8 +273,8 @@ const SingleListing = () => {
                 </div>
               )) || 
               // Fallback for mobile
-              Array.from({ length: 4 }, (_, index) => (
-                <div key={`fallback-mobile-${index}`} className="relative h-24 rounded-lg overflow-hidden bg-gray-200">
+              Array.from({ length: 3 }, (_, index) => (
+                <div key={`fallback-mobile-${index}`} className="relative h-32 rounded-lg overflow-hidden bg-gray-200">
                   <div className="w-full h-full flex items-center justify-center">
                     <Home className="h-6 w-6 text-gray-400" />
                   </div>
@@ -290,11 +349,33 @@ const SingleListing = () => {
               {/* Close to University - Only show if data exists */}
               {property.closestUniversities?.[0] && (
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center">
-                    <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                  </div>
+                  {/* University Logo or Default Icon */}
+                  {(() => {
+                    const universityLogo = getUniversityLogo(property.closestUniversities[0]);
+                    
+                    if (universityLogo) {
+                      return (
+                        <div className="w-12 h-12 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center overflow-hidden">
+                          <Image
+                            src={universityLogo}
+                            alt={`${property.closestUniversities[0]} logo`}
+                            width={40}
+                            height={40}
+                            className="object-contain"
+                            unoptimized={true}
+                          />
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center">
+                          <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                        </div>
+                      );
+                    }
+                  })()}
                   <span className="text-gray-700 font-medium">Close to {property.closestUniversities[0]}</span>
                 </div>
               )}
