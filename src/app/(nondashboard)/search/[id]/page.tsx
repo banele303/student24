@@ -143,8 +143,12 @@ const SingleListing = () => {
   const processedProperty = React.useMemo(() => {
     if (!property) return null;
     
+    console.log('Raw property data:', property);
+    console.log('Property images:', property.images);
+    console.log('Property photoUrls:', property.photoUrls);
+    
     // Return processed property with guaranteed values
-    return {
+    const processed = {
       ...property,
       // Make sure price is a valid number
       price: typeof property.price === 'number' ? property.price : 
@@ -156,6 +160,9 @@ const SingleListing = () => {
         property.photoUrls.filter(img => img && typeof img === 'string' && img.trim() !== '') :
         []
     };
+    
+    console.log('Processed property images:', processed.images);
+    return processed;
   }, [property]);
   
   // Process rooms data to ensure image URLs are valid
@@ -214,28 +221,42 @@ const SingleListing = () => {
             
             {/* Right side images - takes 2/6 of the width with 1 column and rectangular layout */}
             <div className="col-span-2 flex flex-col gap-4 relative">
-              {processedProperty.images?.slice(1, 5).map((image, index) => (
-                <div key={index} className="relative h-[140px] rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
-                  <Image
-                    src={image || "/placeholder.jpg"}
-                    alt={`${property.name} ${index + 2}`}
-                    fill
-                    className="object-cover hover:scale-105 transition-transform duration-300"
-                    unoptimized={true}
-                  />
-                </div>
-              )) || 
-              // Fallback images if not enough property images
-              Array.from({ length: 4 }, (_, index) => (
-                <div key={`fallback-${index}`} className="relative h-[140px] rounded-lg overflow-hidden bg-gray-200">
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Home className="h-8 w-8 text-gray-400" />
+      
+              {(() => {
+                console.log('Property images:', processedProperty.images);
+                console.log('Images slice(1,5):', processedProperty.images?.slice(1, 5));
+                return null;
+              })()}
+              
+              {/* Always show 4 side images */}
+              {Array.from({ length: 4 }, (_, index) => {
+                // If we have multiple images, use them. Otherwise, use the main image or placeholder
+                const imageIndex = index + 1;
+                const imageUrl = processedProperty.images?.[imageIndex] || 
+                                processedProperty.images?.[0] || 
+                                "/placeholder.jpg";
+                
+                return (
+                  <div key={index} className="relative h-[140px] rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
+                    <Image
+                      src={imageUrl}
+                      alt={`${property.name} ${index + 2}`}
+                      fill
+                      className="object-cover hover:scale-105 transition-transform duration-300"
+                      unoptimized={true}
+                    />
+                    {/* Show overlay if using placeholder or duplicate */}
+                    {(!processedProperty.images?.[imageIndex] && processedProperty.images?.[0]) && (
+                      <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                        <span className="text-white text-xs font-medium">Main Photo</span>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
               
               {/* View all button positioned at bottom right of the last image */}
-              {processedProperty.images && processedProperty.images.length > 1 && (
+              {processedProperty.images && processedProperty.images.length > 0 && (
                 <div className="absolute bottom-4 right-4 z-10">
                   <button 
                     onClick={() => setIsImageModalOpen(true)}
