@@ -213,7 +213,7 @@ const SingleListing = () => {
             </div>
             
             {/* Right side images - takes 2/6 of the width with 1 column and rectangular layout */}
-            <div className="col-span-2 flex flex-col gap-4">
+            <div className="col-span-2 flex flex-col gap-4 relative">
               {processedProperty.images?.slice(1, 5).map((image, index) => (
                 <div key={index} className="relative h-[140px] rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
                   <Image
@@ -234,14 +234,16 @@ const SingleListing = () => {
                 </div>
               ))}
               
-              {/* View all button */}
+              {/* View all button positioned at bottom right of the last image */}
               {processedProperty.images && processedProperty.images.length > 1 && (
-                <button 
-                  onClick={() => setIsImageModalOpen(true)}
-                  className="absolute bottom-4 right-4 bg-white/90 text-gray-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-white transition-colors shadow-lg"
-                >
-                  View all ({processedProperty.images.length})
-                </button>
+                <div className="absolute bottom-4 right-4 z-10">
+                  <button 
+                    onClick={() => setIsImageModalOpen(true)}
+                    className="bg-white/90 text-gray-800 px-3 py-2 rounded-lg text-xs font-medium hover:bg-white transition-colors shadow-lg"
+                  >
+                    View all ({processedProperty.images.length})
+                  </button>
+                </div>
               )}
             </div>
           </div>
