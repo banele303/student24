@@ -85,9 +85,10 @@ export default function AdminDashboard() {
     }
   };
   
-  // Fetch managers data once we have admin user details
+  // Fetch managers data once we have admin user details - exclude demo data
   const { data: managers } = useGetAllManagersQuery({
-    status: undefined
+    status: undefined,
+    includeDemo: false
   }, {
     skip: !adminUser?.cognitoId
   });
@@ -128,6 +129,18 @@ export default function AdminDashboard() {
       </section>
 
       {/* Manager statistics */}
+      {managers && managers.length === 0 && (
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-6">
+          <div className="flex items-center">
+            <AlertCircle className="w-5 h-5 text-yellow-500 mr-2" />
+            <p className="text-yellow-800 dark:text-yellow-200">
+              <strong>No real landlords found.</strong> Your database currently contains only demo/seed data. 
+              Real landlords will appear here when they register through your platform.
+            </p>
+          </div>
+        </div>
+      )}
+      
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="p-4 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">

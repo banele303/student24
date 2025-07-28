@@ -1331,11 +1331,14 @@ export const api = createApi({
     }),
 
     // Admin endpoints
-    getAllManagers: build.query<(Manager & { status: 'Pending' | 'Active' | 'Disabled' | 'Banned' })[], { status?: string }>({
+    getAllManagers: build.query<(Manager & { status: 'Pending' | 'Active' | 'Disabled' | 'Banned' })[], { status?: string; includeDemo?: boolean }>({
       query: (params) => {
         const queryParams = new URLSearchParams();
         if (params.status) {
           queryParams.append("status", params.status);
+        }
+        if (params.includeDemo) {
+          queryParams.append("includeDemo", params.includeDemo.toString());
         }
         const queryString = queryParams.toString();
         return `admin/managers${queryString ? `?${queryString}` : ''}`;
@@ -1523,6 +1526,41 @@ export const api = createApi({
       },
     }),
 
+    // Analytics endpoint
+    getAnalytics: build.query<{
+      summary: {
+        totalProperties: number;
+        totalLandlords: number;
+        totalTenants: number;
+        totalLeases: number;
+      };
+      propertyData: { name: string; count: number }[];
+      cityData: { name: string; count: number }[];
+      priceRangeData: { name: string; count: number }[];
+      landlordActivityData: { name: string; properties: number; applications: number; leases: number }[];
+      studentActivityData: { month: string; applications: number; favorites: number; leases: number }[];
+      landlordStatusData: { name: string; value: number }[];
+      propertyStatusData: { name: string; value: number }[];
+    }, { timeRange?: string }>({
+      query: (params = {}) => {
+        const searchParams = new URLSearchParams();
+        if (params.timeRange) {
+          searchParams.append('timeRange', params.timeRange);
+        }
+        
+        return {
+          url: `admin/analytics${searchParams.toString() ? `?${searchParams.toString()}` : ''}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Properties", "Managers", "Tenants", "Applications", "Leases"],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch analytics data.",
+        });
+      },
+    }),
+
   }),
 });
 
@@ -1555,6 +1593,7 @@ export const {
   useGetAllTenantsQuery,
   useGetTenantDetailsQuery,
   useUpdateAdminSettingsMutation,
+  useGetAnalyticsQuery,
 
   // Room endpoints
   useGetRoomsQuery,

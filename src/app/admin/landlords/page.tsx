@@ -47,7 +47,8 @@ export default function LandlordsPage() {
 
   const { data: authUser } = useGetAuthUserQuery();
   const { data: managers, isLoading, refetch } = useGetAllManagersQuery({ 
-    status: selectedStatus !== "all" ? selectedStatus : undefined 
+    status: selectedStatus !== "all" ? selectedStatus : undefined,
+    includeDemo: false
   }, {
     skip: !authUser?.cognitoInfo?.userId || authUser?.userRole !== "admin"
   });

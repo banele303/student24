@@ -14,10 +14,37 @@ export async function GET(request: NextRequest) {
     // Get status filter from query params if present
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
+    const includeDemo = searchParams.get('includeDemo') === 'true';
 
-    // Fetch managers with optional status filter
+    // Build where clause to exclude demo data unless explicitly requested
+    const whereClause: any = {};
+    
+    if (status) {
+      whereClause.status = status;
+    }
+    
+    if (!includeDemo) {
+      whereClause.AND = [
+        {
+          email: {
+            not: {
+              contains: 'example.com'
+            }
+          }
+        },
+        {
+          email: {
+            not: {
+              contains: '@demo'
+            }
+          }
+        }
+      ];
+    }
+
+    // Fetch managers with filters
     const managers = await prisma.manager.findMany({
-      where: status ? { status } : undefined,
+      where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
       orderBy: {
         createdAt: 'desc'
       }
