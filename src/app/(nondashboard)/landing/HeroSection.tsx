@@ -298,7 +298,7 @@ const HeroSection = () => {
           >
 
             {/* Compact Search Bar */}
-            <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-lg overflow-hidden mb-4 w-full p-2">
+            <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-[2rem] shadow-lg overflow-hidden mb-4 w-full p-2">
               <div className="flex flex-col md:flex-row items-center gap-2">
                 {/* Location Input */}
                 <div className="flex items-center px-3 py-2 flex-1 border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-700 w-full md:w-auto">
