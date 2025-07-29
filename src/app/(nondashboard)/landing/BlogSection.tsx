@@ -12,7 +12,7 @@ const featuredBlogPosts = [
     id: 1,
     title: "How to Find the Perfect Student Accommodation",
     excerpt: "Finding the right student accommodation can be challenging. Here are our top tips for securing the perfect place.",
-    image: "/durban.png",
+    image: "/houses.jpg",
     date: "May 5, 2025",
     readTime: "5 min read",
     category: "Student Housing"
@@ -21,7 +21,7 @@ const featuredBlogPosts = [
     id: 2,
     title: "5 Things to Check Before Signing a Lease Agreement",
     excerpt: "Don&apos;t get caught in a bad rental situation. Make sure to check these 5 important things before signing any lease.",
-    image: "/durban.png",
+    image: "/singlelisting-2.jpg",
     date: "April 28, 2025",
     readTime: "7 min read",
     category: "Rental Tips"
@@ -30,7 +30,7 @@ const featuredBlogPosts = [
     id: 3,
     title: "The Rise of Co-living Spaces in South Africa",
     excerpt: "Co-living is becoming increasingly popular among young professionals. Learn about this growing trend.",
-    image: "/durban.png",
+    image: "/hero-2.jpg",
     date: "April 15, 2025",
     readTime: "6 min read",
     category: "Housing Trends"

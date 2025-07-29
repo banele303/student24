@@ -121,11 +121,12 @@ function PropertyCard({
           )}
         </div>
 
-        {/* Price tag - Now clearly in Rands */}
+        {/* Price tag - Now clearly in Rands with "From" prefix and green background */}
         <div className="absolute top-3 right-3 z-20">
-          <div className="bg-[#00acee] shadow-md text-white px-3 py-1.5 rounded-2xl flex items-center border border-[#00acee]">
+          <div className="bg-green-500 shadow-md text-white px-3 py-1.5 rounded-2xl flex items-center border border-green-500">
+            <span className="text-xs text-green-100 mr-1">From</span>
             <span className="font-bold">R {displayPrice.toLocaleString('en-ZA')}</span>
-            <span className="text-xs text-blue-100 ml-1">/month</span>
+            <span className="text-xs text-green-100 ml-1">/month</span>
           </div>
         </div>
         
@@ -195,9 +196,9 @@ function PropertyCard({
       <div className="p-4 pt-5 space-y-3 bg-white">
         <div>
           <div className="flex items-start justify-between mb-2">
-            <h2 className="line-clamp-1 text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
+            <h2 className="line-clamp-1 text-lg font-bold text-black group-hover:text-[#00acee] transition-colors">
               {propertyLink ? (
-                <Link href={propertyLink} className="hover:text-blue-600" scroll={false}>
+                <Link href={propertyLink} className="hover:text-[#00acee]" scroll={false}>
                   {property.name}
                 </Link>
               ) : (
