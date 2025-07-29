@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: var(--font-open-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-open-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-open-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
 }
 
 *,
@@ -23,16 +23,27 @@ body,
   @apply text-sm;
   @apply bg-white;
   font-family: var(--font-sans);
-  font-weight: 800; /* ExtraBold by default */
+  font-weight: 400; /* Normal weight by default */
 }
 
-/* Utility classes for different font weights */
+/* Utility classes for different font weights and styles */
 .font-light { font-weight: 300; }
 .font-normal { font-weight: 400; }
 .font-medium { font-weight: 500; }
 .font-semibold { font-weight: 600; }
 .font-bold { font-weight: 700; }
 .font-extrabold { font-weight: 800; }
+
+/* Specific styling for descriptions and secondary text */
+.description-text {
+  font-weight: 400;
+  font-style: italic;
+}
+
+.secondary-text {
+  font-weight: 400;
+  font-style: normal;
+}
 
 @layer base {
   :root {

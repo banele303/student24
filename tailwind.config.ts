@@ -9,9 +9,9 @@ const config: Config = {
   ],
   theme: {
     fontFamily: {
-      sans: ['var(--font-open-sans)', 'system-ui', 'sans-serif'],
-      heading: ['var(--font-open-sans)', 'sans-serif'],
-      display: ['var(--font-open-sans)', 'sans-serif'],
+      sans: ['var(--font-barlow)', 'system-ui', 'sans-serif'],
+      heading: ['var(--font-barlow)', 'sans-serif'],
+      display: ['var(--font-barlow)', 'sans-serif'],
     },
     extend: {
       fontWeight: {

@@ -63,7 +63,7 @@ const ApplicationCard = ({
             </div>
             <div className="text-xl font-semibold">
               ${application.property.pricePerMonth}{" "}
-              <span className="text-sm font-normal">/ month</span>
+              <span className="text-sm font-normal italic">/ month</span>
             </div>
           </div>
         </div>

@@ -129,17 +129,27 @@ const CityCard = ({ city, index }: CityCardProps) => {
 
         {/* City info */}
         <div className="absolute bottom-0 left-0 w-full p-5 z-10">
-          <div className="flex items-center mb-1">
-            <MapPin className="w-4 h-4 text-[#4F9CF9] mr-1" />
-            <h3 className="text-xl font-bold text-white">{city.name}</h3>
-          </div>
-          <p className="text-sm text-gray-300">{city.description}</p>
+          {/* City name and description - moves up on hover */}
+          <motion.div
+            animate={{ y: isHovered ? -8 : 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <div className="flex items-center mb-1">
+              <MapPin className="w-4 h-4 text-[#4F9CF9] mr-1" />
+              <h3 className="text-xl font-bold text-white">{city.name}</h3>
+            </div>
+            <p className="text-sm text-gray-300 font-normal italic">{city.description}</p>
+          </motion.div>
 
+          {/* Hover text - appears at the bottom */}
           <motion.div
             className="flex items-center mt-3 text-[#4F9CF9] text-sm font-medium"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isHovered ? 1 : 0 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ 
+              opacity: isHovered ? 1 : 0,
+              y: isHovered ? 0 : 10
+            }}
+            transition={{ duration: 0.3, delay: isHovered ? 0.1 : 0 }}
           >
             <span>Explore properties in {city.name}</span>
             <ChevronRight className="w-4 h-4 ml-1" />

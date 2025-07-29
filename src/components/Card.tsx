@@ -214,7 +214,7 @@ function PropertyCard({
 
           {/* Description */}
           {property.description && (
-            <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+            <p className="text-sm text-gray-600 font-normal italic line-clamp-2 mb-2">
               {property.description}
             </p>
           )}
@@ -224,7 +224,7 @@ function PropertyCard({
         <div className="space-y-2">
           <div className="flex items-center text-sm text-gray-600">
             <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0 text-blue-500" />
-            <p className="line-clamp-1">
+            <p className="line-clamp-1 font-normal">
               {property.location?.address || 'No address'}, {property.location?.city || 'No city'}
             </p>
           </div>
@@ -235,7 +235,7 @@ function PropertyCard({
               <svg className="h-3.5 w-3.5 mr-1 flex-shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
-              <p className="line-clamp-1">
+              <p className="line-clamp-1 font-normal italic">
                 Close to {property.closestUniversities.slice(0, 2).join(", ")}
                 {property.closestUniversities.length > 2 && ` +${property.closestUniversities.length - 2} more`}
               </p>
@@ -254,7 +254,7 @@ function PropertyCard({
               <div className="bg-white p-2 rounded border border-blue-100 flex justify-between items-center">
                 <div>
                   <p className="text-sm font-medium">Standard Room</p>
-                  <p className="text-xs text-gray-500">Private Bath • 18m²</p>
+                  <p className="text-xs text-gray-500 font-normal italic">Private Bath • 18m²</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold text-[#00acee]">R {Math.round(displayPrice * 0.6).toLocaleString('en-ZA')}</p>
@@ -267,11 +267,11 @@ function PropertyCard({
                 <div className="bg-white p-2 rounded border border-blue-100 flex justify-between items-center">
                   <div>
                     <p className="text-sm font-medium">Deluxe Room</p>
-                    <p className="text-xs text-gray-500">Private Bath • 22m²</p>
+                    <p className="text-xs text-gray-500 font-normal italic">Private Bath • 22m²</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-bold text-blue-600">R {Math.round(displayPrice * 0.8).toLocaleString('en-ZA')}</p>
-                    <p className="text-xs text-gray-500">per month</p>
+                    <p className="text-xs text-gray-500 font-normal">per month</p>
                   </div>
                 </div>
               )}

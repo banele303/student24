@@ -2,14 +2,15 @@
 
 import { Toaster } from "@/components/ui/sonner"
 import type { Metadata } from "next";
-import { Open_Sans } from 'next/font/google';
+import { Barlow } from 'next/font/google';
 import "./globals.css";
 
-// Load Open Sans font with ExtraBold weight
-const openSans = Open_Sans({
+// Load Barlow font with multiple weights and italic
+const barlow = Barlow({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700', '800'],
-  variable: '--font-open-sans',
+  style: ['normal', 'italic'],
+  variable: '--font-barlow',
   display: 'swap',
 });
 import "@aws-amplify/ui-react/styles.css";
@@ -37,7 +38,7 @@ export default function RootLayout({
   
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${openSans.variable} font-sans antialiased`} suppressHydrationWarning>
+      <body className={`${barlow.variable} font-sans antialiased`} suppressHydrationWarning>
         <Providers>{children}</Providers>
         <Toaster 
           position="bottom-right"

@@ -407,7 +407,7 @@ const RandomListings = () => {
         
         {/* Properties Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="bg-white rounded-3xl border border-gray-200 overflow-hidden mt-6 shadow-sm">
                 {/* Image skeleton */}
@@ -467,7 +467,7 @@ const RandomListings = () => {
             <p className="text-gray-600">Try adjusting your filters or selecting a different city</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {filteredProperties.map((property) => (
               <Card
                 key={property.id}
