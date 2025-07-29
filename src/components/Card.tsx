@@ -126,7 +126,6 @@ function PropertyCard({
           <div className="bg-green-500 shadow-md text-white px-3 py-1.5 rounded-2xl flex items-center border border-green-500">
             <span className="text-xs text-green-100 mr-1">From</span>
             <span className="font-bold">R {displayPrice.toLocaleString('en-ZA')}</span>
-            <span className="text-xs text-green-100 ml-1">/month</span>
           </div>
         </div>
         

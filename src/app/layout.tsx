@@ -2,26 +2,15 @@
 
 import { Toaster } from "@/components/ui/sonner"
 import type { Metadata } from "next";
-import { Poppins, Montserrat, Outfit } from 'next/font/google';
+import { Open_Sans } from 'next/font/google';
 import "./globals.css";
 
-// Load fonts at the module scope (outside the component)
-const poppins = Poppins({
+// Load Open Sans font with ExtraBold weight
+const openSans = Open_Sans({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-poppins',
-});
-
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-montserrat',
-});
-
-const outfit = Outfit({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-outfit',
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-open-sans',
+  display: 'swap',
 });
 import "@aws-amplify/ui-react/styles.css";
 import Providers from "./providers";
@@ -48,7 +37,7 @@ export default function RootLayout({
   
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${poppins.variable} ${montserrat.variable} ${outfit.variable} font-sans antialiased`} suppressHydrationWarning>
+      <body className={`${openSans.variable} font-sans antialiased`} suppressHydrationWarning>
         <Providers>{children}</Providers>
         <Toaster 
           position="bottom-right"

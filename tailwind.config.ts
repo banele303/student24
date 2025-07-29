@@ -9,11 +9,14 @@ const config: Config = {
   ],
   theme: {
     fontFamily: {
-      sans: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
-      heading: ['Montserrat', 'sans-serif'],
-      display: ['Outfit', 'sans-serif'],
+      sans: ['var(--font-open-sans)', 'system-ui', 'sans-serif'],
+      heading: ['var(--font-open-sans)', 'sans-serif'],
+      display: ['var(--font-open-sans)', 'sans-serif'],
     },
     extend: {
+      fontWeight: {
+        'extrabold': '800',
+      },
       animation: {
         'spin-slow': 'spin 8s linear infinite',
         'ping-slow': 'ping 5s cubic-bezier(0, 0, 0.2, 1) infinite',
