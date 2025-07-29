@@ -61,7 +61,7 @@ const BlogSection = () => {
                   className="object-cover"
                   fill
                 />
-                <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 m-2 rounded">
+                <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-medium px-3 py-1 m-2 rounded-full">
                   {post.category}
                 </div>
               </div>
@@ -79,7 +79,7 @@ const BlogSection = () => {
                 <h3 className="text-lg font-bold mb-2 line-clamp-2">{post.title}</h3>
                 <p className="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">{post.excerpt}</p>
                 <Link href={`/blog/${post.id}`}>
-                  <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800 p-0 h-auto">
+                  <Button variant="ghost" size="sm" className="text-[#00acee] hover:text-[#0099d4] p-0 h-auto">
                     Read More
                     <ChevronRight size={16} className="ml-1" />
                   </Button>
@@ -91,7 +91,7 @@ const BlogSection = () => {
         
         <div className="text-center mt-10">
           <Link href="/blog">
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button className="bg-[#00acee] hover:bg-[#0099d4] text-white">
               View All Articles
               <ChevronRight size={16} className="ml-1" />
             </Button>
