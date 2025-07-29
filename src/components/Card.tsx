@@ -214,7 +214,7 @@ function PropertyCard({
 
           {/* Description */}
           {property.description && (
-            <p className="text-sm text-gray-600 font-normal italic line-clamp-2 mb-2">
+            <p className="text-sm text-gray-600 font-semibold line-clamp-2 mb-2">
               {property.description}
             </p>
           )}

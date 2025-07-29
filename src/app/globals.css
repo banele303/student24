@@ -23,7 +23,7 @@ body,
   @apply text-sm;
   @apply bg-white;
   font-family: var(--font-sans);
-  font-weight: 400; /* Normal weight by default */
+  font-weight: 300; /* Light weight by default for Barlow */
 }
 
 /* Utility classes for different font weights and styles */
