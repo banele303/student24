@@ -96,12 +96,12 @@ function PropertyCard({
 
   return (
     <Card
-      className="group overflow-hidden transition-all mt-6 duration-300 hover:shadow-xl hover:ring-2 hover:ring-[#00acee]/30 border border-gray-200 bg-white rounded-3xl relative w-full cursor-pointer transform hover:scale-[1.02] shadow-sm"
+      className="group overflow-hidden transition-all mt-6 duration-300 hover:shadow-xl hover:ring-4 hover:ring-blue-600/50 border border-gray-200 bg-white rounded-3xl relative w-full cursor-pointer transform hover:scale-[1.02] shadow-sm"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      <div className="relative w-full aspect-[4/3] px-2 mt-[-1rem] ">
+      <div className="relative w-full aspect-[4/2] px-2 mt-[-1rem] ">
         <div className="relative w-full h-full">
           {!imgError ? (
             <Image
@@ -156,12 +156,12 @@ function PropertyCard({
         <div className="absolute bottom-2 right-3 flex items-center gap-2 z-50">
           {/* NSFAS Accredited Badge with Image */}
           {property.isNsfassAccredited && (
-            <div className="relative w-11 h-11 bg-white rounded-full p-1 shadow-lg border border-gray-200">
+            <div className="relative w-[3.3rem] h-[3.3rem] bg-white rounded-full p-1 shadow-lg border border-gray-200">
               <Image
                 src="/universities/nasfas.png"
                 alt="NSFAS Accredited"
-                width={36}
-                height={36}
+                width={44}
+                height={44}
                 className="w-full h-full rounded-full object-contain hover:scale-110 transition-transform duration-200"
                 title="NSFAS Accredited Property"
               />
@@ -173,10 +173,10 @@ function PropertyCard({
             <Button
               size="icon"
               variant="ghost"
-              className={`h-11 w-11 rounded-full p-0 transition-all duration-300 ${
+              className={`h-[3.3rem] w-[3.3rem] rounded-full p-0 transition-all duration-300 ${
                 isFavorite 
                   ? "bg-white text-red-500 shadow-lg border border-gray-200 scale-105" 
-                  : "bg-white/95 text-gray-600 border border-gray-200 shadow-lg hover:text-red-400 hover:scale-105"
+                  : "bg-white/95 text-gray-600 border border-gray-200 shadow-lg hover:text-blue-600 hover:scale-105"
               }`}
               onClick={(e) => {
                 e.preventDefault()
@@ -185,7 +185,7 @@ function PropertyCard({
               }}
               title="Add to favorites"
             >
-              <Heart className={`h-5 w-5 transition-all duration-300 ${isFavorite ? "fill-red-500" : ""}`} />
+              <Heart className={`h-6 w-6 transition-all duration-300 ${isFavorite ? "fill-red-500" : ""}`} />
               <span className="sr-only">Toggle favorite</span>
             </Button>
           )}
@@ -193,31 +193,10 @@ function PropertyCard({
       </div>
 
       <div className="p-4 pt-5 space-y-3 bg-white">
-        <div>
-          <div className="flex items-start justify-between mb-2">
-            <h2 className="line-clamp-1 text-lg font-bold text-black group-hover:text-[#00acee] transition-colors">
-              {propertyLink ? (
-                <Link href={propertyLink} className="hover:text-[#00acee]" scroll={false}>
-                  {property.name}
-                </Link>
-              ) : (
-                property.name
-              )}
-            </h2>
-          </div>
-
-          {/* Review moved below heading */}
-          <div className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded-md w-fit mb-2">
-            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-            <span className="text-xs font-medium text-gray-800">{(property.averageRating || 0).toFixed(1)} ({property.numberOfReviews || 0} reviews)</span>
-          </div>
-
-          {/* Description */}
-          {property.description && (
-            <p className="text-sm text-gray-600 font-semibold line-clamp-2 mb-2">
-              {property.description}
-            </p>
-          )}
+        <div className="space-y-1">
+          <h2 className="line-clamp-1 text-lg font-bold group-hover:text-blue-600">{propertyLink ? <Link href={propertyLink} className="hover:text-blue-600" scroll={false}>{property.name}</Link> : property.name}</h2>
+          <div className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /><span className="text-xs font-medium">{(property.averageRating || 0).toFixed(1)} ({property.numberOfReviews || 0})</span></div>
+          {property.description && <p className="text-sm text-gray-600 line-clamp-4">{property.description}</p>}
         </div>
 
         {/* Location and University Information */}
@@ -281,7 +260,7 @@ function PropertyCard({
               )}
               
               <div className="flex justify-center mt-1">
-                <Link href={propertyLink || `#`} className="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                <Link href={propertyLink || `#`} className="text-xs text-blue-600 hover:text-blue-600 font-medium">
                   View all {property.availableRooms} available rooms
                 </Link>
               </div>

@@ -73,7 +73,7 @@ const FeaturesSection = () => {
         className="max-w-6xl mx-auto"
       >
         <motion.div variants={itemVariants} className="text-center mb-16">
-          <span className="inline-block mb-3 px-3 py-1 rounded-full bg-blue-400 text-slate-700 text-sm font-medium">
+          <span className="inline-block mb-3 px-3 py-1 rounded-full bg-blue-600 text-white text-sm font-medium">
             Powerful Tools
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 max-w-2xl mx-auto">
@@ -119,33 +119,34 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
 }) => {
   return (
     <motion.div
-      className="bg-white border border-slate-100 rounded-xl overflow-hidden h-full flex flex-col transition-all duration-300 hover:border-slate-200 hover:shadow-sm"
+      className="bg-white border border-slate-100 rounded-xl overflow-hidden h-full flex flex-col transition-all duration-300 hover:border-blue-600 hover:shadow-md"
       whileHover={{ y: -4 }}
     >
-      <div className="relative h-44 overflow-hidden">
+      <div className="relative h-20 w-full overflow-hidden">
         <Image
           src={imageSrc || "/placeholder.svg"}
           fill
           className="object-cover transition-transform duration-500 hover:scale-105"
           alt={title}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
 
       <div className="p-6 flex-grow flex flex-col">
-        <div className={`w-10 h-10 ${iconBg} ${iconColor} rounded-lg flex items-center justify-center text-lg mb-4`}>
+        <div className={`w-12 h-12 ${iconBg} ${iconColor} rounded-lg flex items-center justify-center text-xl mb-4`}>
           {icon}
         </div>
 
-        <h3 className="text-lg font-semibold text-slate-900 mb-2">{title}</h3>
+        <h3 className="text-xl font-semibold text-slate-900 mb-3">{title}</h3>
 
-        <p className="text-slate-600 text-sm mb-5 flex-grow">{description}</p>
+        <p className="text-slate-600 text-base mb-8 flex-grow leading-relaxed">{description}</p>
 
         <Link
           href={linkHref}
-          className="group inline-flex items-center text-sm font-medium text-slate-900 hover:text-slate-700"
+          className="group inline-flex items-center text-sm font-medium text-slate-900 hover:text-blue-600"
         >
           {linkText}
-          <ArrowRight size={16} className="ml-1.5 group-hover:translate-x-1 transition-transform duration-200" />
+          <ArrowRight size={16} className="ml-1.5 group-hover:translate-x-1 transition-transform duration-200 group-hover:text-blue-600" />
         </Link>
       </div>
     </motion.div>

@@ -3,7 +3,7 @@ import { ChevronDown } from "lucide-react"
 
 export default function LandlordHero() {
   return (
-    <div className="min-h-[70vh] bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 relative overflow-hidden">
+    <div className="min-h-[70vh] bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 relative overflow-hidden">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-90"
@@ -42,7 +42,7 @@ export default function LandlordHero() {
           {/* CTA Button */}
           <Button
             size="lg"
-            className="bg-cyan-400 hover:bg-cyan-500 text-white px-8 py-4 text-lg font-semibold rounded-full border-0 shadow-lg hover:shadow-xl transition-all"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-full border-0 shadow-lg hover:shadow-xl transition-all"
           >
             Create an account now
           </Button>
@@ -51,7 +51,7 @@ export default function LandlordHero() {
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
           <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-            <ChevronDown className="w-5 h-5 text-blue-500" />
+            <ChevronDown className="w-5 h-5 text-blue-600" />
           </div>
         </div>
       </main>

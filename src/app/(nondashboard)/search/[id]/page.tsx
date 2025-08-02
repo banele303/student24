@@ -435,8 +435,8 @@ const SingleListing = () => {
                       <Image
                         src="/universities/nasfas.png"
                         alt="NSFAS Accredited"
-                        width={70}
-                        height={70}
+                        width={84}
+                        height={84}
                         className="object-contain"
                       />
                     </div>

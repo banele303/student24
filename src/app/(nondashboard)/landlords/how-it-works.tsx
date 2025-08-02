@@ -78,18 +78,18 @@ export default function HowItWorks() {
       {/* Section Title */}
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-slate-800">How it works</h2>
-        <div className="w-16 h-1 bg-cyan-500 mx-auto mt-2"></div>
+        <div className="w-16 h-1 bg-blue-600 mx-auto mt-2"></div>
       </div>
 
       {/* Steps Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {slides[currentSlide].map((step, index) => (
-          <div key={index} className="bg-sky-50 rounded-3xl p-8 relative">
+          <div key={index} className="bg-blue-50 rounded-3xl p-8 relative">
             {/* Blue accent line */}
-            <div className="absolute left-0 top-8 bottom-8 w-1.5 bg-cyan-500 rounded-r-full"></div>
+            <div className="absolute left-0 top-8 bottom-8 w-1.5 bg-blue-600 rounded-r-full"></div>
 
             {/* Icon */}
-            <div className="border border-cyan-500 text-cyan-500 w-10 h-10 flex items-center justify-center rounded mb-6 ml-4">
+            <div className="border border-blue-600 text-blue-600 w-10 h-10 flex items-center justify-center rounded mb-6 ml-4">
               <span className="text-xl">{step.icon}</span>
             </div>
 
