@@ -205,11 +205,36 @@ const Listings = () => {
   };
 
   if (isLoading) return (
-    <div className="flex justify-center items-center min-h-[300px] w-full">
-      <div className="animate-pulse flex flex-col items-center">
-        <div className="w-14 h-14 rounded-full bg-indigo-200 dark:bg-indigo-800 mb-4"></div>
-        <div className="text-sm font-medium text-gray-600 dark:text-gray-300">Loading properties...</div>
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-200">
+          {/* Image skeleton */}
+          <div className="relative w-full aspect-[4/3] px-2 pt-2">
+            <div className="w-full h-full bg-gray-200 dark:bg-gray-700 rounded-2xl animate-pulse"></div>
+          </div>
+          {/* Content skeleton */}
+          <div className="p-4 pt-5 space-y-3">
+            {/* Title */}
+            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse w-3/4"></div>
+            {/* Description */}
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse w-full"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse w-2/3"></div>
+            </div>
+            {/* Location rows */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse flex-1"></div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse w-3/4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
     
@@ -285,6 +310,9 @@ const Listings = () => {
               propertyLink={`/search/${property.id}`}
               userRole={authUser?.userRole || null}
               showFavoriteButton={true}
+              hoverRingClass="hover:ring-[#00acee]/50"
+              disableImageHoverZoom
+              disableHoverScale
             />
           ) : (
             <CardCompact

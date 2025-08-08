@@ -46,6 +46,12 @@ interface PropertyCardProps {
   showActions?: boolean
   userRole?: "tenant" | "manager" | "admin" | null
   onClick?: () => void
+  // Optional: customize hover ring color class (e.g., "hover:ring-[#00acee]/50")
+  hoverRingClass?: string
+  // Optional: disable image zoom effect on hover
+  disableImageHoverZoom?: boolean
+  // Optional: disable card hover scale (prevents layout touch with map)
+  disableHoverScale?: boolean
 }
 
 function PropertyCard({
@@ -57,6 +63,9 @@ function PropertyCard({
   showActions = false,
   userRole = null,
   onClick,
+  hoverRingClass = "hover:ring-gray-600/40",
+  disableImageHoverZoom = false,
+  disableHoverScale = false,
 }: PropertyCardProps) {
   // Access images directly from the property object as it comes from the API
   const [imgSrc, setImgSrc] = useState<string>(
@@ -96,7 +105,7 @@ function PropertyCard({
 
   return (
     <Card
-      className="group overflow-hidden transition-all mt-6 duration-300 hover:shadow-xl hover:ring-4 hover:ring-blue-600/50 border border-gray-200 bg-white rounded-3xl relative w-full cursor-pointer transform hover:scale-[1.02] shadow-sm"
+      className={`group overflow-hidden transition-all mt-6 duration-300 bg-white rounded-3xl relative w-full cursor-pointer transform ${disableHoverScale ? "" : "hover:scale-[1.02]"} shadow-md hover:shadow-[0_0_36px_rgba(0,172,238,0.35)] hover:ring-2 ${hoverRingClass}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
@@ -110,7 +119,7 @@ function PropertyCard({
               fill
               loader={loaderFunc}
               unoptimized={true}
-              className={`object-cover transition-transform rounded-2xl duration-500 ${isHovered ? "scale-110" : "scale-100"}`}
+              className={`object-cover transition-transform rounded-2xl duration-500 ${disableImageHoverZoom ? "scale-100" : isHovered ? "scale-110" : "scale-100"}`}
               onError={handleImageError}
               
             />
@@ -123,8 +132,8 @@ function PropertyCard({
 
         {/* Price tag - Now clearly in Rands with "From" prefix and green background */}
         <div className="absolute top-3 right-3 z-20">
-          <div className="bg-green-500 shadow-md text-white px-3 py-1.5 rounded-2xl flex items-center border border-green-500">
-            <span className="text-xs text-green-100 mr-1">From</span>
+          <div className="bg-[#3dca00] shadow-md text-white px-3 py-1.5 rounded-2xl flex items-center border border-[#3dca00]">
+            <span className="font-bold text-white mr-1">From</span>
             <span className="font-bold">R {displayPrice.toLocaleString('en-ZA')}</span>
           </div>
         </div>
@@ -176,7 +185,7 @@ function PropertyCard({
               className={`h-[3.3rem] w-[3.3rem] rounded-full p-0 transition-all duration-300 ${
                 isFavorite 
                   ? "bg-white text-red-500 shadow-lg border border-gray-200 scale-105" 
-                  : "bg-white/95 text-gray-600 border border-gray-200 shadow-lg hover:text-blue-600 hover:scale-105"
+                  : "bg-white/95 text-[#00acee] border border-gray-200 shadow-lg hover:scale-105"
               }`}
               onClick={(e) => {
                 e.preventDefault()
@@ -185,7 +194,7 @@ function PropertyCard({
               }}
               title="Add to favorites"
             >
-              <Heart className={`h-6 w-6 transition-all duration-300 ${isFavorite ? "fill-red-500" : ""}`} />
+              <Heart className={`h-6 w-6 transition-all duration-300 ${isFavorite ? "fill-red-500 text-red-500" : "text-[#00acee]"}`} />
               <span className="sr-only">Toggle favorite</span>
             </Button>
           )}
@@ -194,16 +203,15 @@ function PropertyCard({
 
       <div className="p-4 pt-5 space-y-3 bg-white">
         <div className="space-y-1">
-          <h2 className="line-clamp-1 text-lg font-bold group-hover:text-blue-600">{propertyLink ? <Link href={propertyLink} className="hover:text-blue-600" scroll={false}>{property.name}</Link> : property.name}</h2>
-          <div className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /><span className="text-xs font-medium">{(property.averageRating || 0).toFixed(1)} ({property.numberOfReviews || 0})</span></div>
-          {property.description && <p className="text-sm text-gray-600 line-clamp-4">{property.description}</p>}
+          <h2 className="line-clamp-1 text-lg font-bold text-[#00acee] group-hover:text-[#00acee]">{propertyLink ? <Link href={propertyLink} className="text-[#00acee] hover:opacity-90" scroll={false}>{property.name}</Link> : property.name}</h2>
+          {property.description && <p className="text-sm text-gray-600 font-semibold line-clamp-4">{property.description}</p>}
         </div>
 
         {/* Location and University Information */}
         <div className="space-y-2">
           <div className="flex items-center text-sm text-gray-600">
             <div className="flex items-center justify-center w-7 h-7 bg-gray-100 rounded-full mr-2 flex-shrink-0">
-              <MapPin className="h-3.5 w-3.5 text-blue-500" />
+              <MapPin className="h-3.5 w-3.5 text-[#00acee]" />
             </div>
             <p className="line-clamp-1 font-normal">
               {property.location?.address || 'No address'}, {property.location?.city || 'No city'}
@@ -214,7 +222,7 @@ function PropertyCard({
           {property.closestUniversities && property.closestUniversities.length > 0 && (
             <div className="flex items-center text-sm text-gray-600">
               <div className="flex items-center justify-center w-7 h-7 bg-gray-100 rounded-full mr-2 flex-shrink-0">
-                <svg className="h-3.5 w-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-3.5 w-3.5 text-[#00acee]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
               </div>
@@ -230,7 +238,7 @@ function PropertyCard({
         {property.availableRooms !== undefined && property.availableRooms > 0 && (
           <div className="mt-3 p-3 bg-blue-50 rounded-md border border-blue-100">
             <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
-              <Bed className="h-4 w-4 mr-1" /> Available Rooms
+              <Bed className="h-4 w-4 mr-1 text-[#00acee]" /> Available Rooms
             </h3>
             <div className="space-y-2">
               {/* Room example 1 */}

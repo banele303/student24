@@ -309,9 +309,10 @@ const RandomListings = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-center items-center mb-10">
           <div className="text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#00acee] mb-2">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#00acee]">
               Featured Properties
             </h2>
+            <div className="mx-auto mt-2 mb-3 h-1.5 w-28 rounded-full bg-gradient-to-r from-[#00acee] to-[#3dca00]"></div>
             <p className="text-gray-400 max-w-2xl mx-auto">
               Discover our handpicked selection of premium accommodations in {selectedCity}. Find your perfect stay today.
             </p>
@@ -478,6 +479,7 @@ const RandomListings = () => {
                 userRole={authUser?.userRole || null}
                 showFavoriteButton={true}
                 onClick={() => handlePropertyClick(property.id)}
+                hoverRingClass="hover:ring-[#00acee]/50"
               />
             ))}
           </div>

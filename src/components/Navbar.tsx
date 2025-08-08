@@ -5,9 +5,10 @@ import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { useGetAuthUserQuery } from "@/state/api"
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth"
 import { usePathname, useRouter } from "next/navigation"
-import { signOut } from "aws-amplify/auth"
+import { signOut as cognitoSignOut } from "aws-amplify/auth"
+import { signOut as nextAuthSignOut } from "next-auth/react"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { cn } from "@/lib/utils"
 import {
@@ -38,7 +39,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 
 const Navbar = () => {
-  const { data: authUser } = useGetAuthUserQuery(undefined)
+  const { user: authUser, isAuthenticated, provider } = useUnifiedAuth()
   const router = useRouter()
   const pathname = usePathname()
   const [isLoading, setIsLoading] = useState(true)
@@ -94,17 +95,26 @@ const Navbar = () => {
 
   const handleSignOut = async () => {
     setIsLoading(true)
-    await signOut()
-    window.location.href = "/"
+    try {
+      if (provider === "google") {
+        await nextAuthSignOut({ callbackUrl: "/" })
+      } else if (provider === "cognito") {
+        await cognitoSignOut()
+        window.location.href = "/"
+      }
+    } catch (error) {
+      console.error("Sign out error:", error)
+      window.location.href = "/"
+    }
   }
 
   // Helper function to get user's first letter for avatar
   const getUserInitial = () => {
-    if (authUser?.userInfo?.name) {
+    if (authUser?.name) {
       // Just return the first letter capitalized
-      return authUser.userInfo.name[0].toUpperCase();
+      return authUser.name[0].toUpperCase();
     }
-    return authUser?.userRole?.[0].toUpperCase() || "U";
+    return authUser?.role?.[0].toUpperCase() || "U";
   }
 
   return (
@@ -147,7 +157,7 @@ const Navbar = () => {
             </div>
             
             {/* Add property button for managers */}
-            {isDashboardPage && authUser && authUser.userRole?.toLowerCase() === "manager" && (
+            {isDashboardPage && authUser && authUser.role?.toLowerCase() === "manager" && (
               <Button
                 variant="default"
                 className="ml-4 md:ml-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white transition-all duration-300 shadow-sm dark:shadow-blue-900/20"
@@ -159,7 +169,7 @@ const Navbar = () => {
             )}
             
             {/* Admin dashboard button */}
-            {isDashboardPage && authUser && authUser.userRole?.toLowerCase() === "admin" && (
+            {isDashboardPage && authUser && authUser.role?.toLowerCase() === "admin" && (
               <Button
                 variant="default"
                 className="ml-4 md:ml-6 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white transition-all duration-300 shadow-sm dark:shadow-purple-900/20"
@@ -173,7 +183,7 @@ const Navbar = () => {
 
           {/* Middle section with action buttons aligned with sidebar */}
           <div className="flex items-center justify-center">
-            {isDashboardPage && authUser && authUser.userRole?.toLowerCase() === "tenant" && (
+            {isDashboardPage && authUser && authUser.role?.toLowerCase() === "tenant" && (
               <Button
                 variant="default"
                 className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white transition-all duration-300 shadow-sm dark:shadow-blue-900/20"
@@ -195,7 +205,7 @@ const Navbar = () => {
                 {isDashboardPage && <ThemeToggle />}
                 
                 {/* Settings link */}
-                <Link href={`/${authUser.userRole?.toLowerCase()}s/settings`} className="group" scroll={false}>
+                <Link href={`/${authUser.role?.toLowerCase()}s/settings`} className="group" scroll={false}>
                   <Settings className={`w-6 h-6 cursor-pointer text-slate-500 ${isDashboardPage ? 'dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' : 'group-hover:text-blue-600'} transition-colors duration-300`} />
                 </Link>
 
@@ -204,7 +214,7 @@ const Navbar = () => {
                     <button className={`flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-slate-100 ${isDashboardPage ? 'dark:hover:bg-slate-800' : ''} transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${isDashboardPage ? 'dark:focus-visible:ring-offset-slate-900' : ''}`}>
                       <Avatar className={`h-9 w-9 ring-2 ring-blue-500/20 ${isDashboardPage ? 'dark:ring-blue-500/30' : ''} hover:ring-blue-500/50 bg-gradient-to-br from-slate-50 to-slate-100 ${isDashboardPage ? 'dark:from-slate-800 dark:to-slate-900' : ''} transition-all duration-200 shadow-sm`}>
                         <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-medium text-lg flex items-center justify-center">
-                          {authUser.cognitoInfo?.username?.charAt(0)?.toUpperCase() || "U"}
+                          {getUserInitial()}
                         </AvatarFallback>
                       </Avatar>
 
@@ -221,14 +231,12 @@ const Navbar = () => {
                       <div className="flex items-center gap-2">
                         <User className={`h-4 w-4 text-blue-600 ${isDashboardPage ? 'dark:text-blue-400' : ''}`} />
                         <p className={`font-medium text-slate-900 ${isDashboardPage ? 'dark:text-white' : ''}`}>
-                          {authUser.cognitoInfo?.username ? 
-                            authUser.cognitoInfo.username.charAt(0).toUpperCase() + authUser.cognitoInfo.username.slice(1) : 
-                            "User"}
+                          {authUser.name || "User"}
                         </p>
                       </div>
                       <div className="flex items-center gap-2 mt-2">
                         <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                        <p className={`text-xs text-slate-500 ${isDashboardPage ? 'dark:text-slate-400' : ''} capitalize`}>{authUser.userRole?.toLowerCase()} account</p>
+                        <p className={`text-xs text-slate-500 ${isDashboardPage ? 'dark:text-slate-400' : ''} capitalize`}>{authUser.role?.toLowerCase()} account</p>
                       </div>
                     </div>
 
@@ -236,9 +244,9 @@ const Navbar = () => {
                     <DropdownMenuItem
                       className={`cursor-pointer py-2.5 px-3 my-1 rounded-md text-slate-700 ${isDashboardPage ? 'dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800' : 'hover:text-blue-600 hover:bg-slate-100'} transition-colors duration-200 flex items-center gap-2 text-sm`}
                       onClick={() => {
-                        if (authUser.userRole?.toLowerCase() === "admin") {
+                        if (authUser.role?.toLowerCase() === "admin") {
                           router.push("/admin", { scroll: false });
-                        } else if (authUser.userRole?.toLowerCase() === "manager") {
+                        } else if (authUser.role?.toLowerCase() === "manager") {
                           router.push("/managers/properties", { scroll: false });
                         } else {
                           router.push("/tenants/favorites", { scroll: false });
@@ -250,7 +258,7 @@ const Navbar = () => {
                     </DropdownMenuItem>
                     
                     {/* Admin-specific menu item */}
-                    {authUser.userRole?.toLowerCase() === "admin" && (
+                    {authUser.role?.toLowerCase() === "admin" && (
                       <DropdownMenuItem
                         className={`cursor-pointer py-2.5 px-3 my-1 rounded-md text-purple-700 ${isDashboardPage ? 'dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/20' : 'hover:text-purple-800 hover:bg-purple-50'} transition-colors duration-200 flex items-center gap-2 text-sm`}
                         onClick={() => router.push('/admin/landlords', { scroll: false })}
@@ -270,7 +278,7 @@ const Navbar = () => {
 
                     <DropdownMenuItem
                       className="cursor-pointer py-2.5 px-3 my-1 rounded-md text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 flex items-center gap-2 text-sm"
-                      onClick={() => router.push(`/${authUser.userRole?.toLowerCase()}s/settings`, { scroll: false })}
+                      onClick={() => router.push(`/${authUser.role?.toLowerCase()}s/settings`, { scroll: false })}
                     >
                       <Settings className="w-4 h-4" />
                       <span>Settings</span>

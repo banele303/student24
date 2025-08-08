@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     const cognitoIdParam = url.searchParams.get('cognitoId');
     
     let body;
-    let cognitoId, email, firstName, lastName, phone;
+    let cognitoId, email, firstName, lastName, phone, name, isGoogleAuth;
     
     // Try to parse the request body, but handle empty body gracefully
     try {
@@ -44,6 +44,8 @@ export async function POST(request: NextRequest) {
         firstName = body.firstName;
         lastName = body.lastName;
         phone = body.phone;
+        name = body.name;
+        isGoogleAuth = body.isGoogleAuth || false;
       }
     } catch (error) {
       // Type assertion for the error to access message property
@@ -123,11 +125,12 @@ export async function POST(request: NextRequest) {
       data: {
         cognitoId,
         email,
-        // Use name field directly, or combine firstName and lastName if available
-        name: `${firstName || ''} ${lastName || ''}`.trim() || 'Admin User',
+        // Use name field directly if provided, or combine firstName and lastName if available
+        name: name || `${firstName || ''} ${lastName || ''}`.trim() || 'User',
         // Use phoneNumber field from the schema
         phoneNumber: phone || '',
-        // Note: firstName and lastName are not in the schema, so we don't include them
+        // Add a flag to track authentication method (optional, if you want to track this)
+        // Note: You may need to add this field to your Prisma schema if you want to track it
       },
     });
 

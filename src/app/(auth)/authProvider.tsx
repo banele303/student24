@@ -72,15 +72,19 @@ const components = {
         <>
           <Authenticator.SignUp.FormFields />
           <RadioGroupField
-            legend="Role"
+            legend="Account Type"
             name="custom:role"
             errorMessage={validationErrors?.["custom:role"]}
             hasError={!!validationErrors?.["custom:role"]}
             isRequired
           >
-            <Radio value="tenant">Student</Radio>
-            <Radio value="manager">LandLoard</Radio>
+            <Radio value="manager">Landlord</Radio>
           </RadioGroupField>
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+            <p className="text-sm text-blue-700">
+              <strong>Students:</strong> Please use the <a href="/signin" className="text-blue-600 underline">Google Sign-in option</a> instead.
+            </p>
+          </div>
         </>
       );
     },
@@ -239,7 +243,8 @@ const Auth = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const isAuthPage = pathname.match(/^\/(signin|signup)$/);
+  const isAuthPage = pathname.match(/^\/(signin|signup|cognito-signin|cognito-signup)$/);
+  const isCognitoAuthPage = pathname.match(/^\/(cognito-signin|cognito-signup)$/);
   const isDashboardPage =
     pathname.startsWith("/manager") || pathname.startsWith("/tenants");
 
@@ -255,17 +260,23 @@ const Auth = ({ children }: { children: React.ReactNode }) => {
     return <>{children}</>;
   }
 
-  return (
-    <div className="h-full">
-      <Authenticator
-        initialState={pathname.includes("signup") ? "signUp" : "signIn"}
-        components={components}
-        formFields={formFields}
-      >
-        {() => <>{children}</>}
-      </Authenticator>
-    </div>
-  );
+  // For cognito-signin and cognito-signup, show the Authenticator
+  if (isCognitoAuthPage) {
+    return (
+      <div className="h-full">
+        <Authenticator
+          initialState={pathname.includes("signup") ? "signUp" : "signIn"}
+          components={components}
+          formFields={formFields}
+        >
+          {() => <>{children}</>}
+        </Authenticator>
+      </div>
+    );
+  }
+
+  // For regular signin and signup, just show the content (which will be the new pages with tabs)
+  return <>{children}</>;
 };
 
 export default Auth;

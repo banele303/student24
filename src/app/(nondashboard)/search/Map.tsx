@@ -258,18 +258,19 @@ const Map = () => {
   }, [isLoading, isError, properties, filters.coordinates, filters.location]);
 
   if (isLoading) return (
-    <div className="hidden pt-5 md:flex md:basis-6/12 grow relative rounded-xl items-center justify-center">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <div className="h-8 w-8 bg-blue-200 dark:bg-blue-800 rounded-full mx-auto mb-4 animate-pulse"></div>
-        <p className="text-center text-gray-600 dark:text-gray-300">Loading map...</p>
+    <div className="hidden pt-5 md:flex md:basis-5/12 grow-0 relative rounded-xl">
+      <div className="w-full h-full max-h-[calc(100vh-250px)] min-h-[400px] rounded-xl overflow-hidden">
+        <div className="h-full w-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
       </div>
     </div>
   );
 
   if (isError || !properties) return (
-    <div className="hidden pt-5 md:flex md:basis-6/12 grow relative rounded-xl items-center justify-center">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <p className="text-center text-red-500 font-medium">Failed to load map data</p>
+    <div className="hidden pt-5 md:flex md:basis-5/12 grow-0 relative rounded-xl">
+      <div className="w-full h-full max-h-[calc(100vh-250px)] min-h-[400px] rounded-xl overflow-hidden">
+        <div className="h-full w-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+          <p className="text-sm text-gray-500 dark:text-gray-300">Failed to load map</p>
+        </div>
       </div>
     </div>
   );
@@ -281,13 +282,14 @@ const Map = () => {
   );
 
   return (
-    <div className="hidden pt-5 md:block md:basis-6/12 grow relative rounded-xl">
+    <div className="hidden pt-5 md:block grow relative rounded-xl">
       <div
         className="map-container rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
         ref={mapContainerRef}
         style={{
           height: "100%",
           width: "100%",
+          minHeight: "400px",
           maxHeight: "calc(100vh - 250px)"
         }}
       />
