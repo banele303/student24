@@ -163,7 +163,7 @@ const SingleListing = () => {
     
     console.log('Processed property images:', processed.images);
     return processed;
-  }, [property]);
+  }, []);
   
   // Process rooms data to ensure image URLs are valid
   const processedRooms = React.useMemo(() => {
