@@ -92,7 +92,7 @@ export default function SignInPage() {
             <TabsContent value="landlord" className="space-y-4 mt-4">
               <div className="text-center">
                 <p className="text-sm text-muted-foreground mb-4">
-                  Continue to Cognito authentication for landlords
+                  Continue as a landlord
                 </p>
                 <Button
                   onClick={() => window.location.href = '/cognito-signin'}

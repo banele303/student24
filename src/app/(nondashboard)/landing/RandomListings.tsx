@@ -480,6 +480,8 @@ const RandomListings = () => {
                 showFavoriteButton={true}
                 onClick={() => handlePropertyClick(property.id)}
                 hoverRingClass="hover:ring-[#00acee]/50"
+                edgeToEdgeImage
+                className="mt-0"
               />
             ))}
           </div>

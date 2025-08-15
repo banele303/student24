@@ -151,8 +151,11 @@ const SingleListing = () => {
     const processed = {
       ...property,
       // Make sure price is a valid number
-      price: typeof property.price === 'number' ? property.price : 
-             typeof property.price === 'string' ? parseFloat(property.price) : 0,
+      price: typeof (property as any).pricePerMonth === 'number'
+        ? (property as any).pricePerMonth
+        : typeof (property as any).pricePerMonth === 'string'
+          ? parseFloat((property as any).pricePerMonth)
+          : 0,
       // Ensure images array is valid - use exactly the same approach as in CardCompact
       images: Array.isArray(property.images) && property.images.length > 0 ? 
         property.images.filter(img => img && typeof img === 'string' && img.trim() !== '') : 
@@ -163,7 +166,7 @@ const SingleListing = () => {
     
     console.log('Processed property images:', processed.images);
     return processed;
-  }, []);
+  }, [property]);
   
   // Process rooms data to ensure image URLs are valid
   const processedRooms = React.useMemo(() => {
@@ -185,13 +188,21 @@ const SingleListing = () => {
         room.photoUrls.filter(img => img && typeof img === 'string' && img.trim() !== '') : 
         []
     }));
-  }, [rooms, property]);
+  }, [rooms]);
   
   // Use processed data
   const propertyRooms = processedRooms || [];
 
   // Calculate room-based statistics
   const roomStats = getRoomStats(rooms);
+  // Determine display price (fallback to property's pricePerMonth)
+  const displayPrice = roomStats.minPrice || (
+    typeof (property as any)?.pricePerMonth === 'number'
+      ? (property as any).pricePerMonth
+      : typeof (property as any)?.pricePerMonth === 'string'
+        ? parseFloat((property as any).pricePerMonth)
+        : 0
+  );
   
   // Use room stats or fallback to property values for backward compatibility
   const displayBeds = roomStats.totalBeds || property?.beds || 0;
@@ -424,7 +435,7 @@ const SingleListing = () => {
                   <div>
                     <p className="text-sm text-gray-600">From</p>
                     <p className="text-3xl font-bold text-blue-600">
-                      R {(roomStats.minPrice || property.price).toLocaleString('en-ZA')}
+                      R {displayPrice.toLocaleString('en-ZA')}
                     </p>
                     <p className="text-sm text-gray-600">per month</p>
                   </div>

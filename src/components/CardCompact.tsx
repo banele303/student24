@@ -73,7 +73,7 @@ export default function PropertyCardCompact({
 
   return (
     <Card 
-      className="flex flex-row h-auto min-h-[140px] mt-6 overflow-hidden transition-all duration-300 hover:shadow-md border border-gray-200 bg-white rounded-xl"
+      className="flex flex-row h-auto min-h-[140px] mt-6 overflow-hidden transition-all duration-300 hover:shadow-[0_0_14px_rgba(0,172,238,0.15)] hover:ring-2 hover:ring-[#00acee]/30 border border-gray-200 bg-white rounded-xl"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -115,7 +115,7 @@ export default function PropertyCardCompact({
       <div className="relative flex w-2/3 flex-col justify-between p-3 sm:p-4 bg-white text-gray-800">
         <div className="space-y-1.5">
           <div className="flex items-start justify-between gap-2">
-            <h2 className="line-clamp-1 text-base font-bold sm:text-lg group-hover:text-blue-600 transition-colors">
+            <h2 className="line-clamp-1 text-base font-bold sm:text-lg text-[#043e55] group-hover:text-blue-600 transition-colors">
               {propertyLink ? (
                 <Link href={propertyLink} className="hover:text-blue-600" scroll={false}>
                   {property.name}
@@ -147,7 +147,7 @@ export default function PropertyCardCompact({
             )}
           </div>
           
-          <div className="flex items-center text-xs text-gray-500">
+          <div className="flex items-center text-xs text-[#536167]">
             <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
             <p className="line-clamp-1">
               {property.location ? `${property.location.address}, ${property.location.city}` : 'Location not available'}
@@ -162,7 +162,7 @@ export default function PropertyCardCompact({
         </div>
         
         <div className="mt-2 flex flex-wrap items-center justify-between gap-y-2">
-          <div className="flex gap-3 text-xs text-gray-600 sm:text-sm">
+          <div className="flex gap-3 text-xs text-[#536167] sm:text-sm">
             <div className="flex items-center gap-1">
               <Bed className="h-3.5 w-3.5" />
               <span>{displayBeds}</span>

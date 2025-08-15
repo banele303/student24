@@ -145,12 +145,12 @@ function ModernPropertyCard({
         <div className="flex-1 flex flex-col justify-between p-3">
           <div>
             <Link href={propertyLink || `/properties/${property.id}`} scroll={false} className="block">
-              <h2 className="text-base font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1 mb-0.5">
+              <h2 className="text-base font-bold text-[#043e55] dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1 mb-0.5">
                 {property.name}
               </h2>
             </Link>
 
-            <div className="flex items-center text-sm text-gray-700 dark:text-white/80 mb-1">
+            <div className="flex items-center text-sm text-[#536167] dark:text-white/80 mb-1">
               <MapPin className="h-3 w-3 mr-1 flex-shrink-0 text-gray-500 dark:text-gray-400" />
               <p className="line-clamp-1 text-[10px]">
                 {property.location?.address || 'No address'}, {property.location?.city || 'No city'}
@@ -158,22 +158,22 @@ function ModernPropertyCard({
             </div>
 
             <div className="flex gap-2">
-              <div className="flex items-center text-[10px] text-gray-700 dark:text-white/80">
+              <div className="flex items-center text-[10px] text-[#536167] dark:text-white/80">
                 <BedDouble className="h-3 w-3 mr-0.5 text-blue-500 dark:text-blue-400" />
                 <span>{displayBeds}</span>
               </div>
 
-              <div className="flex items-center text-[10px] text-gray-700 dark:text-white/80">
+              <div className="flex items-center text-[10px] text-[#536167] dark:text-white/80">
                 <Bath className="h-3 w-3 mr-0.5 text-blue-500 dark:text-blue-400" />
                 <span>{displayBaths}</span>
               </div>
 
-              <div className="flex items-center text-[10px] text-gray-700 dark:text-white/80">
+              <div className="flex items-center text-[10px] text-[#536167] dark:text-white/80">
                 <ChefHat className="h-3 w-3 mr-0.5 text-blue-500 dark:text-blue-400" />
                 <span>{displayKitchens}</span>
               </div>
 
-              <div className="flex items-center text-[10px] text-gray-700 dark:text-white/80">
+              <div className="flex items-center text-[10px] text-[#536167] dark:text-white/80">
                 <Ruler className="h-3 w-3 mr-0.5 text-blue-500 dark:text-blue-400" />
                 <span>{displaySquareFeet} sq ft</span>
               </div>

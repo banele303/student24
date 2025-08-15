@@ -52,6 +52,10 @@ interface PropertyCardProps {
   disableImageHoverZoom?: boolean
   // Optional: disable card hover scale (prevents layout touch with map)
   disableHoverScale?: boolean
+  // Make the image touch the card edges (remove inner padding/rounding)
+  edgeToEdgeImage?: boolean
+  // Optional additional classes for the root Card container
+  className?: string
 }
 
 function PropertyCard({
@@ -63,9 +67,11 @@ function PropertyCard({
   showActions = false,
   userRole = null,
   onClick,
-  hoverRingClass = "hover:ring-gray-600/40",
+  hoverRingClass = "hover:ring-[#00acee]/30",
   disableImageHoverZoom = false,
   disableHoverScale = false,
+  edgeToEdgeImage = false,
+  className,
 }: PropertyCardProps) {
   // Access images directly from the property object as it comes from the API
   const [imgSrc, setImgSrc] = useState<string>(
@@ -105,12 +111,12 @@ function PropertyCard({
 
   return (
     <Card
-      className={`group overflow-hidden transition-all mt-6 duration-300 bg-white rounded-3xl relative w-full cursor-pointer transform ${disableHoverScale ? "" : "hover:scale-[1.02]"} shadow-md hover:shadow-[0_0_36px_rgba(0,172,238,0.35)] hover:ring-2 ${hoverRingClass}`}
+      className={`group overflow-hidden transition-all duration-300 bg-white rounded-3xl relative w-full cursor-pointer transform ${disableHoverScale ? "" : "hover:scale-[1.01]"} shadow-sm hover:shadow-[0_0_16px_rgba(0,172,238,0.15)] hover:ring-2 ${hoverRingClass} mt-6 ${className ?? ""}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      <div className="relative w-full aspect-[4/2] px-2 mt-[-1rem] ">
+      <div className={`relative w-full aspect-[4/2] ${edgeToEdgeImage ? "" : "px-2 mt-[-1rem]"}`}>
         <div className="relative w-full h-full">
           {!imgError ? (
             <Image
@@ -119,12 +125,12 @@ function PropertyCard({
               fill
               loader={loaderFunc}
               unoptimized={true}
-              className={`object-cover transition-transform rounded-2xl duration-500 ${disableImageHoverZoom ? "scale-100" : isHovered ? "scale-110" : "scale-100"}`}
+              className={`object-cover transition-transform " : "rounded-2xl"} duration-500 ${disableImageHoverZoom ? "scale-100" : isHovered ? "scale-110" : "scale-100"}`}
               onError={handleImageError}
               
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-2xl">
+            <div className={`w-full h-full flex items-center justify-center bg-gray-100 ${edgeToEdgeImage ? "" : "rounded-2xl"}`}>
               <Home className="h-12 w-12 text-gray-400" />
             </div>
           )}
@@ -161,8 +167,8 @@ function PropertyCard({
           )}
         </div>
 
-        {/* NSFAS and Favorite Icons - Positioned above the white background */}
-        <div className="absolute bottom-2 right-3 flex items-center gap-2 z-50">
+  {/* NSFAS and Favorite Icons - Straddle image and content (half above, half below) */}
+  <div className="absolute bottom-0 right-3 transform translate-y-1/2 flex items-center gap-2 z-50">
           {/* NSFAS Accredited Badge with Image */}
           {property.isNsfassAccredited && (
             <div className="relative w-[3.3rem] h-[3.3rem] bg-white rounded-full p-1 shadow-lg border border-gray-200">
@@ -201,16 +207,24 @@ function PropertyCard({
         </div>
       </div>
 
-      <div className="p-4 pt-5 space-y-3 bg-white">
+  <div className="p-4 pt-12 space-y-3 bg-white">
         <div className="space-y-1">
-          <h2 className="line-clamp-1 text-lg font-bold text-[#00acee] group-hover:text-[#00acee]">{propertyLink ? <Link href={propertyLink} className="text-[#00acee] hover:opacity-90" scroll={false}>{property.name}</Link> : property.name}</h2>
-          {property.description && <p className="text-sm text-gray-600 font-semibold line-clamp-4">{property.description}</p>}
+          <h2 className="line-clamp-1 text-lg font-bold text-[#043e55] group-hover:text-[#00acee]">
+            {propertyLink ? (
+              <Link href={propertyLink} className="hover:text-[#00acee]" scroll={false}>
+                {property.name}
+              </Link>
+            ) : (
+              property.name
+            )}
+          </h2>
+          {property.description && <p className="text-[13px] sm:text-sm text-[#536167] font-normal line-clamp-4">{property.description}</p>}
         </div>
 
         {/* Location and University Information */}
         <div className="space-y-2">
-          <div className="flex items-center text-sm text-gray-600">
-            <div className="flex items-center justify-center w-7 h-7 bg-gray-100 rounded-full mr-2 flex-shrink-0">
+          <div className="flex items-center text-sm text-[#536167]">
+            <div className="flex items-center justify-center w-7 h-7 bg-gray-50 rounded-full mr-2 flex-shrink-0">
               <MapPin className="h-3.5 w-3.5 text-[#00acee]" />
             </div>
             <p className="line-clamp-1 font-normal">
@@ -220,8 +234,8 @@ function PropertyCard({
           
           {/* Closest University */}
           {property.closestUniversities && property.closestUniversities.length > 0 && (
-            <div className="flex items-center text-sm text-gray-600">
-              <div className="flex items-center justify-center w-7 h-7 bg-gray-100 rounded-full mr-2 flex-shrink-0">
+            <div className="flex items-center text-sm text-[#536167]">
+              <div className="flex items-center justify-center w-7 h-7 bg-gray-50 rounded-full mr-2 flex-shrink-0">
                 <svg className="h-3.5 w-3.5 text-[#00acee]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
