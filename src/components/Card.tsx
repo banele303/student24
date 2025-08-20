@@ -121,11 +121,18 @@ function PropertyCard({
 
   const [isLoaded, setIsLoaded] = useState(false)
 
+  // Match image rounding to card style
+  const roundedImageClass = edgeToEdgeImage
+    ? "rounded-md"
+    : simpleShadow
+    ? "rounded-3xl"
+    : "rounded-2xl"
+
   return (
     <Card
       className={
         simpleShadow
-          ? `group overflow-hidden bg-white rounded-xl relative w-full cursor-pointer transition-shadow duration-300 shadow-md hover:shadow-lg border-0 py-0 gap-0 mt-6 ${className ?? ""}`
+          ? `group overflow-hidden bg-white rounded-3xl relative w-full cursor-pointer transition-all ease-out duration-300 shadow-md hover:shadow-lg border border-transparent hover:border-[#00acee] hover:ring-2 ring-[#00acee]/35 py-0 gap-0 mt-6 ${className ?? ""}`
           : `group overflow-hidden transition-all duration-300 bg-white rounded-3xl relative w-full cursor-pointer transform ${disableHoverScale ? "" : "hover:scale-[1.01]"} shadow-sm hover:shadow-[0_0_16px_rgba(0,172,238,0.15)] hover:ring-2 ${hoverRingClass} mt-6 ${className ?? ""}`
       }
       onMouseEnter={() => setIsHovered(true)}
@@ -141,12 +148,12 @@ function PropertyCard({
               fill
               loader={loaderFunc}
               unoptimized={true}
-              className={`object-cover transition-transform ${edgeToEdgeImage ? "rounded-md" : "rounded-2xl"} duration-500 ${disableImageHoverZoom ? "scale-100" : isHovered ? "scale-105" : "scale-100"}`}
+              className={`object-cover transition-transform ${roundedImageClass} duration-500 ease-out ${disableImageHoverZoom ? "scale-100" : isHovered ? (simpleShadow ? "scale-[1.02]" : "scale-105") : "scale-100"}`}
               onError={handleImageError}
               
             />
           ) : (
-            <div className={`w-full h-full flex items-center justify-center bg-gray-100 ${edgeToEdgeImage ? "rounded-md" : "rounded-2xl"}`}>
+            <div className={`w-full h-full flex items-center justify-center bg-gray-100 ${roundedImageClass}`}>
               <Home className="h-12 w-12 text-gray-400" />
             </div>
           )}
@@ -241,7 +248,7 @@ function PropertyCard({
               property.name
             )}
           </h2>
-          {property.description && <p className="text-[13px] sm:text-sm text-[#536167] font-normal line-clamp-4">{property.description}</p>}
+          {property.description && <p className={`text-[13px] sm:text-sm text-[#536167] ${simpleShadow ? "font-semibold" : "font-normal"} line-clamp-4`}>{property.description}</p>}
         </div>
 
         {/* Location and University Information */}

@@ -128,27 +128,24 @@ const CityCard = ({ city, index }: CityCardProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
         {/* City info */}
-        <div className="absolute bottom-0 left-0 w-full p-5 z-10">
-          {/* City name and description - moves up on hover */}
+        <div className="absolute inset-0 z-10 p-5">
+          {/* City name and description - bottom by default, center on hover */}
           <motion.div
-            animate={{ y: isHovered ? -8 : 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className={`absolute left-0 w-full ${isHovered ? 'top-1/2 -translate-y-1/2' : 'bottom-5'}`}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
           >
-            <div className="flex items-center mb-1">
+            <div className="flex items-center mb-1 px-5">
               <MapPin className="w-4 h-4 text-[#4F9CF9] mr-1" />
               <h3 className="text-xl font-bold text-white">{city.name}</h3>
             </div>
-            <p className="text-sm text-gray-300 font-normal italic">{city.description}</p>
+            <p className="text-sm text-gray-300 font-normal italic px-5">{city.description}</p>
           </motion.div>
 
-          {/* Hover text - appears at the bottom */}
+          {/* Hover CTA - appears at the bottom */}
           <motion.div
-            className="flex items-center mt-3 text-[#4F9CF9] text-sm font-medium"
+            className="absolute left-0 bottom-3 w-full flex items-center justify-center text-[#4F9CF9] text-sm font-medium"
             initial={{ opacity: 0, y: 10 }}
-            animate={{ 
-              opacity: isHovered ? 1 : 0,
-              y: isHovered ? 0 : 10
-            }}
+            animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 10 }}
             transition={{ duration: 0.3, delay: isHovered ? 0.1 : 0 }}
           >
             <span>Explore properties in {city.name}</span>

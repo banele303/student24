@@ -312,7 +312,7 @@ const HeroSection = () => {
                       onChange={handleInputChange}
                       onKeyPress={handleKeyPress}
                       placeholder="Search by city or address"
-                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-2 bg-transparent text-gray-800 placeholder-gray-400 transition-all duration-300 group-hover:placeholder-[#00acee] focus:placeholder-[#00acee] text-base w-full"
+                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-2 bg-transparent text-gray-800 placeholder-gray-400 placeholder:font-bold placeholder:text-lg transition-all duration-300 group-hover:placeholder-[#00acee] focus:placeholder-[#00acee] text-lg w-full"
                     />
                     <div className="h-0.5 w-0 bg-[#00acee] transition-all duration-300 group-hover:w-full group-focus-within:w-full"></div>
                   </div>

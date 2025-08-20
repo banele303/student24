@@ -463,10 +463,10 @@ const RandomListings = () => {
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-xl overflow-hidden mt-6 shadow-md">
+        <div key={i} className="bg-white rounded-3xl overflow-hidden mt-6 shadow-md border border-transparent">
                 {/* Image skeleton */}
                 <div className="relative w-full aspect-[4/3] px-2 pt-2">
-                  <div className="w-full h-full bg-gray-200 rounded-2xl animate-pulse"></div>
+          <div className="w-full h-full bg-gray-200 rounded-3xl animate-pulse"></div>
                   
                   {/* Price tag skeleton */}
                   <div className="absolute top-3 right-3">
