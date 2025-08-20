@@ -320,7 +320,7 @@ const RandomListings = () => {
         </div>
         
         {/* University Buttons - Kept as requested */}
-        <div className="flex flex-wrap justify-center gap-2 mt-4">
+        <div className="flex flex-wrap justify-center gap-2 mt-4 bg-[2rem]">
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -482,7 +482,6 @@ const RandomListings = () => {
                 hoverRingClass="hover:ring-[#00acee]/50"
                 edgeToEdgeImage
                   className="mt-0 border-0"
-                imageAspectClass="aspect-[4/3]"
                 reviewsCount={(property as any).reviews ?? (property as any).reviewCount ?? (property as any).reviewsCount}
               />
             ))}

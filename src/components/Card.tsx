@@ -58,8 +58,6 @@ interface PropertyCardProps {
   className?: string
   // Optional: reviews count to display above title/description (fallback to property.numberOfReviews)
   reviewsCount?: number
-  // Optional: override the image aspect ratio (e.g., "aspect-[4/3]" to make it taller)
-  imageAspectClass?: string
 }
 
 function PropertyCard({
@@ -77,7 +75,6 @@ function PropertyCard({
   edgeToEdgeImage = false,
   className,
   reviewsCount,
-  imageAspectClass = "aspect-[4/2]",
 }: PropertyCardProps) {
   // Access images directly from the property object as it comes from the API
   const [imgSrc, setImgSrc] = useState<string>(
@@ -122,7 +119,7 @@ function PropertyCard({
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      <div className={`relative w-full ${imageAspectClass} ${edgeToEdgeImage ? "" : "px-2 mt-[-1rem]"}`}>
+  <div className={`relative w-full aspect-[4/2] ${edgeToEdgeImage ? "" : "px-2 mt-[-1rem]"}`}>
         <div className="relative w-full h-full">
           {!imgError ? (
             <Image
@@ -235,7 +232,7 @@ function PropertyCard({
         </div>
 
         {/* Location and University Information */}
-        <div className="space-y-2 mb-4">
+  <div className="space-y-2">
           <div className="flex items-center text-sm text-[#536167]">
             <div className="flex items-center justify-center w-8 h-8 bg-gray-50 rounded-full mr-2 flex-shrink-0">
               <MapPin className="h-4 w-4 text-[#00acee]" />
@@ -263,7 +260,7 @@ function PropertyCard({
         
         {/* Room Information Section - Detailed view */}
         {property.availableRooms !== undefined && property.availableRooms > 0 && (
-          <div className="mt-4 p-3 bg-blue-50 rounded-md border border-blue-100">
+          <div className="mt-3 p-3 bg-blue-50 rounded-md border border-blue-100">
             <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
               <Bed className="h-4 w-4 mr-1 text-[#00acee]" /> Available Rooms
             </h3>
