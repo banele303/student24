@@ -410,7 +410,7 @@ const RandomListings = () => {
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-3xl border border-gray-200 overflow-hidden mt-6 shadow-sm">
+              <div key={i} className="bg-white rounded-3xl border-0 overflow-hidden mt-6 shadow-sm">
                 {/* Image skeleton */}
                 <div className="relative w-full aspect-[4/3] px-2 pt-2">
                   <div className="w-full h-full bg-gray-200 rounded-2xl animate-pulse"></div>
@@ -481,7 +481,9 @@ const RandomListings = () => {
                 onClick={() => handlePropertyClick(property.id)}
                 hoverRingClass="hover:ring-[#00acee]/50"
                 edgeToEdgeImage
-                className="mt-0"
+                  className="mt-0 border-0"
+                imageAspectClass="aspect-[4/3]"
+                reviewsCount={(property as any).reviews ?? (property as any).reviewCount ?? (property as any).reviewsCount}
               />
             ))}
           </div>

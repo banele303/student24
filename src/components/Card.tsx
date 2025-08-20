@@ -56,6 +56,10 @@ interface PropertyCardProps {
   edgeToEdgeImage?: boolean
   // Optional additional classes for the root Card container
   className?: string
+  // Optional: reviews count to display above title/description (fallback to property.numberOfReviews)
+  reviewsCount?: number
+  // Optional: override the image aspect ratio (e.g., "aspect-[4/3]" to make it taller)
+  imageAspectClass?: string
 }
 
 function PropertyCard({
@@ -72,6 +76,8 @@ function PropertyCard({
   disableHoverScale = false,
   edgeToEdgeImage = false,
   className,
+  reviewsCount,
+  imageAspectClass = "aspect-[4/2]",
 }: PropertyCardProps) {
   // Access images directly from the property object as it comes from the API
   const [imgSrc, setImgSrc] = useState<string>(
@@ -116,7 +122,7 @@ function PropertyCard({
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      <div className={`relative w-full aspect-[4/2] ${edgeToEdgeImage ? "" : "px-2 mt-[-1rem]"}`}>
+      <div className={`relative w-full ${imageAspectClass} ${edgeToEdgeImage ? "" : "px-2 mt-[-1rem]"}`}>
         <div className="relative w-full h-full">
           {!imgError ? (
             <Image
@@ -125,12 +131,12 @@ function PropertyCard({
               fill
               loader={loaderFunc}
               unoptimized={true}
-              className={`object-cover transition-transform " : "rounded-2xl"} duration-500 ${disableImageHoverZoom ? "scale-100" : isHovered ? "scale-110" : "scale-100"}`}
+              className={`object-cover transition-transform ${edgeToEdgeImage ? "rounded-md" : "rounded-2xl"} duration-500 ${disableImageHoverZoom ? "scale-100" : isHovered ? "scale-105" : "scale-100"}`}
               onError={handleImageError}
               
             />
           ) : (
-            <div className={`w-full h-full flex items-center justify-center bg-gray-100 ${edgeToEdgeImage ? "" : "rounded-2xl"}`}>
+            <div className={`w-full h-full flex items-center justify-center bg-gray-100 ${edgeToEdgeImage ? "rounded-md" : "rounded-2xl"}`}>
               <Home className="h-12 w-12 text-gray-400" />
             </div>
           )}
@@ -208,6 +214,13 @@ function PropertyCard({
       </div>
 
   <div className="p-4 pt-12 space-y-3 bg-white">
+        {/* Reviews row */}
+        {typeof (reviewsCount ?? property.numberOfReviews) === "number" && (
+          <div className="flex items-center text-xs text-[#536167]">
+            <Star className="h-3.5 w-3.5 text-[#00acee] mr-1.5" />
+            <span className="font-normal">{((reviewsCount ?? property.numberOfReviews) as number).toLocaleString()} reviews</span>
+          </div>
+        )}
         <div className="space-y-1">
           <h2 className="line-clamp-1 text-lg font-bold text-[#043e55] group-hover:text-[#00acee]">
             {propertyLink ? (
@@ -222,10 +235,10 @@ function PropertyCard({
         </div>
 
         {/* Location and University Information */}
-        <div className="space-y-2">
+        <div className="space-y-2 mb-4">
           <div className="flex items-center text-sm text-[#536167]">
-            <div className="flex items-center justify-center w-7 h-7 bg-gray-50 rounded-full mr-2 flex-shrink-0">
-              <MapPin className="h-3.5 w-3.5 text-[#00acee]" />
+            <div className="flex items-center justify-center w-8 h-8 bg-gray-50 rounded-full mr-2 flex-shrink-0">
+              <MapPin className="h-4 w-4 text-[#00acee]" />
             </div>
             <p className="line-clamp-1 font-normal">
               {property.location?.address || 'No address'}, {property.location?.city || 'No city'}
@@ -250,7 +263,7 @@ function PropertyCard({
         
         {/* Room Information Section - Detailed view */}
         {property.availableRooms !== undefined && property.availableRooms > 0 && (
-          <div className="mt-3 p-3 bg-blue-50 rounded-md border border-blue-100">
+          <div className="mt-4 p-3 bg-blue-50 rounded-md border border-blue-100">
             <h3 className="text-sm font-medium text-blue-800 mb-2 flex items-center">
               <Bed className="h-4 w-4 mr-1 text-[#00acee]" /> Available Rooms
             </h3>
