@@ -58,6 +58,12 @@ interface PropertyCardProps {
   className?: string
   // Optional: reviews count to display above title/description (fallback to property.numberOfReviews)
   reviewsCount?: number
+  // Optional: make action icons (NSFAS badge and favorite) larger
+  largeActionIcons?: boolean
+  // Optional: override image wrapper padding/margins when not edgeToEdge
+  imagePaddingClass?: string
+  // Optional: use simple blog-like shadow style (rounded-xl, shadow-md, hover:shadow-lg, no ring/scale)
+  simpleShadow?: boolean
 }
 
 function PropertyCard({
@@ -75,6 +81,9 @@ function PropertyCard({
   edgeToEdgeImage = false,
   className,
   reviewsCount,
+  largeActionIcons = false,
+  imagePaddingClass = "px-2 mt-[-1rem]",
+  simpleShadow = false,
 }: PropertyCardProps) {
   // Access images directly from the property object as it comes from the API
   const [imgSrc, setImgSrc] = useState<string>(
@@ -114,12 +123,16 @@ function PropertyCard({
 
   return (
     <Card
-      className={`group overflow-hidden transition-all duration-300 bg-white rounded-3xl relative w-full cursor-pointer transform ${disableHoverScale ? "" : "hover:scale-[1.01]"} shadow-sm hover:shadow-[0_0_16px_rgba(0,172,238,0.15)] hover:ring-2 ${hoverRingClass} mt-6 ${className ?? ""}`}
+      className={
+        simpleShadow
+          ? `group overflow-hidden bg-white rounded-xl relative w-full cursor-pointer transition-shadow duration-300 shadow-md hover:shadow-lg border-0 py-0 gap-0 mt-6 ${className ?? ""}`
+          : `group overflow-hidden transition-all duration-300 bg-white rounded-3xl relative w-full cursor-pointer transform ${disableHoverScale ? "" : "hover:scale-[1.01]"} shadow-sm hover:shadow-[0_0_16px_rgba(0,172,238,0.15)] hover:ring-2 ${hoverRingClass} mt-6 ${className ?? ""}`
+      }
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-  <div className={`relative w-full aspect-[4/2] ${edgeToEdgeImage ? "" : "px-2 mt-[-1rem]"}`}>
+  <div className={`relative w-full aspect-[4/2] ${edgeToEdgeImage ? "" : imagePaddingClass}`}>
         <div className="relative w-full h-full">
           {!imgError ? (
             <Image
@@ -174,7 +187,7 @@ function PropertyCard({
   <div className="absolute bottom-0 right-3 transform translate-y-1/2 flex items-center gap-2 z-50">
           {/* NSFAS Accredited Badge with Image */}
           {property.isNsfassAccredited && (
-            <div className="relative w-[3.3rem] h-[3.3rem] bg-white rounded-full p-1 shadow-lg border border-gray-200">
+            <div className={`relative ${largeActionIcons ? "w-[3.8rem] h-[3.8rem] p-1.5" : "w-[3.3rem] h-[3.3rem] p-1"} bg-white rounded-full shadow-lg border border-gray-200`}>
               <Image
                 src="/universities/nasfas.png"
                 alt="NSFAS Accredited"
@@ -187,11 +200,11 @@ function PropertyCard({
           )}
 
           {/* Favorite button */}
-          {showFavoriteButton && (
+      {showFavoriteButton && (
             <Button
               size="icon"
               variant="ghost"
-              className={`h-[3.3rem] w-[3.3rem] rounded-full p-0 transition-all duration-300 ${
+        className={`${largeActionIcons ? "h-[3.8rem] w-[3.8rem]" : "h-[3.3rem] w-[3.3rem]"} rounded-full p-0 transition-all duration-300 ${
                 isFavorite 
                   ? "bg-white text-red-500 shadow-lg border border-gray-200 scale-105" 
                   : "bg-white/95 text-[#00acee] border border-gray-200 shadow-lg hover:scale-105"
@@ -203,18 +216,18 @@ function PropertyCard({
               }}
               title="Add to favorites"
             >
-              <Heart className={`h-6 w-6 transition-all duration-300 ${isFavorite ? "fill-red-500 text-red-500" : "text-[#00acee]"}`} />
+        <Heart className={`${largeActionIcons ? "h-7 w-7" : "h-6 w-6"} transition-all duration-300 ${isFavorite ? "fill-red-500 text-red-500" : "text-[#00acee]"}`} />
               <span className="sr-only">Toggle favorite</span>
             </Button>
           )}
         </div>
       </div>
 
-  <div className="p-4 pt-12 space-y-3 bg-white">
+  <div className={`p-4 ${largeActionIcons ? "pt-10" : "pt-12"} space-y-3 bg-white`}>
         {/* Reviews row */}
         {typeof (reviewsCount ?? property.numberOfReviews) === "number" && (
           <div className="flex items-center text-xs text-[#536167]">
-            <Star className="h-3.5 w-3.5 text-[#00acee] mr-1.5" />
+            <Star className={`h-3.5 w-3.5 mr-1.5 ${simpleShadow ? "text-[#536167]" : "text-[#00acee]"}`} />
             <span className="font-normal">{((reviewsCount ?? property.numberOfReviews) as number).toLocaleString()} reviews</span>
           </div>
         )}

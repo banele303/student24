@@ -355,7 +355,7 @@ const Navbar = () => {
                     className={cn(
                       "transition-colors bg-transparent border-2 px-7 py-4 rounded-full text-l shadow-md",
                       scrolled 
-                        ? "border-[#00acee] hover:border-[#00acee] text-black hover:text-blue-700" 
+                        ? "border-[#043e55] text-[#043e55] hover:border-[#00acee] hover:text-[#00acee]" 
                         : isHomePage
                           ? "border-gray-300 bg-transparent hover:border-gray-300 text-slate-200"
                           : "border-[#00acee] hover:border-[#00acee] text-slate-700 hover:text-blue-700"

@@ -72,7 +72,7 @@ const RandomListings = () => {
     }
     
     // Return a limited number of properties
-    return propertiesCopy.slice(0, 8).map(property => ({
+  return propertiesCopy.slice(0, 9).map(property => ({
       ...property,
       price: typeof property.price === 'number' ? property.price : 0,
       squareFeet: typeof property.squareFeet === 'number' ? property.squareFeet : 0,
@@ -409,8 +409,8 @@ const RandomListings = () => {
         {/* Properties Grid */}
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-3xl border-0 overflow-hidden mt-6 shadow-sm">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <div key={i} className="bg-white rounded-xl overflow-hidden mt-6 shadow-md">
                 {/* Image skeleton */}
                 <div className="relative w-full aspect-[4/3] px-2 pt-2">
                   <div className="w-full h-full bg-gray-200 rounded-2xl animate-pulse"></div>
@@ -479,9 +479,10 @@ const RandomListings = () => {
                 userRole={authUser?.userRole || null}
                 showFavoriteButton={true}
                 onClick={() => handlePropertyClick(property.id)}
-                hoverRingClass="hover:ring-[#00acee]/50"
-                edgeToEdgeImage
-                  className="mt-0 border-0"
+                className="mt-0 border-0"
+                imagePaddingClass="px-2 pt-2"
+                largeActionIcons
+                simpleShadow
                 reviewsCount={(property as any).reviews ?? (property as any).reviewCount ?? (property as any).reviewsCount}
               />
             ))}
