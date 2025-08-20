@@ -61,32 +61,85 @@ const RandomListings = () => {
   // Process and randomize properties
   const randomProperties = React.useMemo(() => {
     if (!allProperties || allProperties.length === 0) return [];
-    
-    // Create a copy of the properties array
-    const propertiesCopy = [...allProperties];
-    
-    // Shuffle the array to get random properties
-    for (let i = propertiesCopy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [propertiesCopy[i], propertiesCopy[j]] = [propertiesCopy[j], propertiesCopy[i]];
-    }
-    
-    // Return a limited number of properties
-  return propertiesCopy.slice(0, 9).map(property => ({
-      ...property,
-      price: typeof property.price === 'number' ? property.price : 0,
-      squareFeet: typeof property.squareFeet === 'number' ? property.squareFeet : 0,
-      images: Array.isArray(property.images) && property.images.length > 0 ? property.images : [],
-      numberOfReviews: typeof property.numberOfReviews === 'number' ? property.numberOfReviews : 0,
-      description: property.description || '',
-      closestUniversities: property.closestUniversities || [],
-      location: property.location || {
-        address: 'No address provided',
-        city: 'Unknown location',
-        province: ''
+
+    try {
+      const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+      const storageKey = `randomListings:${selectedCity}`;
+
+      let storedIds: number[] | null = null;
+      if (typeof window !== 'undefined') {
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.date === today && Array.isArray(parsed.ids)) {
+            storedIds = parsed.ids as number[];
+          }
+        }
       }
-    }));
-  }, [allProperties]);
+
+      // Build a quick index by id
+      const byId = new Map<number, any>(allProperties.map((p: any) => [p.id, p]));
+
+      let chosen: any[] = [];
+      if (storedIds && storedIds.length) {
+        chosen = storedIds.map((id) => byId.get(id)).filter(Boolean);
+      }
+
+      // If not enough chosen (first load or new items), fill up with shuffled remainder
+      if (chosen.length < 9) {
+        const remaining = allProperties.filter((p: any) => !chosen.some((c: any) => c.id === p.id));
+        const shuffled = [...remaining];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        const need = 9 - chosen.length;
+        chosen = [...chosen, ...shuffled.slice(0, Math.max(0, need))];
+
+        if (typeof window !== 'undefined') {
+          const idsToStore = chosen.slice(0, 9).map((p: any) => p.id);
+          localStorage.setItem(storageKey, JSON.stringify({ date: today, ids: idsToStore }));
+        }
+      }
+
+      return chosen.slice(0, 9).map((property: any) => ({
+        ...property,
+        price: typeof property.price === 'number' ? property.price : 0,
+        squareFeet: typeof property.squareFeet === 'number' ? property.squareFeet : 0,
+        images: Array.isArray(property.images) && property.images.length > 0 ? property.images : [],
+        numberOfReviews: typeof property.numberOfReviews === 'number' ? property.numberOfReviews : 0,
+        description: property.description || '',
+        closestUniversities: property.closestUniversities || [],
+        location: property.location || {
+          address: 'No address provided',
+          city: 'Unknown location',
+          province: ''
+        }
+      }));
+    } catch (e) {
+      console.error('Error computing daily random properties', e);
+      // Fallback to simple shuffle if anything goes wrong
+      const propertiesCopy = [...allProperties];
+      for (let i = propertiesCopy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [propertiesCopy[i], propertiesCopy[j]] = [propertiesCopy[j], propertiesCopy[i]];
+      }
+      return propertiesCopy.slice(0, 9).map((property: any) => ({
+        ...property,
+        price: typeof property.price === 'number' ? property.price : 0,
+        squareFeet: typeof property.squareFeet === 'number' ? property.squareFeet : 0,
+        images: Array.isArray(property.images) && property.images.length > 0 ? property.images : [],
+        numberOfReviews: typeof property.numberOfReviews === 'number' ? property.numberOfReviews : 0,
+        description: property.description || '',
+        closestUniversities: property.closestUniversities || [],
+        location: property.location || {
+          address: 'No address provided',
+          city: 'Unknown location',
+          province: ''
+        }
+      }));
+    }
+  }, [allProperties, selectedCity]);
   
   // Initialize filtered properties with random properties
   useEffect(() => {
