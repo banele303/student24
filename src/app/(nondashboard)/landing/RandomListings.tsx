@@ -320,7 +320,7 @@ const RandomListings = () => {
         </div>
         
         {/* University Buttons - Kept as requested */}
-        <div className="flex flex-wrap justify-center gap-2 mt-4 bg-[2rem]">
+        <div className="flex flex-wrap justify-center gap-2 mt-4 mb-[2rem]">
               <Button 
                 variant="outline" 
                 size="sm" 
