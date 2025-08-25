@@ -126,6 +126,14 @@ export async function GET(request: NextRequest) {
     const latitude = searchParams.get('latitude');
     const longitude = searchParams.get('longitude');
     const propertyName = searchParams.get('propertyName'); // New parameter for property name search
+    const limitParam = searchParams.get('limit');
+    let limit = 50;
+    if (limitParam) {
+      const parsed = parseInt(limitParam, 10);
+      if (!isNaN(parsed)) {
+        limit = Math.min(Math.max(parsed, 1), 100); // enforce 1..100
+      }
+    }
 
     console.log('API Query params:', { propertyName, latitude, longitude });
 
@@ -227,7 +235,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const completeQuery = Prisma.sql`
+  const completeQuery = Prisma.sql`
       SELECT 
         p.*,
         l.id as "locationId", 
@@ -250,9 +258,27 @@ export async function GET(request: NextRequest) {
           ? Prisma.sql`WHERE ${Prisma.join(whereConditions, " AND ")}`
           : Prisma.empty
       }
+      ORDER BY p.id DESC
+      LIMIT ${limit}
     `;
 
-    const properties = await prisma.$queryRaw(completeQuery) as Property[];
+    let properties: Property[] = [];
+    try {
+      properties = await prisma.$queryRaw(completeQuery) as Property[];
+    } catch (err: any) {
+      // If connection pool timeout, retry once with smaller limit to reduce pressure
+      if (err?.code === 'P2024' && limit > 10) {
+        console.warn('P2024 timeout – retrying with smaller limit (10)');
+        const retryQuery = Prisma.sql`${completeQuery} LIMIT 10`; // append limit safeguard
+        try {
+          properties = await prisma.$queryRaw(retryQuery) as Property[];
+        } catch (retryErr) {
+          throw retryErr;
+        }
+      } else {
+        throw err;
+      }
+    }
 
     console.log(`Query returned ${properties.length} properties for search:`, { propertyName, latitude, longitude });
 
