@@ -218,15 +218,19 @@ const SingleListing = () => {
         {/* Full Width Image Gallery */}
         <div className="mb-8">
           {/* Desktop Layout */}
-          <div className="hidden md:grid md:grid-cols-6 gap-4 h-[600px]">
+          {/* Reduced overall gallery height */}
+          <div className="hidden md:grid md:grid-cols-6 gap-4 h-[420px]">
             {/* Main large image - takes 4/6 of the width (66.67%) */}
             <div className="col-span-4 relative rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
               <Image
                 src={processedProperty.images?.[0] || "/placeholder.jpg"}
                 alt={property.name}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 67vw, 800px"
+                priority={true}
+                quality={85}
                 className="object-cover hover:scale-105 transition-transform duration-300"
-                unoptimized={true}
+                unoptimized={false}
               />
             </div>
             
@@ -239,8 +243,8 @@ const SingleListing = () => {
                 return null;
               })()}
               
-              {/* Always show 4 side images */}
-              {Array.from({ length: 4 }, (_, index) => {
+              {/* Show 2 side images */}
+              {Array.from({ length: 2 }, (_, index) => {
                 // If we have multiple images, use them. Otherwise, use the main image or placeholder
                 const imageIndex = index + 1;
                 const imageUrl = processedProperty.images?.[imageIndex] || 
@@ -248,13 +252,16 @@ const SingleListing = () => {
                                 "/placeholder.jpg";
                 
                 return (
-                  <div key={index} className="relative h-[140px] rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
+                  <div key={index} className="relative h-[200px] rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
                     <Image
                       src={imageUrl}
                       alt={`${property.name} ${index + 2}`}
                       fill
+                      sizes="(max-width: 768px) 100vw, 250px"
+                      priority={index < 2}
+                      quality={70}
                       className="object-cover hover:scale-105 transition-transform duration-300"
-                      unoptimized={true}
+                      unoptimized={false}
                     />
                     {/* Show overlay if using placeholder or duplicate */}
                     {(!processedProperty.images?.[imageIndex] && processedProperty.images?.[0]) && (
@@ -283,32 +290,37 @@ const SingleListing = () => {
           {/* Mobile Layout */}
           <div className="md:hidden">
             {/* Main image for mobile */}
-            <div className="relative h-[350px] rounded-lg overflow-hidden cursor-pointer mb-4" onClick={() => setIsImageModalOpen(true)}>
+            <div className="relative h-[260px] rounded-lg overflow-hidden cursor-pointer mb-4" onClick={() => setIsImageModalOpen(true)}>
               <Image
                 src={processedProperty.images?.[0] || "/placeholder.jpg"}
                 alt={property.name}
                 fill
+                sizes="100vw"
+                priority={true}
+                quality={80}
                 className="object-cover"
-                unoptimized={true}
+                unoptimized={false}
               />
             </div>
             
             {/* Mobile image grid - rectangular layout */}
             <div className="grid grid-cols-1 gap-3">
-              {processedProperty.images?.slice(1, 4).map((image, index) => (
-                <div key={index} className="relative h-32 rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
+              {processedProperty.images?.slice(1, 3).map((image, index) => (
+                <div key={index} className="relative h-28 rounded-lg overflow-hidden cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
                   <Image
                     src={image || "/placeholder.jpg"}
                     alt={`${property.name} ${index + 2}`}
                     fill
+                    sizes="(max-width: 768px) 100vw, 300px"
+                    quality={70}
                     className="object-cover"
-                    unoptimized={true}
+                    unoptimized={false}
                   />
                 </div>
               )) || 
               // Fallback for mobile
               Array.from({ length: 3 }, (_, index) => (
-                <div key={`fallback-mobile-${index}`} className="relative h-32 rounded-lg overflow-hidden bg-gray-200">
+                <div key={`fallback-mobile-${index}`} className="relative h-28 rounded-lg overflow-hidden bg-gray-200">
                   <div className="w-full h-full flex items-center justify-center">
                     <Home className="h-6 w-6 text-gray-400" />
                   </div>

@@ -537,6 +537,7 @@ const RandomListings = () => {
                 largeActionIcons
                 simpleShadow
                 reviewsCount={(property as any).reviews ?? (property as any).reviewCount ?? (property as any).reviewsCount}
+                locationDisplayMode="suburbCity"
               />
             ))}
           </div>

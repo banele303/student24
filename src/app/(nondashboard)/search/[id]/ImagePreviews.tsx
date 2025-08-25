@@ -65,8 +65,9 @@ const ImagePreviews = ({ images }: ImagePreviewsProps) => {
               src={image}
               alt={`Property Image ${index + 1}`}
               fill
-              unoptimized={true}
+              unoptimized={false}
               priority={index === 0}
+              quality={index === 0 ? 85 : 75}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1000px"
               className="object-cover cursor-pointer transition-transform duration-500 ease-in-out rounded-lg shadow-md"
               onError={() => handleImageError(index)}

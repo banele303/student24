@@ -64,6 +64,8 @@ interface PropertyCardProps {
   imagePaddingClass?: string
   // Optional: use simple blog-like shadow style (rounded-xl, shadow-md, hover:shadow-lg, no ring/scale)
   simpleShadow?: boolean
+  // Optional: control how location is displayed (full address or just suburb + city)
+  locationDisplayMode?: 'full' | 'suburbCity'
 }
 
 function PropertyCard({
@@ -84,6 +86,7 @@ function PropertyCard({
   largeActionIcons = false,
   imagePaddingClass = "px-2 mt-[-1rem]",
   simpleShadow = false,
+  locationDisplayMode = 'full',
 }: PropertyCardProps) {
   // Access images directly from the property object as it comes from the API
   const [imgSrc, setImgSrc] = useState<string>(
@@ -258,7 +261,38 @@ function PropertyCard({
               <MapPin className="h-4 w-4 text-[#00acee]" />
             </div>
             <p className="line-clamp-1 font-normal">
-              {property.location?.address || 'No address'}, {property.location?.city || 'No city'}
+              {(() => {
+                if (!property.location) return 'No location';
+                const address = property.location.address || '';
+                const city = property.location.city || '';
+                if (locationDisplayMode === 'suburbCity') {
+                  // Attempt to extract suburb + city from the address string.
+                  // Example input: "43 Amanda avenue, Arcadia, Johannesburg" -> "Arcadia, Johannesburg"
+                  const parts = address.split(',').map(p => p.trim()).filter(Boolean);
+                  if (parts.length >= 2) {
+                    // If city prop matches one of the parts, use the preceding part as suburb
+                    const cityLower = city.toLowerCase();
+                    let cityIndex = parts.findIndex(p => p.toLowerCase() === cityLower);
+                    if (cityIndex === -1 && parts.length >= 2) {
+                      // Fallback: assume last part is city if explicit city missing in parts
+                      cityIndex = parts.length - 1;
+                    }
+                    if (cityIndex > 0) {
+                      const suburb = parts[cityIndex - 1];
+                      const finalCity = city || parts[cityIndex];
+                      return `${suburb}, ${finalCity}`;
+                    }
+                    // If we cannot find a suburb preceding city, fallback to last two segments
+                    const suburb = parts[parts.length - 2];
+                    const finalCity = city || parts[parts.length - 1];
+                    return `${suburb}${finalCity ? `, ${finalCity}` : ''}`;
+                  }
+                  // If we only have one segment, just return city or that segment
+                  return city || address || 'No location';
+                }
+                // Default full display
+                return `${address || 'No address'}${city ? ', ' + city : ''}`;
+              })()}
             </p>
           </div>
           
