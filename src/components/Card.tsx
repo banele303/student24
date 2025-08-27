@@ -135,8 +135,8 @@ function PropertyCard({
     <Card
       className={
         simpleShadow
-          ? `group overflow-hidden bg-white rounded-3xl relative w-full cursor-pointer transition-all ease-out duration-300 shadow-md hover:shadow-lg border border-transparent hover:border-[#00acee] hover:ring-2 ring-[#00acee]/35 py-0 gap-0 mt-6 ${className ?? ""}`
-          : `group overflow-hidden transition-all duration-300 bg-white rounded-3xl relative w-full cursor-pointer transform ${disableHoverScale ? "" : "hover:scale-[1.01]"} shadow-sm hover:shadow-[0_0_16px_rgba(0,172,238,0.15)] hover:ring-2 ${hoverRingClass} mt-6 ${className ?? ""}`
+          ? `group overflow-hidden bg-white rounded-2xl relative max-w-xs w-full cursor-pointer transition-all ease-out duration-300 shadow-md hover:shadow-lg border border-transparent hover:border-[#00acee] hover:ring-2 ring-[#00acee]/35 py-0 gap-0 mt-4 p-3 ${className ?? ""}`
+          : `group overflow-hidden transition-all duration-300 bg-white rounded-2xl relative max-w-xs w-full cursor-pointer transform ${disableHoverScale ? "" : "hover:scale-[1.01]"} shadow-sm hover:shadow-[0_0_16px_rgba(0,172,238,0.15)] hover:ring-2 ${hoverRingClass} mt-4 p-3 ${className ?? ""}`
       }
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -194,7 +194,8 @@ function PropertyCard({
         </div>
 
   {/* NSFAS and Favorite Icons - Straddle image and content (half above, half below) */}
-  <div className="absolute bottom-0 right-3 transform translate-y-1/2 flex items-center gap-2 z-50">
+  {/* Action icons container: lowered z-index so it doesn't overlap the site navbar when scrolling */}
+  <div className="absolute bottom-0 right-3 transform translate-y-1/2 flex items-center gap-2 z-30">
           {/* NSFAS Accredited Badge with Image */}
           {property.isNsfassAccredited && (
             <div className={`relative ${largeActionIcons ? "w-[3.8rem] h-[3.8rem] p-1.5" : "w-[3.3rem] h-[3.3rem] p-1"} bg-white rounded-full shadow-lg border border-gray-200`}>
@@ -304,7 +305,7 @@ function PropertyCard({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
               </div>
-              <p className="line-clamp-1 font-normal italic">
+              <p className="line-clamp-1 font-normal">
                 Close to {property.closestUniversities.slice(0, 2).join(", ")}
                 {property.closestUniversities.length > 2 && ` +${property.closestUniversities.length - 2} more`}
               </p>
