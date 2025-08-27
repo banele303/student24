@@ -146,7 +146,7 @@ function PropertyCard({
       onClick={onClick}
     >
       {/* Image wrapper restored to original taller aspect ratio (4/3) for larger image height */}
-      <div className={`relative w-full ${edgeToEdgeImage ? '' : 'px-2'} overflow-hidden ${edgeToEdgeImage ? '' : imagePaddingClass?.includes('px-') ? '' : ''} aspect-[4/3]`}>
+  <div className={`relative w-full ${edgeToEdgeImage ? '' : 'px-2'} ${edgeToEdgeImage ? '' : imagePaddingClass?.includes('px-') ? '' : ''} aspect-[4/3]`}>
         <div className="relative w-full h-full">
           {!imgError ? (
             <Image
@@ -198,8 +198,8 @@ function PropertyCard({
 
   {/* NSFAS and Favorite Icons - Straddle image and content (half above, half below) */}
   {/* Action icons container: lowered z-index so it doesn't overlap the site navbar when scrolling */}
-  {/* Action icons fully visible (removed translate that caused clipping by overflow-hidden) */}
-  <div className="absolute bottom-3 right-3 flex items-center gap-2 z-40">
+  {/* NSFAS + Favorite icons straddling image/content: half above, half below */}
+  <div className="absolute bottom-0 right-3 transform translate-y-1/2 flex items-center gap-2 z-[60]">
           {/* NSFAS Accredited Badge with Image */}
           {property.isNsfassAccredited && (
             <div className={`relative ${largeActionIcons ? "w-[3.8rem] h-[3.8rem] p-1.5" : "w-[3.3rem] h-[3.3rem] p-1"} bg-white rounded-full shadow-lg border border-gray-200`}>
