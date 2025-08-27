@@ -142,7 +142,8 @@ function PropertyCard({
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-  <div className={`relative w-full aspect-[4/2] ${edgeToEdgeImage ? "" : imagePaddingClass}`}>
+      {/* Image wrapper restored to original taller aspect ratio (4/3) for larger image height */}
+      <div className={`relative w-full ${edgeToEdgeImage ? '' : 'px-2'} overflow-hidden ${edgeToEdgeImage ? '' : imagePaddingClass?.includes('px-') ? '' : ''} aspect-[4/3]`}>
         <div className="relative w-full h-full">
           {!imgError ? (
             <Image
@@ -151,12 +152,11 @@ function PropertyCard({
               fill
               loader={loaderFunc}
               unoptimized={true}
-              className={`object-cover transition-transform ${roundedImageClass} duration-500 ease-out ${disableImageHoverZoom ? "scale-100" : isHovered ? (simpleShadow ? "scale-[1.02]" : "scale-105") : "scale-100"}`}
+              className={`object-cover transition-transform ${edgeToEdgeImage ? roundedImageClass : 'rounded-xl'} duration-500 ease-out ${disableImageHoverZoom ? 'scale-100' : isHovered ? (simpleShadow ? 'scale-[1.02]' : 'scale-110') : 'scale-100'}`}
               onError={handleImageError}
-              
             />
           ) : (
-            <div className={`w-full h-full flex items-center justify-center bg-gray-100 ${roundedImageClass}`}>
+            <div className={`w-full h-full flex items-center justify-center bg-gray-100 ${edgeToEdgeImage ? roundedImageClass : 'rounded-xl'}`}>
               <Home className="h-12 w-12 text-gray-400" />
             </div>
           )}
