@@ -66,6 +66,8 @@ interface PropertyCardProps {
   simpleShadow?: boolean
   // Optional: control how location is displayed (full address or just suburb + city)
   locationDisplayMode?: 'full' | 'suburbCity'
+  // Optional: override width utility classes (defaults widened from previous slim size)
+  widthClass?: string
 }
 
 function PropertyCard({
@@ -87,6 +89,7 @@ function PropertyCard({
   imagePaddingClass = "px-2 mt-[-1rem]",
   simpleShadow = false,
   locationDisplayMode = 'full',
+  widthClass,
 }: PropertyCardProps) {
   // Access images directly from the property object as it comes from the API
   const [imgSrc, setImgSrc] = useState<string>(
@@ -135,8 +138,8 @@ function PropertyCard({
     <Card
       className={
         simpleShadow
-          ? `group overflow-hidden bg-white rounded-2xl relative max-w-xs w-full cursor-pointer transition-all ease-out duration-300 shadow-md hover:shadow-lg border border-transparent hover:border-[#00acee] hover:ring-2 ring-[#00acee]/35 py-0 gap-0 mt-4 p-3 ${className ?? ""}`
-          : `group overflow-hidden transition-all duration-300 bg-white rounded-2xl relative max-w-xs w-full cursor-pointer transform ${disableHoverScale ? "" : "hover:scale-[1.01]"} shadow-sm hover:shadow-[0_0_16px_rgba(0,172,238,0.15)] hover:ring-2 ${hoverRingClass} mt-4 p-3 ${className ?? ""}`
+          ? `group overflow-hidden bg-white rounded-2xl relative ${widthClass || 'max-w-sm'} w-full cursor-pointer transition-all ease-out duration-300 shadow-md hover:shadow-lg border border-transparent hover:border-[#00acee] hover:ring-2 ring-[#00acee]/35 py-0 gap-0 mt-4 p-3 ${className ?? ""}`
+          : `group overflow-hidden transition-all duration-300 bg-white rounded-2xl relative ${widthClass || 'max-w-sm'} w-full cursor-pointer transform ${disableHoverScale ? "" : "hover:scale-[1.01]"} shadow-sm hover:shadow-[0_0_16px_rgba(0,172,238,0.15)] hover:ring-2 ${hoverRingClass} mt-4 p-3 ${className ?? ""}`
       }
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
