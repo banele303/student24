@@ -88,7 +88,7 @@ function PropertyCard({
   className,
   reviewsCount,
   largeActionIcons = false,
-  imagePaddingClass = "px-2 pt-2",
+  imagePaddingClass = "p-1",
   simpleShadow = false,
   locationDisplayMode = 'full',
   widthClass,
