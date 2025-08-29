@@ -533,7 +533,7 @@ const RandomListings = () => {
                 showFavoriteButton={true}
                 onClick={() => handlePropertyClick(property.id)}
                 className="mt-0 border-0 mx-auto"
-                imagePaddingClass="px-2 pt-2"
+                imagePaddingClass="p-2"
                 largeActionIcons
                 simpleShadow
                 reviewsCount={(property as any).reviews ?? (property as any).reviewCount ?? (property as any).reviewsCount}
