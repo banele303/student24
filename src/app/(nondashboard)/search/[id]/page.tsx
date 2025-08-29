@@ -215,8 +215,8 @@ const SingleListing = () => {
   return (
     <div className="bg-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Full Width Image Gallery */}
-        <div className="mb-8">
+  {/* Full Width Image Gallery with added top padding for consistent spacing */}
+  <div className="mb-8 pt-4">
           {/* Desktop Layout */}
           {/* Reduced overall gallery height */}
           <div className="hidden md:grid md:grid-cols-6 gap-4 h-[420px]">
@@ -379,52 +379,55 @@ const SingleListing = () => {
               </div>
             </div>
 
-            {/* Location and University */}
-            <div className="space-y-4">
+            {/* Location and University inline */}
+            <div>
               <div className="flex items-start gap-3">
                 <svg className="h-6 w-6 text-gray-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <div>
-                  <p className="text-gray-800 font-medium text-lg">{property.location?.address || 'No address'}</p>
-                  <p className="text-gray-600">{property.location?.city || 'No city'}</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-4 flex-wrap">
+                    <p className="text-gray-800 font-medium text-lg truncate max-w-full">
+                      {property.location?.address || 'No address'}
+                    </p>
+                    {property.closestUniversities?.[0] && (
+                      <div className="flex items-center gap-2">
+                        {(() => {
+                          const universityLogo = getUniversityLogo(property.closestUniversities[0]);
+                          if (universityLogo) {
+                            return (
+                              <div className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center overflow-hidden">
+                                <Image
+                                  src={universityLogo}
+                                  alt={`${property.closestUniversities[0]} logo`}
+                                  width={36}
+                                  height={36}
+                                  className="object-contain"
+                                  unoptimized={true}
+                                />
+                              </div>
+                            );
+                          }
+                          return (
+                            <div className="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center">
+                              <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                              </svg>
+                            </div>
+                          );
+                        })()}
+                        <span className="text-gray-700 font-medium whitespace-nowrap">
+                          Close to {property.closestUniversities[0]}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-gray-600 mt-1">
+                    {property.location?.city || 'No city'}
+                  </p>
                 </div>
               </div>
-              
-              {/* Close to University - Only show if data exists */}
-              {property.closestUniversities?.[0] && (
-                <div className="flex items-center gap-3">
-                  {/* University Logo or Default Icon */}
-                  {(() => {
-                    const universityLogo = getUniversityLogo(property.closestUniversities[0]);
-                    
-                    if (universityLogo) {
-                      return (
-                        <div className="w-12 h-12 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center overflow-hidden">
-                          <Image
-                            src={universityLogo}
-                            alt={`${property.closestUniversities[0]} logo`}
-                            width={40}
-                            height={40}
-                            className="object-contain"
-                            unoptimized={true}
-                          />
-                        </div>
-                      );
-                    } else {
-                      return (
-                        <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center">
-                          <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                          </svg>
-                        </div>
-                      );
-                    }
-                  })()}
-                  <span className="text-gray-700 font-medium">Close to {property.closestUniversities[0]}</span>
-                </div>
-              )}
             </div>
 
             {/* Property Description */}

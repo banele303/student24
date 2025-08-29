@@ -267,7 +267,7 @@ const Listings = () => {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full pr-4 md:pr-8 xl:pr-12">
       {/* Property count heading */}
       <div className="mb-4">
         {/* Location-based or Property name-based heading */}
