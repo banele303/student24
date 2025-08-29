@@ -532,12 +532,13 @@ const RandomListings = () => {
                 userRole={authUser?.userRole || null}
                 showFavoriteButton={true}
                 onClick={() => handlePropertyClick(property.id)}
-                className="mt-0 border-0"
+                className="mt-0 border-0 mx-auto"
                 imagePaddingClass="px-2 pt-2"
                 largeActionIcons
                 simpleShadow
                 reviewsCount={(property as any).reviews ?? (property as any).reviewCount ?? (property as any).reviewsCount}
                 locationDisplayMode="suburbCity"
+                imageAspect="4/2"
               />
             ))}
           </div>

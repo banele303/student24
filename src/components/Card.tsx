@@ -68,6 +68,8 @@ interface PropertyCardProps {
   locationDisplayMode?: 'full' | 'suburbCity'
   // Optional: override width utility classes (defaults widened from previous slim size)
   widthClass?: string
+  // Optional: choose image aspect ratio (default 4/3, can set to 4/2 for shorter banner style)
+  imageAspect?: '4/3' | '4/2'
 }
 
 function PropertyCard({
@@ -90,6 +92,7 @@ function PropertyCard({
   simpleShadow = false,
   locationDisplayMode = 'full',
   widthClass,
+  imageAspect = '4/3',
 }: PropertyCardProps) {
   // Access images directly from the property object as it comes from the API
   const [imgSrc, setImgSrc] = useState<string>(
@@ -146,7 +149,9 @@ function PropertyCard({
       onClick={onClick}
     >
       {/* Image wrapper restored to original taller aspect ratio (4/3) for larger image height */}
-  <div className={`relative w-full ${edgeToEdgeImage ? '' : 'px-2'} ${edgeToEdgeImage ? '' : imagePaddingClass?.includes('px-') ? '' : ''} aspect-[4/3]`}>
+  {/** Determine aspect ratio class explicitly so Tailwind sees both variants */}
+  {/** Available: aspect-[4/3] (default), aspect-[4/2] (shorter) */}
+  <div className={`relative w-full ${edgeToEdgeImage ? '' : 'px-2'} ${edgeToEdgeImage ? '' : imagePaddingClass?.includes('px-') ? '' : ''} ${imageAspect === '4/2' ? 'aspect-[4/2]' : 'aspect-[4/3]'}` }>
         <div className="relative w-full h-full">
           {!imgError ? (
             <Image
