@@ -151,7 +151,8 @@ function PropertyCard({
       {/* Image wrapper restored to original taller aspect ratio (4/3) for larger image height */}
   {/** Determine aspect ratio class explicitly so Tailwind sees both variants */}
   {/** Available: aspect-[4/3] (default), aspect-[4/2] (shorter) */}
-  <div className={`relative w-full ${edgeToEdgeImage ? '' : 'px-2'} ${edgeToEdgeImage ? '' : imagePaddingClass?.includes('px-') ? '' : ''} ${imageAspect === '4/2' ? 'aspect-[4/2]' : 'aspect-[4/3]'}` }>
+  {/** Apply custom imagePaddingClass (e.g. "px-2 pt-2") so top padding can match left/right */}
+  <div className={`relative w-full ${edgeToEdgeImage ? '' : (imagePaddingClass || 'px-2')} ${imageAspect === '4/2' ? 'aspect-[4/2]' : 'aspect-[4/3]'}` }>
         <div className="relative w-full h-full">
           {!imgError ? (
             <Image
