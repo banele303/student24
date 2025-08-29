@@ -216,7 +216,7 @@ const SingleListing = () => {
     <div className="bg-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   {/* Full Width Image Gallery with added top padding for consistent spacing */}
-  <div className="mb-8 pt-4">
+  <div className="mb-8 pt-4 sm:pt-6 lg:pt-8">
           {/* Desktop Layout */}
           {/* Reduced overall gallery height */}
           <div className="hidden md:grid md:grid-cols-6 gap-4 h-[420px]">
