@@ -532,8 +532,8 @@ const RandomListings = () => {
                 userRole={authUser?.userRole || null}
                 showFavoriteButton={true}
                 onClick={() => handlePropertyClick(property.id)}
-                className="mt-0 border-0 mx-auto"
-                imagePaddingClass="p-1"
+                className="mt-0 border-0 mx-auto !p-2"
+                imagePaddingClass="p-0"
                 largeActionIcons
                 simpleShadow
                 reviewsCount={(property as any).reviews ?? (property as any).reviewCount ?? (property as any).reviewsCount}
