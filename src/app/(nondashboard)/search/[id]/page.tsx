@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetAuthUserQuery, useGetPropertyQuery, useGetRoomsQuery, useGetPropertiesQuery } from "@/state/api";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import Image, { ImageLoaderProps } from "next/image";
@@ -691,7 +692,7 @@ const SingleListing = () => {
           <div className="border-t border-gray-200 pt-12">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-semibold text-gray-900">Nearby Accommodations</h2>
-              <a href="/search" className="text-[#00acee] text-sm font-medium hover:underline">View all</a>
+              <Link href="/search" className="text-[#00acee] text-sm font-medium hover:underline">View all</Link>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {nearby.map((p: any) => (
@@ -713,7 +714,7 @@ const SingleListing = () => {
                     <p className="text-sm text-gray-600 line-clamp-1">{p.location?.city}</p>
                     <div className="flex items-center justify-between">
                       <p className="text-[#00acee] font-bold">R {Number(p.pricePerMonth || 0).toLocaleString('en-ZA')}</p>
-                      <a href={`/search/${p.id}`} className="text-xs font-medium text-[#00acee] hover:underline">View</a>
+                      <Link href={`/search/${p.id}`} className="text-xs font-medium text-[#00acee] hover:underline">View</Link>
                     </div>
                   </div>
                 </div>
