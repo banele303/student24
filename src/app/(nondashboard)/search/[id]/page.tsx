@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetAuthUserQuery, useGetPropertyQuery, useGetRoomsQuery } from "@/state/api";
+import { useGetAuthUserQuery, useGetPropertyQuery, useGetRoomsQuery, useGetPropertiesQuery } from "@/state/api";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import Image, { ImageLoaderProps } from "next/image";
@@ -193,6 +193,17 @@ const SingleListing = () => {
   // Use processed data
   const propertyRooms = processedRooms || [];
 
+  // Nearby accommodations (same city) - lightweight: limit 6, skip if no property yet
+  const { data: nearbyRaw } = useGetPropertiesQuery(
+    property?.location?.city ? { location: property.location.city } : {},
+    { skip: !property?.location?.city }
+  );
+  const nearby = React.useMemo(() => {
+    if (!nearbyRaw || !Array.isArray(nearbyRaw)) return [];
+    // Filter out current property and slice to 6
+  return nearbyRaw.filter((p: any) => p.id !== propertyId).slice(0, 6);
+  }, [nearbyRaw, propertyId]);
+
   // Calculate room-based statistics
   const roomStats = getRoomStats(rooms);
   // Determine display price (fallback to property's pricePerMonth)
@@ -209,12 +220,8 @@ const SingleListing = () => {
   const displayBaths = roomStats.totalBaths || property?.baths || 0;
   const displaySquareFeet = roomStats.totalSquareFeet || property?.squareFeet || 0;
 
-  // NSFAS Top-up calculation (assumes an NSFAS cap provided via env or fallback)
-  // You can set NEXT_PUBLIC_NSFAS_CAP in your .env.local (e.g. NEXT_PUBLIC_NSFAS_CAP=5000)
-  const nsfasCapRaw = (process as any).env?.NEXT_PUBLIC_NSFAS_CAP;
-  const nsfasCap = nsfasCapRaw ? parseFloat(nsfasCapRaw) : 0; // 0 means unknown / no cap provided
-  const baseRentForTopUp = displayPrice; // using min room price (displayPrice) as the reference
-  const topUpAmount = nsfasCap > 0 ? Math.max(0, baseRentForTopUp - nsfasCap) : 0;
+  // Top-up calculation removed (env cap not needed). Set to 0 for now.
+  const topUpAmount = 0;
 
   if (isLoading || roomsLoading) return <div><Loading/></div>;
   if (isError || !property || !processedProperty) return <div>Property not found</div>;
@@ -476,8 +483,8 @@ const SingleListing = () => {
                       <span className="text-[11px] font-semibold text-red-600 tracking-wide bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
                         NSFAS Accredited
                       </span>
-                      <span className="text-[11px] font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-200" title={nsfasCap > 0 ? `NSFAS Cap: R${nsfasCap.toLocaleString('en-ZA')}` : 'Set NEXT_PUBLIC_NSFAS_CAP to show real top-up'}>
-                        Top-up R{topUpAmount.toLocaleString('en-ZA', { minimumFractionDigits: 0 })}
+                      <span className="text-[11px] font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-200" title="Top-up currently fixed (no cap configured)">
+                        Top-up R0,00
                       </span>
                     </div>
                   )}
@@ -673,6 +680,44 @@ const SingleListing = () => {
             {/* Image Preview Component */}
             <div className="p-4">
               <ImagePreviews images={processedProperty.images || []} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Nearby Accommodations */}
+      {nearby.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 mt-4">
+          <div className="border-t border-gray-200 pt-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-semibold text-gray-900">Nearby Accommodations</h2>
+              <a href="/search" className="text-[#00acee] text-sm font-medium hover:underline">View all</a>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {nearby.map((p: any) => (
+                <div key={p.id} className="group bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                  <div className="relative h-48 w-full overflow-hidden">
+                    <Image
+                      src={(Array.isArray(p.images) && p.images[0]) || (Array.isArray(p.photoUrls) && p.photoUrls[0]) || '/placeholder.jpg'}
+                      alt={p.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      unoptimized={true}
+                    />
+                    {p.isNsfassAccredited && (
+                      <span className="absolute top-3 left-3 bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-semibold text-red-600 rounded-full border border-red-200">NSFAS</span>
+                    )}
+                  </div>
+                  <div className="p-4 space-y-2">
+                    <h3 className="font-semibold text-gray-900 line-clamp-1">{p.name}</h3>
+                    <p className="text-sm text-gray-600 line-clamp-1">{p.location?.city}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-[#00acee] font-bold">R {Number(p.pricePerMonth || 0).toLocaleString('en-ZA')}</p>
+                      <a href={`/search/${p.id}`} className="text-xs font-medium text-[#00acee] hover:underline">View</a>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
