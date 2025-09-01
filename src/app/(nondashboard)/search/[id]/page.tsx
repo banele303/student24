@@ -209,6 +209,13 @@ const SingleListing = () => {
   const displayBaths = roomStats.totalBaths || property?.baths || 0;
   const displaySquareFeet = roomStats.totalSquareFeet || property?.squareFeet || 0;
 
+  // NSFAS Top-up calculation (assumes an NSFAS cap provided via env or fallback)
+  // You can set NEXT_PUBLIC_NSFAS_CAP in your .env.local (e.g. NEXT_PUBLIC_NSFAS_CAP=5000)
+  const nsfasCapRaw = (process as any).env?.NEXT_PUBLIC_NSFAS_CAP;
+  const nsfasCap = nsfasCapRaw ? parseFloat(nsfasCapRaw) : 0; // 0 means unknown / no cap provided
+  const baseRentForTopUp = displayPrice; // using min room price (displayPrice) as the reference
+  const topUpAmount = nsfasCap > 0 ? Math.max(0, baseRentForTopUp - nsfasCap) : 0;
+
   if (isLoading || roomsLoading) return <div><Loading/></div>;
   if (isError || !property || !processedProperty) return <div>Property not found</div>;
 
@@ -397,12 +404,12 @@ const SingleListing = () => {
                           const universityLogo = getUniversityLogo(property.closestUniversities[0]);
                           if (universityLogo) {
                             return (
-                              <div className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center overflow-hidden">
+                              <div className="w-16 h-16 rounded-full bg-white border border-gray-200 flex items-center justify-center overflow-hidden shadow-sm">
                                 <Image
                                   src={universityLogo}
                                   alt={`${property.closestUniversities[0]} logo`}
-                                  width={36}
-                                  height={36}
+                                  width={56}
+                                  height={56}
                                   className="object-contain"
                                   unoptimized={true}
                                 />
@@ -410,8 +417,8 @@ const SingleListing = () => {
                             );
                           }
                           return (
-                            <div className="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center">
-                              <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="w-16 h-16 rounded-full bg-orange-500 flex items-center justify-center shadow-sm">
+                              <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
                               </svg>
                             </div>
@@ -449,22 +456,29 @@ const SingleListing = () => {
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <p className="text-sm text-gray-600">From</p>
-                    <p className="text-3xl font-bold text-blue-600">
+                    <p className="text-3xl font-bold text-[#00acee]">
                       R {displayPrice.toLocaleString('en-ZA')}
                     </p>
                     <p className="text-sm text-gray-600">per month</p>
                   </div>
                   
-                  {/* NSFAS Logo */}
+                  {/* NSFAS Accreditation Block */}
                   {property.isNsfassAccredited && (
-                    <div className="flex items-center">
+                    <div className="flex flex-col items-center gap-1 min-w-[90px]">
                       <Image
                         src="/universities/nasfas.png"
                         alt="NSFAS Accredited"
                         width={84}
                         height={84}
                         className="object-contain"
+                        priority
                       />
+                      <span className="text-[11px] font-semibold text-red-600 tracking-wide bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
+                        NSFAS Accredited
+                      </span>
+                      <span className="text-[11px] font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-200" title={nsfasCap > 0 ? `NSFAS Cap: R${nsfasCap.toLocaleString('en-ZA')}` : 'Set NEXT_PUBLIC_NSFAS_CAP to show real top-up'}>
+                        Top-up R{topUpAmount.toLocaleString('en-ZA', { minimumFractionDigits: 0 })}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -491,7 +505,7 @@ const SingleListing = () => {
                         roomsSection.scrollIntoView({ behavior: 'smooth' });
                       }
                     }}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+                    className="w-full bg-[#00acee] hover:bg-[#0095cc] text-white py-3 px-4 rounded-lg font-medium transition-colors"
                   >
                     View Available Rooms
                   </button>
@@ -540,7 +554,7 @@ const SingleListing = () => {
                         </div>
                         
                         {/* Price badge */}
-                        <div className="absolute top-3 right-3 bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium">
+                        <div className="absolute top-3 right-3 bg-[#00acee] text-white px-2 py-1 rounded text-sm font-medium">
                           R{room.price?.toLocaleString('en-ZA') || '0'}
                         </div>
                       </div>
@@ -554,50 +568,24 @@ const SingleListing = () => {
                           )}
                         </div>
                         
-                        {room.description && (
-                          <div className="text-gray-600 text-sm mb-3">
-                            {expandedDescriptions[`room-${room.id || index}`] ? 
-                              room.description : 
-                              `${room.description.substring(0, 80)}${room.description.length > 80 ? '...' : ''}`
-                            }
-                            {room.description.length > 80 && (
-                              <button
-                                onClick={() => toggleDescription(`room-${room.id || index}`)}
-                                className="text-blue-600 hover:text-blue-800 text-xs font-medium mt-1 focus:outline-none"
-                              >
-                                {expandedDescriptions[`room-${room.id || index}`] ? 'Read less' : 'Read more'}
-                              </button>
-                            )}
-                          </div>
-                        )}
-                        
-                        {room.features && room.features.length > 0 && (
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {(() => {
-                              let featuresArray;
-                              
-                              // Handle different formats of features
-                              if (Array.isArray(room.features)) {
-                                featuresArray = room.features;
-                              } else if (typeof room.features === 'string') {
-                                try {
-                                  featuresArray = JSON.parse(room.features);
-                                } catch {
-                                  // If it's not valid JSON, treat as a single feature
-                                  featuresArray = [room.features];
-                                }
-                              } else {
-                                featuresArray = [];
-                              }
-                              
-                              return featuresArray.map((feature: string, i: number) => (
-                                <span key={i} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                                  {feature}
-                                </span>
-                              ));
-                            })()}
-                          </div>
-                        )}
+                        {/* Privacy summary (Bedroom / Kitchen / Bathroom) */}
+                        <div className="mt-1 space-y-1 text-sm text-gray-700">
+                          {(() => {
+                            // Bedroom privacy derived from roomType
+                            const bedroomStatus = room.roomType === 'SHARED' ? 'Sharing' : 'Private';
+                            // Kitchen: assume only ENTIRE_UNIT guarantees private kitchen
+                            const kitchenStatus = room.roomType === 'ENTIRE_UNIT' ? 'Private' : 'Sharing';
+                            // Bathroom heuristic: private if not shared & capacity <=1, else sharing
+                            const bathroomStatus = (room.roomType !== 'SHARED' && (room.capacity ?? 1) <= 1) ? 'Private' : 'Sharing';
+                            return (
+                              <>
+                                <p><span className="font-medium text-gray-900">Bedroom:</span> {bedroomStatus}</p>
+                                <p><span className="font-medium text-gray-900">Kitchen:</span> {kitchenStatus}</p>
+                                <p><span className="font-medium text-gray-900">Bathroom:</span> {bathroomStatus}</p>
+                              </>
+                            );
+                          })()}
+                        </div>
                         
                         {room.availableFrom && !room.isAvailable && (
                           <div className="mt-3 text-sm text-gray-600">
@@ -617,7 +605,7 @@ const SingleListing = () => {
                             }}
                             className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
                               room.isAvailable 
-                                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                ? 'bg-[#00acee] hover:bg-[#0095cc] text-white'
                                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                             }`}
                             disabled={!room.isAvailable}
