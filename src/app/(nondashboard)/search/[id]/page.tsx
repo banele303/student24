@@ -484,9 +484,6 @@ const SingleListing = () => {
                       <span className="text-[11px] font-semibold text-red-600 tracking-wide bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
                         NSFAS Accredited
                       </span>
-                      <span className="text-[11px] font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-200" title="Top-up currently fixed (no cap configured)">
-                        Top-up R0,00
-                      </span>
                     </div>
                   )}
                 </div>
@@ -494,11 +491,16 @@ const SingleListing = () => {
                 {/* Deposit Info - Only show if data exists */}
                 {property.securityDeposit !== undefined && (
                   <div className="py-4 border-t border-gray-100">
-                    <div>
-                      <p className="text-sm text-gray-600">Security Deposit</p>
-                      <p className="font-semibold">
-                        {property.securityDeposit === 0 ? 'None' : `R${property.securityDeposit.toLocaleString('en-ZA')}`}
-                      </p>
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="inline-flex items-center text-[11px] font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full border border-red-200" title="Top-up currently fixed (no cap configured)">
+                        Top-up R0,00
+                      </span>
+                      <div className="text-right">
+                        <p className="text-sm text-gray-600">Security Deposit</p>
+                        <p className="font-semibold">
+                          {property.securityDeposit === 0 ? 'None' : `R${property.securityDeposit.toLocaleString('en-ZA')}`}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 )}
