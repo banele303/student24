@@ -491,16 +491,17 @@ const SingleListing = () => {
                 {/* Deposit Info - Only show if data exists */}
                 {property.securityDeposit !== undefined && (
                   <div className="py-4 border-t border-gray-100">
-                    <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-start justify-between gap-6">
                       <div>
                         <p className="text-sm text-gray-600">Security Deposit</p>
                         <p className="font-semibold">
                           {property.securityDeposit === 0 ? 'None' : `R${property.securityDeposit.toLocaleString('en-ZA')}`}
                         </p>
                       </div>
-                      <span className="inline-flex items-center text-[11px] font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full border border-red-200" title="Top-up currently fixed (no cap configured)">
-                        Top-up R0,00
-                      </span>
+                      <div className="text-right">
+                        <p className="text-sm text-gray-600">Top-up</p>
+                        <p className="font-semibold">R0,00</p>
+                      </div>
                     </div>
                   </div>
                 )}
