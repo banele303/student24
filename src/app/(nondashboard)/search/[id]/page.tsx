@@ -460,7 +460,7 @@ const SingleListing = () => {
           <div className="lg:col-span-1">
             <div className="sticky top-24">
               {/* Pricing Section */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-lg">
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <p className="text-sm text-gray-600">From</p>
@@ -481,7 +481,7 @@ const SingleListing = () => {
                         className="object-contain"
                         priority
                       />
-                      <span className="text-[11px] font-semibold text-red-600 tracking-wide bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
+                      <span className="text-[11px] font-semibold text-green-600 tracking-wide bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
                         NSFAS Accredited
                       </span>
                     </div>
@@ -535,7 +535,7 @@ const SingleListing = () => {
           <div className="lg:col-span-2 space-y-8">
             {/* Rooms Section */}
             {propertyRooms && propertyRooms.length > 0 && (
-              <div id="rooms-section" className="bg-white shadow-sm rounded-xl p-6">
+              <div id="rooms-section" className="bg-white shadow-sm rounded-2xl p-6">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-4">Available Rooms</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {propertyRooms.map((room: any, index: number) => (
