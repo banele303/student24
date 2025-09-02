@@ -539,8 +539,8 @@ const SingleListing = () => {
                 <h2 className="text-2xl font-semibold text-gray-800 mb-4">Available Rooms</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {propertyRooms.map((room: any, index: number) => (
-                    <div key={room.id || index} 
-                         className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+        <div key={room.id || index} 
+          className="border rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
                       {/* Room Image */}
                       <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
                         <Image
